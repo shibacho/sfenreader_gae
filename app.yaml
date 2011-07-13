@@ -1,0 +1,22 @@
+application: sfenreader
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /(.*\.(html|ico|css|js|ttf|js))
+  static_files: htdocs/\1
+  upload: htdocs/
+
+- url: /
+  static_files: htdocs/index.html
+  upload: htdocs/
+
+- url: /sfen
+  script: sfen.py
+
+- url: /sfen_dev
+  script: sfen_dev.py
+
+- url: /.*
+  script: not_found.py
