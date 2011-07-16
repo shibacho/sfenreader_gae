@@ -32,11 +32,11 @@ var URL = '';
 var SHORT_URL = '';
 var IMG_URL = '';
 var SFEN = '';
+var BLANK = 'about:_blank';
 
 $(document).ready(function(){
     $('#board_convert').click(BoardConvert);
     $('#example_button').click(function(e) {
-        var BLANK = 'about:_blank';
         ChangeExampleStatus();
     });
 
