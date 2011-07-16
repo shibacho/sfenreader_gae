@@ -1,2 +1,5 @@
+-- 2011/07/17
+   Added alphabet pieces.
+
 -- 2011/07/13
    First Release.
