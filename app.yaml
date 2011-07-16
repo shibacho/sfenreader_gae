@@ -15,8 +15,5 @@ handlers:
 - url: /sfen
   script: sfen.py
 
-- url: /sfen_dev
-  script: sfen_dev.py
-
 - url: /.*
   script: not_found.py

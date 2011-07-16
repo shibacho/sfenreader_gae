@@ -40,7 +40,13 @@ class BadSfenStringException(Exception):
 
 class SfenHandler(webapp.RequestHandler):
     board_img = ''
+    board_alphabet_img = ''
+    draw_board_img = ''
+
     piece_img = {}
+    piece_alphabet_img = {}
+    draw_piece_img = {}
+
     number_img = {}
     black_img = ()
     white_img = ()
@@ -101,9 +107,20 @@ class SfenHandler(webapp.RequestHandler):
     ### 一度に合成出来る画像の最大数
     COMPOSITE_MAX_NUM = 15
 
-    def img_init(self):
-        self.piece_img_init()
-        self.board_img_init()
+    def img_init(self, piece_kind = 'kanji'):
+        if piece_kind == 'kanji':
+            self.piece_img_init()
+            self.draw_piece_img = self.piece_img
+            self.board_img_init()
+            self.draw_board_img = self.board_img
+
+        elif piece_kind == 'alphabet':
+            self.piece_alphabet_img_init()
+            self.draw_piece_img = self.piece_alphabet_img
+            self.board_alphabet_img_init()
+            self.draw_board_img = self.board_alphabet_img
+
+
         self.mark_img_init()
 
     def piece_img_init(self):
@@ -112,6 +129,8 @@ class SfenHandler(webapp.RequestHandler):
         ### 覚えていることがまれによくある
         if self.piece_img != {}:
             return
+        
+        logging.info('Loading Kanji Piece Image...')
 
         f = open("img/fu.png", "rb")
         fu_img = f.read()
@@ -184,13 +203,98 @@ class SfenHandler(webapp.RequestHandler):
         self.piece_img['+r'] = (ry_img,   images.rotate(ry_img, 180))
         self.piece_img['+b'] = (um_img,   images.rotate(um_img, 180))
 
+    def piece_alphabet_img_init(self):
+        if self.piece_alphabet_img != {}:
+            return
+
+        logging.info('Loading Alphabet Piece Image...')
+
+        f = open("img/fu_alphabet.png", "rb")
+        fu_img = f.read()
+        f.close()
+
+        f = open("img/ky_alphabet.png", "rb")
+        ky_img = f.read()
+        f.close()
+        
+        f = open("img/ke_alphabet.png", "rb")
+        ke_img = f.read()
+        f.close()
+
+        f = open("img/gi_alphabet.png", "rb")
+        gi_img = f.read()
+        f.close()
+
+        f = open("img/ki_alphabet.png", "rb")
+        ki_img = f.read()
+        f.close()
+
+        f = open("img/hi_alphabet.png", "rb")
+        hi_img = f.read()
+        f.close()
+
+        f = open("img/ka_alphabet.png", "rb")
+        ka_img = f.read()
+        f.close()
+
+        f = open("img/ou_alphabet.png", "rb")
+        ou_img = f.read()
+        f.close()
+
+        f = open("img/to_alphabet.png", "rb")
+        to_img = f.read()
+        f.close()
+
+        f = open("img/naky_alphabet.png", "rb")
+        naky_img = f.read()
+        f.close()
+
+        f = open("img/nake_alphabet.png", "rb")
+        nake_img = f.read()
+        f.close()
+
+        f = open("img/nagi_alphabet.png", "rb")
+        nagi_img = f.read()
+        f.close()
+
+        f = open("img/ry_alphabet.png", "rb")
+        ry_img = f.read()
+        f.close()
+
+        f = open("img/um_alphabet.png", "rb")
+        um_img = f.read()
+        f.close()
+
+        self.piece_alphabet_img['p']  = (fu_img,   images.rotate(fu_img, 180))
+        self.piece_alphabet_img['l']  = (ky_img,   images.rotate(ky_img, 180))
+        self.piece_alphabet_img['n']  = (ke_img,   images.rotate(ke_img, 180))
+        self.piece_alphabet_img['s']  = (gi_img,   images.rotate(gi_img, 180))
+        self.piece_alphabet_img['g']  = (ki_img,   images.rotate(ki_img, 180))
+        self.piece_alphabet_img['r']  = (hi_img,   images.rotate(hi_img, 180))
+        self.piece_alphabet_img['b']  = (ka_img,   images.rotate(ka_img, 180))
+        self.piece_alphabet_img['k']  = (ou_img,   images.rotate(ou_img, 180))
+        self.piece_alphabet_img['+p'] = (to_img,   images.rotate(to_img,180))
+        self.piece_alphabet_img['+l'] = (naky_img, images.rotate(naky_img, 180))
+        self.piece_alphabet_img['+n'] = (nake_img, images.rotate(nake_img, 180))
+        self.piece_alphabet_img['+s'] = (nagi_img, images.rotate(nagi_img, 180))
+        self.piece_alphabet_img['+r'] = (ry_img,   images.rotate(ry_img, 180))
+        self.piece_alphabet_img['+b'] = (um_img,   images.rotate(um_img, 180))
+    
+
     def board_img_init(self):
         if self.board_img == '':
-            logging.info('Loading Black Image...')
+            logging.info('Loading Board Image...')
             f = open("img/board.png", "rb")
             self.board_img = f.read()
             f.close()
 
+    def board_alphabet_img_init(self):
+        if self.board_alphabet_img == '':
+            logging.info('Loading Alphabet Board Image...')
+            f = open("img/board_alphabet.png", "rb")
+            self.board_alphabet_img = f.read()
+            f.close()
+            
     def mark_img_init(self):
         if self.black_img == ():
             logging.info('Loading Black Image...')
@@ -372,7 +476,7 @@ class SfenHandler(webapp.RequestHandler):
             one_digit_x = x ### 1ケタ目
 
         for hand_tuple in hand_tuples:
-            img_list.append((self.piece_img[hand_tuple[0]][turn], 
+            img_list.append((self.draw_piece_img[hand_tuple[0]][turn], 
                              x, y, 1.0, images.TOP_LEFT))
 
             logging.debug('Drawing:' + str(hand_tuple[0]) + 
@@ -441,15 +545,16 @@ class SfenHandler(webapp.RequestHandler):
     def get(self):
         sfen = urllib.unquote(self.request.get('sfen'))
         last_move = urllib.unquote(self.request.get('lm'))
+        piece_kind = urllib.unquote(self.request.get('piece','kanji'))
 
         logging.info('sfen:' + sfen + ' last_move:' + last_move)
         if sfen == '':
             self.response.out.write('Please, specify SFEN string.')
             return
 
-        black_name = urllib.unquote(self.request.get('sname', ''))
-        white_name = urllib.unquote(self.request.get('gname', ''))
-        title = urllib.unquote(self.request.get('title', ''))
+        black_name = urllib.unquote(self.request.get('sname'))
+        white_name = urllib.unquote(self.request.get('gname'))
+        title = urllib.unquote(self.request.get('title'))
 
         if black_name != '' or white_name != '' or title != '':
             self.exist_title_flag = True
@@ -487,7 +592,7 @@ class SfenHandler(webapp.RequestHandler):
             self.response.out.write('Cannot create string image:' + str(e))
             return
 
-        self.img_init()
+        self.img_init(piece_kind = piece_kind)
         img_list = []
 
         ### タイトル等が存在したら最大の高さを求めて必要に応じて描画する
@@ -544,8 +649,9 @@ class SfenHandler(webapp.RequestHandler):
 
             ### 中央タイトルの描画
             if title_img is not None:
-                ### 中央
                 center = self.IMAGE_WIDTH / 2
+
+                ### 文字の長さに合わせて描画開始位置を調整
                 center_x = center - title_img_obj.width / 2
                 img_list.append( (title_img, center_x,
                                   self.TITLE_Y + self.max_title_height + self.IMAGE_PADDING_Y,
@@ -554,8 +660,6 @@ class SfenHandler(webapp.RequestHandler):
         logging.info('max_title_height:' + str(self.max_title_height))
         if len(img_list) != 0:
             (img, img_list) = self.composite(img_list)
-
-            
 
         ### 飛 -> 角 -> 金 -> 銀 -> 桂 -> 香 -> 歩 の順番にarrayに入れる
         white_hand_array = self.sort_hand_array(white_hand)
@@ -580,7 +684,7 @@ class SfenHandler(webapp.RequestHandler):
 
         ### 盤の描画
         ### 最終着手マスより後に書くのは盤上の星が上に来て欲しいため
-        img_list.append( (self.board_img, self.BOARD_X, 
+        img_list.append( (self.draw_board_img, self.BOARD_X, 
                           self.BOARD_Y + self.title_height, 
                           1.0, images.TOP_LEFT) )
 
@@ -599,10 +703,10 @@ class SfenHandler(webapp.RequestHandler):
             ### 駒を書く場所を決める
             x = self.BOARD_X + self.SQUARE_ORIGIN_X + self.SQUARE_MULTIPLE_X * (9 - int(col))
             y = self.BOARD_Y + self.SQUARE_ORIGIN_Y + self.title_height + self.SQUARE_MULTIPLE_Y * (int(row) - 1)
-            logging.debug("x:" + str(x) + " y:" + str(y) + 
+            logging.info("x:" + str(x) + " y:" + str(y) + 
                          " pos:" + pos + " piece:" + piece_lower + 
                          " turn:" + str(turn))
-            img_list.append((self.piece_img[piece_lower][turn],
+            img_list.append((self.draw_piece_img[piece_lower][turn],
                              x, y, 1.0, images.TOP_LEFT))
 
             if len(img_list) == self.COMPOSITE_MAX_NUM:

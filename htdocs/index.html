@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>将棋の局面図を生成するWebAPI のページ</title>
+<title>クラウド将棋盤ジェネレーター</title>
 <script type="text/javascript" src="jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="bod2sfen.js"></script>
 <!--
@@ -14,17 +14,18 @@ google.load('jquery', '1.6');
 </head>
 <body>
 <p>
-<h1>将棋の局面図を生成するWebAPI</h1>
+<h1>クラウド将棋局面図ジェネレーター</h1>
 <h2>概要</h2>
 <p>
-将棋の局面図の画像を生成するWebAPIです。<br>
-主に<b>Twitterでのbotによる局面図の生成</b>や、<br>
+<strong>クラウド将棋局面図ジェネレーター</strong>(旧称:将棋局面図WebAPI)はWeb上だけで完結する(予定)将棋盤局面図の画像作成ツールです。<br>
+<p>
+用途としては、<b>Twitterでの局面図のつぶやき</b>や、<br>
 ブログでの<b>課題局面</b>、<b>詰め将棋</b>の画像貼り付けを想定しています。<br>
 <p>
 従来は、<a href="http://home.att.ne.jp/lemon/ogi/SituationFigure.html">局面図</a>などのアプリを使用して画像を生成し、ブログのスペースに画像をアップロードしないと局面図の解説が出来ませんでした。<br>
 <p>
-このWebAPIではpng画像を直接返すため、imgタグで<strong style="color:#FF0000;">ブログに直接生成した画像を埋め込む</strong>ことが出来ます。<br>
-局面図を貼り付ける人の手間軽減になりますし、ブログのディスクスペースを消費することもありません。<br>
+このWebサービスではpng画像を直接返すため、imgタグで<strong style="color:#FF0000;">ブログに直接生成した画像を埋め込む</strong>ことが出来ます。<br>
+局面図を貼り付ける人の手間軽減になりますし、<strong style="color:#FF0000;">ブログのディスクスペースを消費することもありません。</strong> <br>
 <p>
 ただ<strong>フリーで無保証の提供になります</strong>ので、ご了承ください。<br>
 <p>
@@ -35,6 +36,11 @@ google.load('jquery', '1.6');
 下のボックスにKifu for Windowsの[編集] -> [局面のコピー] -> [通常] でクリップボードにコピーされる盤面文字列を入力し、「変換する」を押してください。<br>
 画像のURLとブログに貼り付けるimgタグが生成され、プレビューが出来ます。<br>
 出てきたimgタグを使えば局面図を自分のブログに貼り付けることが出来ます。<br>
+<p>
+先手名、後手名以外に盤面の上に表示する「タイトル」も表示することが出来ます。<br>
+棋戦名や、「図は▲５二銀まで」のような局面図そのものの説明などを入力してください<br>
+注意点として、Unicodeの駒文字☗☖は使用出来ません。変わりに▲△(▽)をお使い下さい。<br>
+<hr>
 <p>
 <strong>Kifu for Windows の盤面</strong><br>
 <textarea id="board" style="width:260px; height:230px; font-family:'ＭＳ ゴシック', 'MS Gothic', 'Osaka－等幅', Osaka-mono, monospace; font-size:14px; color:#999;">
@@ -54,17 +60,19 @@ google.load('jquery', '1.6');
 先手の持駒：なし
 手数＝0    まで
 </textarea><br>
-先手名: <input type="text" id="sente_name" style="width: 100px;" /> <br>
-後手名: <input type="text" id="gote_name" style="width: 100px;" /> <br>
-タイトル: <input type="text" id="shogi_title" style="width: 300px;" /> <br>
-<input type="text" id="last_move" style="width:30px;"/> のマスを強調表示する (半角2文字 例:76 84)<br>
+先手名: <input type="text" id="sente_name" style="width: 100px;" /> (※省略可)<br>
+後手名: <input type="text" id="gote_name" style="width: 100px;" /> (※省略可)<br>
+タイトル: <input type="text" id="shogi_title" style="width: 300px;" /> (※省略可)<br>
+強調表示: <input type="text" id="last_move" style="width:30px;"/> のマス (半角2文字 例:76 84 ※省略可)<br>
+駒の種類: <input type="radio" name="piece" value="kanji" checked/>漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒 <br>
+
 <button id="board_convert">変換する</button>
 <div id="board_result" style="display:none;">
 URL :<input type="text" id="long_url" style="width:400px;"/><br>
-SFEN:<input type="text" id="sfen" style="width:400px;"/><br>
 <!--
-短縮URL:<input type="text" id="short_url" /><br>
+短縮URL:<input type="text" id="short_url" /><br> 
 -->
+SFEN:<input type="text" id="sfen" style="width:400px;"/><br>
 ブログに貼り付ける:<br>
 <textarea id="blog_code" style="width:500px;height:100px;"></textarea>
 <h3>プレビュー</h3>
@@ -73,7 +81,7 @@ SFEN:<input type="text" id="sfen" style="width:400px;"/><br>
 <hr>
 <h2>使い方(開発者向け)</h2>
 <blockquote>
-http://sfenreader.appspot.com/sfen?sfen=<i>sfen_string</i>&lm=<i>last_move_square_num</i>&sname=<i>name_of_sente</i>&gname=<i>name_of_gote</i>&title=<i>title</i>
+http://sfenreader.appspot.com/sfen?sfen=<i>sfen_string</i>&lm=<i>last_move_square_num</i>&sname=<i>name_of_sente</i>&gname=<i>name_of_gote</i>&title=<i>title</i>&piece=<i>kanji_or_alphabet</i>
 </blockquote>
 にアクセスすると<i>sfen_string</i>で示された局面がpng画像で返ってきます。<br>
 <i>sfen_string</i>は空白を含むのでURIencodeされている必要があります。<br>
@@ -84,11 +92,16 @@ http://sfenreader.appspot.com/sfen?sfen=<i>sfen_string</i>&lm=<i>last_move_squar
 これは最後に着手した手を示すのに使うことを想定しています。<br>
 lmは必須のパラメータではなく省略可能です。<br>
 <p>
-snameは先手、gnameは後手の名前です。UTF-8でencodeされている必要があります。<br>
+snameは先手、gnameは後手の名前です。UTF-8でURIencodeされている必要があります。<br>
 片方、または両方とも省略可能です。先手だけ、あるいは後手だけ名前を表示する、ということも出来ます。<br>
 <p>
 titleは棋戦名などを入れます。盤の中央上に出る文字列です。<br>
+sname、gname同様にUTF-8でURIencodeされている必要があります。<br>
 &amp;title=第52期王位戦第1局 のように使います。<br>
+<p>
+pieceは駒の種類を指定します。kanji を指定すると通常の一字駒に、alphabet を指定するとアルファベット一字駒になります。<br>
+省略すると、kanji を指定したのと同じことになります。<br>
+alphabet を指定すると将棋盤の段の数字がアラビア数字になります。<br>
 <hr>
 <h2 id="example_title">例</h2>
 <button id="example_button">▼例を見る</button>
@@ -118,29 +131,33 @@ titleは棋戦名などを入れます。盤の中央上に出る文字列です
 <h2>リンク</h2>
 <ul>
 <li> <a href="http://www.geocities.jp/shogidokoro/usi.html">USIとSFENについてのページ </a>
+<li> <a href="https://github.com/fantakeshi/sfenreader_gae">ソース(github)</a> Apache2.0ライセンス
 <li> <a href="http://fantakeshi.blog50.fc2.com/">作者のブログ</a>
 <li> <a href="http://fantakeshi.web.fc2.com/">作者のホームページ(超簡素)</a>
 </ul>
 <hr>
 <h2>今後の予定</h2>
 <ul>
-<li>英語一字駒、国際駒の追加
-<li>最終着手の矢印機能(もし出来れば)
+<li>最終着手の矢印機能(出来れば)
+<li>Web上での局面図作成UIの追加
 </ul>
 <hr>
 <h2>要望、注意点等</h2>
 <a href="http://www.twitter.com/#!/ponanza_shogi">@ponanza_shogi</a>に使っていただいてますが、正常に局面が生成されないと思う方はURLかsfenの文字列を<a href="http://www.twitter.com/#!/fantakeshi">@fantakeshi</a>宛に報告頂ければ幸いです。<br>
 <hr>
 <h2>謝辞</h2>
-ponanza作者(兼bot作者)の<a href="http://twitter.com/#!/issei_y">@issei_yさん</a>と<a href="http://twitter.com/#!/ginsho">@ginshoさん</a>のやりとりがなければこのWebAPIの構想は産まれませんでした。ありがとうございます。<br>
+ponanza作者(兼bot作者)の@issei_yさんと<a href="http://twitter.com/#!/ginsho">@ginshoさん</a>のやりとりがなければこのWebサービスの構想は産まれませんでした。ありがとうございます。<br>
 Google App Engine 上で文字を画像に合成する方法を書いてくださった<a href="http://iizukak.com/?p=856">iizukakさん</a>に感謝します。<br>
 <hr>
 <h2>更新履歴</h2>
 <ul>
+<li> 2011/07/17 サービス名変更、ソースの公開（Apache2.0 ライセンス）、国際駒の追加
 <li> 2011/07/13 対局者名、タイトルを入れるオプションの追加 (<a href="http://iizukak.com/?p=856">iizukakさんに感謝</a>)
 <li> 2011/07/12 先手後手のマークを▲から☗(Unicode5.2)へ 、持ち駒の数を漢数字からアラビア数字に、盤面に星を入れる
 <li> 2011/07/10 特定のマス目の強調機能(lmパラメータ)をつける
 <li> 2011/07/09 最初のリリース
 </ul>
+<hr>
+<img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif" alt="Powered by Google App Engine" />
 </body>
 </html>

@@ -1,3 +1,4 @@
+
 // -*- coding: utf-8 -*-
 //
 // bod2sfen.js Copyright 2011 fantakeshi Inc.
@@ -28,31 +29,15 @@ if (typeof window.console != 'object') { // IE対策
 }
 
 var URL = '';
+var SHORT_URL = '';
 var IMG_URL = '';
 var SFEN = '';
+
 $(document).ready(function(){
     $('#board_convert').click(BoardConvert);
     $('#example_button').click(function(e) {
         var BLANK = 'about:_blank';
-        if ($('#example').css('display') == 'none') {
-            if ($('#initial_board_img')[0].src == BLANK) {
-                /// 例を見るボタンを押してからWebAPIへのアクセスが起こるようにする
-                $('#initial_board_img')[0].src = 'http://' + location.host +'/sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL';
-            }
-            if ($('#endgame_board_img')[0].src == BLANK) {
-                $('#endgame_board_img')[0].src = 'http://' + location.host + '/sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20b%20BGSLPnp%201&lm=52&sname=%E7%BE%BD%E7%94%9F%E5%96%84%E6%B2%BB&gname=%E5%8A%A0%E8%97%A4%E4%B8%80%E4%BA%8C%E4%B8%89&title=%E7%AC%AC38%E5%9B%9E%20NHK%E6%9D%AF%20%E6%BA%96%E3%80%85%E6%B1%BA%E5%8B%9D';
-            }
-
-            if ($('#tsume_board_img')[0].src == BLANK) {
-                $('#tsume_board_img')[0].src = 'http://' + location.host + '/sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p%201';
-            }
-
-            $('#example').show('slow');
-            $('#example_button')[0].innerHTML = '▲例を隠す';
-        } else {
-            $('#example').hide('slow');
-            $('#example_button')[0].innerHTML = '▼例を見る';
-        }
+        ChangeExampleStatus();
     });
 
     var board_focus_first = true;
@@ -77,6 +62,28 @@ $(document).ready(function(){
     });
 
 });
+
+function ChangeExampleStatus() {
+    if ($('#example').css('display') == 'none') {
+        if ($('#initial_board_img')[0].src == BLANK) {
+            /// 例を見るボタンを押してからWebAPIへのアクセスが起こるようにする
+            $('#initial_board_img')[0].src = 'http://' + location.host +'/sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL';
+        }
+        if ($('#endgame_board_img')[0].src == BLANK) {
+            $('#endgame_board_img')[0].src = 'http://' + location.host + '/sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20b%20BGSLPnp%201&lm=52&sname=%E7%BE%BD%E7%94%9F%E5%96%84%E6%B2%BB&gname=%E5%8A%A0%E8%97%A4%E4%B8%80%E4%BA%8C%E4%B8%89&title=%E7%AC%AC38%E5%9B%9E%20NHK%E6%9D%AF%20%E6%BA%96%E3%80%85%E6%B1%BA%E5%8B%9D';
+        }
+        
+        if ($('#tsume_board_img')[0].src == BLANK) {
+            $('#tsume_board_img')[0].src = 'http://' + location.host + '/sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p%201';
+        }
+        
+        $('#example').show('slow');
+        $('#example_button')[0].innerHTML = '▲例を隠す';
+    } else {
+        $('#example').hide('slow');
+        $('#example_button')[0].innerHTML = '▼例を見る';
+    }
+}
 
 function GetSfenPiece(str) {
     var piece_ja2sfen = { '・':''  , '歩':'p' , '香':'l' , '桂':'n' , 
@@ -161,7 +168,6 @@ function Bod2Sfen(bod)
             move_count = RegExp.$1;
         }
         
-        
         /// 最後の列にはスラッシュを入れない
         if (added_row && row_counter <= 9) {
             sfen_board += '/';
@@ -190,6 +196,11 @@ function Bod2Sfen(bod)
     }
 
     return sfen;
+}
+
+function update_imgurl(url) {
+    IMG_URL = '<img src="' + URL + '">';
+
 }
 
 /// 持ち駒をSFEN文字列に変える
@@ -253,8 +264,12 @@ function BoardConvert(e)
     if ( $('#shogi_title').val() != '') {
         URL += '&title=' + encodeURIComponent($('#shogi_title').val());
     }
-    
-    IMG_URL = '<img src="' + URL + '">';
+
+    console.log('piece:' + $('input[name=piece]:checked').val() );
+
+    URL += '&piece=' + $('input[name=piece]:checked').val() ;
+    update_imgurl(URL);
+
     $('#long_url').val(URL);
     $('#sfen').val(SFEN);
     $('#blog_code').val(IMG_URL);
@@ -262,5 +277,4 @@ function BoardConvert(e)
     $('#board_result').show("slow");
 
     $('#blog_code')[0].select();
-
 }
