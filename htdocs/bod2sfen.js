@@ -1,7 +1,7 @@
 
 // -*- coding: utf-8 -*-
 //
-// bod2sfen.js Copyright 2011 fantakeshi Inc.
+// bod2sfen.js Copyright 2011 fantakeshi.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,6 +40,24 @@ $(document).ready(function(){
         ChangeExampleStatus();
     });
 
+    $('#turn_check').change(function() {
+        var $turn_check = $('#turn_check');
+        if ($turn_check.attr('checked') == 'checked') {
+            $('#turn_span').css('color', 'gray');
+            $('input[name=turn]').each(function() {
+                console.log('disabled:true value:' + $(this).val());
+                $(this).css('disabled', 'disabled');
+            });
+        } else {
+            $('#turn_span').css('color', 'black');
+            $('input[name=turn]').each(function() {
+                console.log('enable: value:' + $(this).val());
+                $(this).css('disabled', '');
+            });
+        }
+        
+    });
+
     var board_focus_first = true;
     $('#board').focus(function(e) {
         if (board_focus_first) {
@@ -70,7 +88,7 @@ function ChangeExampleStatus() {
             $('#initial_board_img')[0].src = 'http://' + location.host +'/sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL';
         }
         if ($('#endgame_board_img')[0].src == BLANK) {
-            $('#endgame_board_img')[0].src = 'http://' + location.host + '/sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20b%20BGSLPnp%201&lm=52&sname=%E7%BE%BD%E7%94%9F%E5%96%84%E6%B2%BB&gname=%E5%8A%A0%E8%97%A4%E4%B8%80%E4%BA%8C%E4%B8%89&title=%E7%AC%AC38%E5%9B%9E%20NHK%E6%9D%AF%20%E6%BA%96%E3%80%85%E6%B1%BA%E5%8B%9D';
+            $('#endgame_board_img')[0].src = 'http://' + location.host + '/sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20w%20BGSLPnp%201&lm=52&sname=%E7%BE%BD%E7%94%9F%E5%96%84%E6%B2%BB&gname=%E5%8A%A0%E8%97%A4%E4%B8%80%E4%BA%8C%E4%B8%89&title=%E7%AC%AC38%E5%9B%9E%20NHK%E6%9D%AF%20%E6%BA%96%E3%80%85%E6%B1%BA%E5%8B%9D';
         }
         
         if ($('#tsume_board_img')[0].src == BLANK) {
@@ -176,11 +194,7 @@ function Bod2Sfen(bod)
     }
     var sfen = '';
     sfen += sfen_board + ' ';
-    if (move_count % 2 == 0) { // 偶数の場合先手番
-        sfen += 'b ';
-    } else {
-        sfen += 'w ';
-    }
+    sfen += $('input[name=turn]:checked').val() + ' ';
     
     if (sfen_black_hand == '' && sfen_white_hand == '') { 
         /// どちらも持ち駒がない場合
@@ -265,11 +279,14 @@ function BoardConvert(e)
         URL += '&title=' + encodeURIComponent($('#shogi_title').val());
     }
 
-    console.log('piece:' + $('input[name=piece]:checked').val() );
+    console.log('turn_checked:' + $('#turn_check').attr('checked'));
 
+    if ( $('#turn_check').attr('checked') == 'checked') {
+        URL += '&turn=off';
+    }
     URL += '&piece=' + $('input[name=piece]:checked').val() ;
-    update_imgurl(URL);
 
+    update_imgurl(URL);
     $('#long_url').val(URL);
     $('#sfen').val(SFEN);
     $('#blog_code').val(IMG_URL);

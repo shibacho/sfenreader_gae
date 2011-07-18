@@ -60,7 +60,7 @@ class SfenHandler(webapp.RequestHandler):
 
     TITLE_Y = 5
 
-    IMAGE_WIDTH  = 384
+    IMAGE_WIDTH  = 400
     IMAGE_HEIGHT = 400
 
     PIECE_IMAGE_WIDTH   = 24
@@ -119,7 +119,6 @@ class SfenHandler(webapp.RequestHandler):
             self.draw_piece_img = self.piece_alphabet_img
             self.board_alphabet_img_init()
             self.draw_board_img = self.board_alphabet_img
-
 
         self.mark_img_init()
 
@@ -356,6 +355,15 @@ class SfenHandler(webapp.RequestHandler):
 
         return (self.string_img[string], self.string_img_obj[string])
 
+    def draw_turn_mark(self, img_list, x, y):
+        self.last_move_img_init()
+        image = images.resize(self.last_move_img, 
+                              self.BLACK_MARK_WIDTH + 10, 
+                              self.BLACK_MARK_HEIGHT + 10)
+
+        img_list.append( (image, x - 5, y - 5, 1.0, images.TOP_LEFT) )
+        return self.composite(img_list)
+
     def sort_hand_array(self, hand_dict):
         ''' 
         Sort hand dict to 
@@ -407,6 +415,7 @@ class SfenHandler(webapp.RequestHandler):
             turn = sfen_tokens[1]
         elif len(sfen_tokens) == 1:
             pieces = sfen_tokens[0]
+            turn = '-' ### 省略時はbでもwでもない値
         else:
             raise BadSfenStringException('Token number is too much.')
 
@@ -463,7 +472,7 @@ class SfenHandler(webapp.RequestHandler):
                     white_hand[a_hand] = hand_num
                     hand_num = 0
 
-        return (board, black_hand, white_hand)
+        return (board, black_hand, white_hand, turn)
 
     def draw_hand_pieces(self, img, hand_tuples, x, y, turn):
         img_list = [(img, 0, 0, 1.0, images.TOP_LEFT)]
@@ -584,6 +593,7 @@ class SfenHandler(webapp.RequestHandler):
         last_move = urllib.unquote(self.request.get('lm'))
         piece_kind = urllib.unquote(self.request.get('piece','kanji'))
         arrow_str = urllib.unquote(self.request.get('arrow'))
+        turn_str = urllib.unquote(self.request.get('turn', 'on'))
 
         logging.info('sfen:' + sfen + ' last_move:' + last_move)
         if sfen == '':
@@ -621,7 +631,7 @@ class SfenHandler(webapp.RequestHandler):
             font_size = self.DEFAULT_FONT_SIZE
 
         try:
-            (board, black_hand, white_hand) = self.sfen_parse(sfen)
+            (board, black_hand, white_hand, turn_sfen) = self.sfen_parse(sfen)
             (black_name_img, black_name_img_obj) = self.get_string_img(black_name, font_size)
             (white_name_img, white_name_img_obj) = self.get_string_img(white_name, font_size)
             (title_img, title_img_obj) = self.get_string_img(title, font_size)
@@ -670,8 +680,6 @@ class SfenHandler(webapp.RequestHandler):
                 black_title_x += self.BLACK_MARK_SMALL_WIDTH + self.IMAGE_PADDING_X
                 img_list.append( (black_name_img, black_title_x,
                                   self.TITLE_Y, 1.0, images.TOP_LEFT) )
-
-                
 
             ### 後手のマークと名前を描画する
             if white_name_img is not None:
@@ -757,6 +765,19 @@ class SfenHandler(webapp.RequestHandler):
         (img, img_list) = self.composite(img_list)
         logging.info('Success to draw pieces.')
 
+        ### 手番を書く
+        if turn_str == 'on':
+            logging.info('draw_turn:' + turn_sfen + 
+                         ' title_height:' + str(self.title_height))
+            if turn_sfen == 'b':
+                (img, img_list) = self.draw_turn_mark(img_list, self.BLACK_MARK_X,
+                                                      self.BLACK_MARK_Y + 
+                                                      self.title_height)
+            elif turn_sfen == 'w':
+                (img, img_list) = self.draw_turn_mark(img_list, self.WHITE_MARK_X,
+                                                      self.WHITE_MARK_Y + 
+                                                      self.title_height)
+
         ### 先手のマークを表示する
         img_list.append( (self.black_img[0], self.BLACK_MARK_X, 
                           self.BLACK_MARK_Y + self.title_height, 
@@ -786,6 +807,7 @@ class SfenHandler(webapp.RequestHandler):
 #        if arrow_str != '':
 #            (img, img_list) = self.create_arrow_img(img_list, arrow_str)
 #            (img, img_list) = self.composite(img_list)
+
 
         self.response.headers['Content-Type'] = 'image/png'
         self.response.out.write(img)
