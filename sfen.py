@@ -528,7 +528,44 @@ class SfenHandler(webapp.RequestHandler):
         (img, img_list) = self.composite(img_list)
 
         return (img, img_list)
-                            
+    
+    def create_arrow_img(self, img_list, arrow_str, board_y):
+        '''
+        Create arrow image and add img_list.
+
+        img_list: Original img_list
+        arrow_str: String given arrow argument (e.g: 77,76 11,12|12,13)
+        board_y: board_y 
+        return value:(Image, Image List)
+
+        This method cannot be run, 
+        because I don't know image rotating WebAPI for any degree.
+
+        矢印の回転画像を合成し追加する
+        現在は矢印画像を任意の向きに回転させるWebAPIが見つからないため動きません
+        '''
+        return self.composite(img_list)
+
+#        arrow_tokens = arrow_str.split('|')
+#        arrow_positions = []
+        ### 文字列を解析して 矢印のリストを作る
+#        for arrow_token in arrow_tokens:
+#            positions = arrow_token.split(',')
+#            if len(positions) == 2:
+#                begin_pos = positions[0]
+#                end_pos = positions[1]
+#                arrow_positions.append( (begin_pos, end_pos) )
+
+#        for arrow_pos in arrow_positions:
+#            begin_x = 0
+#            begin_y = 0
+#            end_x = 0
+#            end_y = 0
+
+#        return self.composite(img_list)
+            
+
+
     ### 一旦描画して描画済みの(img, img_list)のtupleを返す
     def composite(self, img_list):
         if len(img_list) == 1:
@@ -546,11 +583,16 @@ class SfenHandler(webapp.RequestHandler):
         sfen = urllib.unquote(self.request.get('sfen'))
         last_move = urllib.unquote(self.request.get('lm'))
         piece_kind = urllib.unquote(self.request.get('piece','kanji'))
+        arrow_str = urllib.unquote(self.request.get('arrow'))
 
         logging.info('sfen:' + sfen + ' last_move:' + last_move)
         if sfen == '':
             self.response.out.write('Please, specify SFEN string.')
             return
+
+        ### Remove CR LF
+        sfen = sfen.replace('\r','')
+        sfen = sfen.replace('\n','')
 
         black_name = urllib.unquote(self.request.get('sname'))
         white_name = urllib.unquote(self.request.get('gname'))
@@ -703,7 +745,7 @@ class SfenHandler(webapp.RequestHandler):
             ### 駒を書く場所を決める
             x = self.BOARD_X + self.SQUARE_ORIGIN_X + self.SQUARE_MULTIPLE_X * (9 - int(col))
             y = self.BOARD_Y + self.SQUARE_ORIGIN_Y + self.title_height + self.SQUARE_MULTIPLE_Y * (int(row) - 1)
-            logging.info("x:" + str(x) + " y:" + str(y) + 
+            logging.debug("x:" + str(x) + " y:" + str(y) + 
                          " pos:" + pos + " piece:" + piece_lower + 
                          " turn:" + str(turn))
             img_list.append((self.draw_piece_img[piece_lower][turn],
@@ -740,6 +782,10 @@ class SfenHandler(webapp.RequestHandler):
         (img, img_list) = self.draw_hand_pieces(img, black_hand_array, 
                                                 pos_x, pos_y, self.BLACK)
 
+        ### 矢印を書く(予定)
+#        if arrow_str != '':
+#            (img, img_list) = self.create_arrow_img(img_list, arrow_str)
+#            (img, img_list) = self.composite(img_list)
 
         self.response.headers['Content-Type'] = 'image/png'
         self.response.out.write(img)
