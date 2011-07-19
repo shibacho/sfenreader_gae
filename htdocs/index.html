@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta content="クラウド将棋盤ジェネレーターは将棋局面図を作成するWebサービスです。" name="description" />
 <meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/> 
-<title>クラウド将棋ジェネレーター</title>
+<title>クラウド将棋局面図ジェネレーター</title>
 <script type="text/javascript" src="jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="bod2sfen.js"></script>
 <script type="text/javascript" src="google_analytics.js"></script>
@@ -50,7 +50,7 @@
 </div> <!-- abstract -->
 <div id="description" style="width:100%; clear:both;">
 <hr>
-<h2>Kifu for Windowsから画像を生成</h2>
+<h2>Kifu for Windowsから画像(とSFEN文字列)を生成</h2>
 <p>
 下のボックスにKifu for Windowsの[編集] -> [局面のコピー] -> [通常] でクリップボードにコピーされる盤面文字列を入力し、「変換する」を押してください。<br>
 画像のURLとブログに貼り付けるimgタグが生成され、プレビューが出来ます。<br>
@@ -59,6 +59,9 @@
 先手名、後手名以外に盤面の上に表示する「タイトル」も表示することが出来ます。<br>
 棋戦名や、「図は▲５二銀まで」のような局面図そのものの説明などを入力してください<br>
 注意点として、Unicodeの駒文字☗☖は使用出来ません。変わりに▲△(▽)をお使い下さい。<br>
+<p>
+SFEN文字列は<a href="http://twitter.com/#!/ponanza_shogi">@ponanza_shogi</a>に局面解析をさせたい時にお使い下さい。SFEN文字列のリプライを飛ばすと120秒間解析してくれるようです。(2011/07/19現在)<br>
+Twitterにログインした状態で「ponanza先生に解析させる」ボタンを押し、ツイートすれば運が良ければponanza先生に解析してもらえるかもしれません。<br>
 <hr>
 <p>
 <strong>Kifu for Windows の盤面</strong><br>
@@ -83,7 +86,7 @@
 後手名: <input type="text" id="gote_name" style="width: 100px;" /> (※省略可)<br>
 タイトル: <input type="text" id="shogi_title" style="width: 300px;" /> (※省略可)<br>
 強調表示: <input type="text" id="last_move" style="width:30px;"/> のマス (半角2文字 例:76 84 ※省略可)<br>
-<span id="turn_span">手番: <input type="radio" name="turn" value="b" checked>先手番</input> <input type="radio" name="turn" value="w">後手番</input></span> <input type="checkbox" id="turn_check" value="off"/>表示しない<br>
+<span id="turn_span">手番: <input type="radio" name="turn" value="b" checked>先手番</input> <input type="radio" name="turn" value="w">後手番</input></span> <input type="checkbox" id="turn_check" value="off"/>表示しない (注:<strong>ponanza先生に聞く時は適切に設定してください。</strong>)<br>
 駒の種類: <input type="radio" name="piece" value="kanji" checked />漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒 <br>
 
 <button id="board_convert">変換する</button>
@@ -92,7 +95,7 @@ URL :<input type="text" id="long_url" style="width:400px;"/><br>
 <!--
 短縮URL:<input type="text" id="short_url" /><br> 
 -->
-SFEN:<input type="text" id="sfen" style="width:400px;"/><br>
+SFEN:<input type="text" id="sfen" style="width:400px;"/> <button id="ponanza_analysis">ponanza先生に聞く</button>(要Twitterアカウント)<br>
 ブログに貼り付ける:<br>
 <textarea id="blog_code" style="width:500px;height:100px;"></textarea>
 <h3>プレビュー</h3>
@@ -192,6 +195,7 @@ Google App Engine 上で文字を画像に合成する方法を書いてくだ�
 <hr>
 <h2>更新履歴</h2>
 <ul>
+<li> 2011/07/20 「ponanza先生に聞く」ツイートボタンの設置、各種ガジェットの設置
 <li> 2011/07/18 SFENの手番強調表示機能を追加
 <li> 2011/07/17 サービス名変更、ソースの公開（Apache2.0 ライセンス）、英語一字駒の追加
 <li> 2011/07/13 対局者名、タイトルを入れるオプションの追加 (<a href="http://iizukak.com/?p=856">iizukakさんに感謝</a>)

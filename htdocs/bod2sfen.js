@@ -40,6 +40,13 @@ $(document).ready(function(){
         ChangeExampleStatus();
     });
 
+    $('#ponanza_analysis').click(function (e) {
+        var text = '@ponanza_shogi ';
+        text += encodeURIComponent($('#sfen').val());
+        window.open('https://twitter.com/share?url=&text=' + text, '_blank', 'width=700,height=300');
+        void(0);
+    });
+
     $('#turn_check').change(function() {
         var $turn_check = $('#turn_check');
         if ($turn_check.attr('checked') == 'checked') {
@@ -66,6 +73,7 @@ $(document).ready(function(){
             board_focus_first = false;
         }
     });
+
 
     $('#long_url').blur(function(e) {
         $('#long_url').val(URL);
