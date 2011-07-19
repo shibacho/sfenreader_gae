@@ -4,14 +4,30 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta content="クラウド将棋盤ジェネレーターは将棋局面図を作成するWebサービスです。" name="description" />
 <meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/> 
-<title>クラウド将棋盤ジェネレーター</title>
+<title>クラウド将棋ジェネレーター</title>
 <script type="text/javascript" src="jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="bod2sfen.js"></script>
 <script type="text/javascript" src="google_analytics.js"></script>
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js">
+  {lang: 'ja'}
+</script>
 </head>
 <body>
-<p>
+<div style="float:left">
 <h1>クラウド将棋局面図ジェネレーター</h1>
+</div>
+<div style="float:right">
+<!-- hatena bookmark button -->
+<a href="http://sfenreader.appspot.com" class="hatena-bookmark-button" data-hatena-bookmark-title="クラウド将棋局面図ジェネレーター" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"> <img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /> 
+
+<!-- twitter button -->
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-lang="ja">ツイート</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+
+<!-- Google Plus one Button -->
+<g:plusone size="medium"></g:plusone> 
+</div>
+<div id="abstract" style="margin-left:auto; margin-right:auto;">
+<div style="float:left; width:85%;"> 
 <h2>概要</h2>
 <p>
 <strong>クラウド将棋局面図ジェネレーター</strong>(旧称:将棋局面図WebAPI)はWeb上だけで完結する(予定)将棋盤局面図の画像作成ツールです。<br>
@@ -27,6 +43,12 @@
 ただ<strong>フリーで無保証の提供になります</strong>ので、ご了承ください。<br>
 <p>
 <a href="https://twitter.com/#!/ginsho">ginsho</a>さんのGoogle Chrome拡張である<a href="https://chrome.google.com/webstore/detail/jelboncgkpobgplihidgchijjfkkkfjd">SFEN Reader</a>にインスパイアされて作りました。<br>
+</div>
+<div style="float:right; width:15%;">
+<script type="text/javascript" src="http://pc.jsamobile.jp/schedule_bp/blogparts.js"></script>
+</div>
+</div> <!-- abstract -->
+<div id="description" style="width:100%; clear:both;">
 <hr>
 <h2>Kifu for Windowsから画像を生成</h2>
 <p>
@@ -153,7 +175,7 @@ arrowは矢印の描画を行います。矢印の開始位置と終了位置を
 </ul>
 <hr>
 <h2>要望、注意点等</h2>
-<a href="http://www.twitter.com/#!/ponanza_shogi">@ponanza_shogi</a>に使っていただいてますが、正常に局面が生成されないと思う方はURLかsfenの文字列を<a href="http://www.twitter.com/#!/fantakeshi">@fantakeshi</a>宛に報告頂ければ幸いです。<br>
+<a href="http://www.twitter.com/#!/ponanza_shogi">@ponanza_shogi</a>に使っていただいてますが、正常に局面が生成されないと思う方はURLかsfenの文字列を<a href="http://www.twitter.com/#!/fantakeshi">@fantakeshi</a>宛に報告頂ければ幸いです。合わせてOSとブラウザ環境も教えて頂けると助かります。<br>
 <hr>
 <h2>Google App Engineの制約により出来ないこと</h2>
 <p>
@@ -179,5 +201,6 @@ Google App Engine 上で文字を画像に合成する方法を書いてくだ�
 </ul>
 <hr>
 <img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif" alt="Powered by Google App Engine" />
+</div> <!-- description -->
 </body>
 </html>
