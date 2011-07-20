@@ -47,6 +47,26 @@ $(document).ready(function(){
         void(0);
     });
 
+    $('#tweet').click(function(e) {
+        var sente_name = $('#sente_name').val();
+        var gote_name = $('#gote_name').val();
+        var shogi_title = $('#shogi_title').val();
+        var text = '';
+        if (sente_name != '' && gote_name != '') {
+            text += sente_name + ' 対 ' + gote_name + ':';
+        }
+
+        text += shogi_title;
+        
+        if (sente_name == '' && gote_name == '' && shogi_title == '') {
+            text = '局面図';
+        }
+
+        var url = encodeURIComponent(URL);
+        window.open('https://twitter.com/share?url=' + url + '&text=' + text, '_blank', 'width=700,height=300');
+        void(0);
+    });
+
     $('#turn_check').change(function() {
         var $turn_check = $('#turn_check');
         if ($turn_check.attr('checked') == 'checked') {
