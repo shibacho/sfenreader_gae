@@ -1,4 +1,3 @@
-
 // -*- coding: utf-8 -*-
 //
 // bod2sfen.js Copyright 2011 fantakeshi.
@@ -23,6 +22,16 @@ String.prototype.toArray = function() {
     return array;
 };
 
+function is_MSIE() {
+    var userAgent = window.navigator.userAgent.toLowerCase();
+    if (userAgent.indexOf("msie") > -1) {
+	return true;
+    } else {
+	return false;
+    }
+}
+
+
 if (typeof window.console != 'object') { // IE対策
     window.console = { log:function(){}      
     };
@@ -32,11 +41,16 @@ var URL = '';
 var SHORT_URL = '';
 var IMG_URL = '';
 var SFEN = '';
+var ASPECT_RATIO = 1.0;
 var BLANK = 'about:_blank';
 
 $(document).ready(function(){
     $('#board_convert').click(BoardConvert);
     $('#example_button').click(function(e) {
+        ChangeExampleStatus();
+    });
+
+    $('#example_button_under').click(function (e){
         ChangeExampleStatus();
     });
 
@@ -53,16 +67,17 @@ $(document).ready(function(){
         var shogi_title = $('#shogi_title').val();
         var text = '';
         if (sente_name != '' && gote_name != '') {
-            text += sente_name + ' 対 ' + gote_name + ':';
+            text += sente_name + ' ' +  $('#versus_string').text() + ' ' + gote_name + ':';
         }
 
         text += shogi_title;
         
         if (sente_name == '' && gote_name == '' && shogi_title == '') {
-            text = '局面図';
+            text = $('#board_default_name').text();
         }
 
         var url = encodeURIComponent(URL);
+        var text = encodeURIComponent(text);
         window.open('https://twitter.com/share?url=' + url + '&text=' + text, '_blank', 'width=700,height=300');
         void(0);
     });
@@ -83,6 +98,14 @@ $(document).ready(function(){
             });
         }
         
+    });
+
+    $('#sfen_img_width').change(function () {
+        update_img_url('width');
+    });
+
+    $('#sfen_img_height').change(function () {
+        update_img_url('height');
     });
 
     var board_focus_first = true;
@@ -113,21 +136,26 @@ function ChangeExampleStatus() {
     if ($('#example').css('display') == 'none') {
         if ($('#initial_board_img')[0].src == BLANK) {
             /// 例を見るボタンを押してからWebAPIへのアクセスが起こるようにする
-            $('#initial_board_img')[0].src = 'http://' + location.host +'/sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL';
+            console.log('initial_board_img_url' + $('#initial_board_img_url').text());
+            $('#initial_board_img')[0].src = $('#initial_board_img_url').text();
         }
         if ($('#endgame_board_img')[0].src == BLANK) {
-            $('#endgame_board_img')[0].src = 'http://' + location.host + '/sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20w%20BGSLPnp%201&lm=52&sname=%E7%BE%BD%E7%94%9F%E5%96%84%E6%B2%BB&gname=%E5%8A%A0%E8%97%A4%E4%B8%80%E4%BA%8C%E4%B8%89&title=%E7%AC%AC38%E5%9B%9E%20NHK%E6%9D%AF%20%E6%BA%96%E3%80%85%E6%B1%BA%E5%8B%9D';
+            $('#endgame_board_img')[0].src = $('#endgame_board_img_url').text();
         }
         
         if ($('#tsume_board_img')[0].src == BLANK) {
-            $('#tsume_board_img')[0].src = 'http://' + location.host + '/sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p%201';
+            $('#tsume_board_img')[0].src = $('#tsume_board_img_url').text();
+        }
+
+        if ($('#tsume_board_img_alphabet')[0].src == BLANK) {
+            $('#tsume_board_img_alphabet')[0].src = $('#tsume_board_img_alphabet_url').text();
         }
         
         $('#example').show('slow');
-        $('#example_button')[0].innerHTML = '▲例を隠す';
+        $('#example_button')[0].innerHTML = $('#example_button_to_hide').text();
     } else {
         $('#example').hide('slow');
-        $('#example_button')[0].innerHTML = '▼例を見る';
+        $('#example_button')[0].innerHTML = $('#example_button_to_show').text();
     }
 }
 
@@ -240,9 +268,35 @@ function Bod2Sfen(bod)
     return sfen;
 }
 
-function update_imgurl(url) {
-    IMG_URL = '<img src="' + URL + '">';
+function update_img_url(priority) {
+    var img_url = 'img src="' + URL + '"';
+    var width  = $('#sfen_img_width').val();
+    var height = $('#sfen_img_height').val();
+    console.log('update_img_url(): width:' + width + ' height:' + height);
 
+    if ($('#keep_sfen_img_aspect').attr('checked') == 'checked') {
+        console.log('KEEP_ASPECT_RATIO: true priority:' + priority);
+        if (priority == 'width') {
+            height = parseInt(width / ASPECT_RATIO);
+            $('#sfen_img_height').val(height);
+        } else if (priority == 'height') {
+            width = parseInt(height * ASPECT_RATIO);
+            $('#sfen_img_width').val(width);
+        }
+    }
+
+    if (typeof width != 'undefined') {
+        img_url += ' width="' + width + '"';
+        $('#sfen_preview')[0].width = width;
+    }
+
+    if (typeof height != 'undefined') {
+        img_url += ' height="' + height + '"';
+        $('#sfen_preview')[0].height = height;
+    }
+
+    IMG_URL = '<' + img_url + '>';
+    $('#blog_code').val(IMG_URL);
 }
 
 /// 持ち駒をSFEN文字列に変える
@@ -282,6 +336,7 @@ function Handpiece2Sfen(str)
     return sfen_hand;
 }
 
+var SFEN_IMAGE = undefined;
 function BoardConvert(e) 
 {
     console.log('BoardConvert() Called:');
@@ -314,12 +369,25 @@ function BoardConvert(e)
     }
     URL += '&piece=' + $('input[name=piece]:checked').val() ;
 
-    update_imgurl(URL);
     $('#long_url').val(URL);
     $('#sfen').val(SFEN);
-    $('#blog_code').val(IMG_URL);
-    $('#sfen_preview')[0].src = URL;
-    $('#board_result').show("slow");
 
+    /// Image オブジェクトを作りなおさないと
+    /// width heightが固定された値になってしまう
+    SFEN_IMAGE = new Image();
+    SFEN_IMAGE.onload = function() {
+        console.log('onload called():');
+        var width = SFEN_IMAGE.width;
+        var height = SFEN_IMAGE.height;
+        console.log(' width:' + width + ' height:' + height);
+        $('#sfen_img_width').val(width);
+        $('#sfen_img_height').val(height);
+        ASPECT_RATIO = width / height;
+        update_img_url();
+    };
+    SFEN_IMAGE.src = URL;
+    $('#sfen_preview').attr('src',SFEN_IMAGE.src);
+    $('#board_result').show("slow");
     $('#blog_code')[0].select();
+
 }
