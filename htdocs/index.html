@@ -11,6 +11,7 @@
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
   {lang: 'ja'}
 </script>
+<link rel="stylesheet" type="text/css" href="./common.css" />
 </head>
 <body>
 <div style="float:left">
@@ -89,9 +90,9 @@ Twitterにログインした状態で「ponanza先生に聞く」ボタンを押
 <span id="turn_span">手番: <input type="radio" name="turn" value="b" checked>先手番</input> <input type="radio" name="turn" value="w">後手番</input></span> <input type="checkbox" id="turn_check" value="off"/>表示しない (注:<strong>ponanza先生に聞く時は適切に設定してください。</strong>)<br>
 駒の種類: <input type="radio" name="piece" value="kanji" checked />漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒 <br>
 
-<button id="board_convert">変換する</button>
-<div id="board_result" style="display:none;">
-URL :<input type="text" id="long_url" style="width:400px;"/> <button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br>
+<button id="board_convert">変換する</button><span id="board_converted_text" class="none">変換完了</span>
+<div id="board_result" class="none">
+URL :<input type="text" id="long_url" style="width:400px;"/> <button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
 短縮URL:<input type="text" id="short_url" /><br> 
 -->
@@ -99,6 +100,7 @@ SFEN:<input type="text" id="sfen" style="width:400px;"/> <button id="ponanza_ana
 ブログに貼り付ける:<br>
 <textarea id="blog_code" style="width:500px;height:100px;"></textarea>
 <h3>プレビュー</h3>
+幅: <input type="text" id="sfen_img_width" /> 高さ: <input type="text" id="sfen_img_height" /> <input type="checkbox" id="keep_sfen_img_aspect" checked/> アスペクト比を保つ<br>
 <img src="about:_blank" id="sfen_preview">
 </div>
 <hr>
@@ -139,29 +141,38 @@ arrowは矢印の描画を行います。矢印の開始位置と終了位置を
 -->
 <hr>
 <h2 id="example_title">例</h2>
-<button id="example_button">▼例を見る</button>
-<div id="example" style="display:none;">
+<button id="example_button">▼例を見る</button><span id="example_button_to_show" class="none">▼例を見る</span><span id="example_button_to_hide" class="none">▲例を隠す</span>
+<div id="example" class="none">
 <h3>初期局面</h3>
-<img src="about:_blank" id="initial_board_img">
+<img src="about:_blank" id="initial_board_img"><span id="initial_board_img_url" style="display:none;">./sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL</span>
 <h4>imgタグ</h4>
 <textarea style="width:500px;height:100px;">
 &lt;img src="http://sfenreader.appspot.com/sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL"&gt;
 </textarea>
 <hr>
 <h3>伝説の▲５二銀</h3>
-<img id="endgame_board_img" src="about:_blank"><br>
+<img id="endgame_board_img" src="about:_blank"><br><span id="endgame_board_img_url" class="none">./sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20w%20BGSLPnp%201&lm=52&sname=%E7%BE%BD%E7%94%9F%E5%96%84%E6%B2%BB&gname=%E5%8A%A0%E8%97%A4%E4%B8%80%E4%BA%8C%E4%B8%89&title=%E7%AC%AC38%E5%9B%9E%20NHK%E6%9D%AF%20%E6%BA%96%E3%80%85%E6%B1%BA%E5%8B%9D</span>
 <h4>imgタグ</h4>
 <textarea style="width:600px;height:150px;">
 &lt;img src="http://sfenreader.appspot.com/sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20w%20BGSLPnp%201&lm=52&sname=%E7%BE%BD%E7%94%9F%E5%96%84%E6%B2%BB&gname=%E5%8A%A0%E8%97%A4%E4%B8%80%E4%BA%8C%E4%B8%89&title=%E7%AC%AC38%E5%9B%9E%20NHK%E6%9D%AF%20%E6%BA%96%E3%80%85%E6%B1%BA%E5%8B%9D"&gt;
 </textarea>
 <hr>
 <h3>詰め将棋(将棋図巧 第1番)</h3>
-<img id="tsume_board_img" src="about:_blank"><br>
+<img id="tsume_board_img" src="about:_blank"><span id="tsume_board_img_url" class="none">./sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p%201</span><br>
 <h4>imgタグ</h4>
 <textarea style="width:500px;height:100px;">
 &lt;img src="http://sfenreader.appspot.com/sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p%201"&gt;
 </textarea>
-</div>
+<hr>
+<h3>詰め将棋(将棋図巧 第1番) 英語一字駒版</h3>
+<img id="tsume_board_img_alphabet" src="about:_blank"><span id="tsume_board_img_alphabet_url" class="none">./sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p%201&piece=alphabet</span><br>
+<h4>imgタグ</h4>
+<textarea style="width:500px;height:100px;">
+&lt;img src="http://sfenreader.appspot.com/sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p%201&piece=alphabet"&gt;
+</textarea>
+<br>
+<button id="example_button_under">▲例を隠す</button>
+</div> <!-- example -->
 <hr>
 <h2>リンク</h2>
 <ul>
