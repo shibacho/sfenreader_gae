@@ -73,6 +73,7 @@ class SfenHandler(webapp.RequestHandler):
 
     WHITE_MARK_X = 10
     WHITE_MARK_Y = 310
+    WHITE_TITLE_MARK_X = 5
 
     BLACK_MARK_WIDTH  = 24
     BLACK_MARK_HEIGHT = 24
@@ -688,7 +689,7 @@ class SfenHandler(webapp.RequestHandler):
                 logging.info('Drawing White Name:' + u2utf8(white_name) + 
                              ' width:' + str(white_name_img_obj.width) +
                              ' height:' + str(white_name_img_obj.height) )
-                white_title_x = 5
+                white_title_x = self.WHITE_TITLE_MARK_X
                 img_list.append( (self.white_img[2], white_title_x,
                                   self.TITLE_Y, 1.0, images.TOP_LEFT) )
 
