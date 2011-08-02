@@ -58,7 +58,6 @@ $(document).ready(function(){
         var text = '@ponanza_shogi ';
         text += encodeURIComponent($('#sfen').val());
         window.open('https://twitter.com/share?url=&text=' + text, '_blank', 'width=700,height=300');
-        void(0);
     });
 
     $('#tweet').click(function(e) {
@@ -77,9 +76,8 @@ $(document).ready(function(){
         }
 
         var url = encodeURIComponent(URL);
-        var text = encodeURIComponent(text);
+        text = encodeURIComponent(text);
         window.open('https://twitter.com/share?url=' + url + '&text=' + text, '_blank', 'width=700,height=300');
-        void(0);
     });
 
     $('#turn_check').change(function() {

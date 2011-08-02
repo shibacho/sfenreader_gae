@@ -31,7 +31,8 @@
 <div style="float:left; width:85%;"> 
 <h2>概要</h2>
 <p>
-<strong>クラウド将棋局面図ジェネレーター</strong>(旧称:将棋局面図WebAPI)はWeb上だけで完結する(予定)将棋盤局面図の画像作成ツールです。<br>
+<strong>クラウド将棋局面図ジェネレーター</strong>(旧称:将棋局面図WebAPI)はWeb上だけで完結する将棋盤局面図の画像作成ツールです。<br>
+開発者向けにWebAPIも公開しています。<br>
 <p>
 用途としては、<b>Twitterでの局面図のつぶやき</b>や、<br>
 ブログでの<b>課題局面</b>、<b>詰め将棋</b>の画像貼り付けを想定しています。<br>
@@ -50,6 +51,11 @@
 </div>
 </div> <!-- abstract -->
 <div id="description" style="width:100%; clear:both;">
+<hr>
+<h2>Web上で局面図を作成</h2>
+<ul>
+<li><a href="./create_board.html">こちら</a>
+</ul>
 <hr>
 <h2>Kifu for Windowsから画像(とSFEN文字列)を生成</h2>
 <p>
@@ -85,7 +91,7 @@ Twitterにログインした状態で「ponanza先生に聞く」ボタンを押
 </textarea><br>
 先手名: <input type="text" id="sente_name" style="width: 100px;" /> (※省略可)<br>
 後手名: <input type="text" id="gote_name" style="width: 100px;" /> (※省略可)<br>
-タイトル: <input type="text" id="shogi_title" style="width: 300px;" /> (※省略可)<br>
+タイトル: <input type="text" id="shogi_title" style="width: 300px;" /> (※省略可 全角20文字以下)<br>
 強調表示: <input type="text" id="last_move" style="width:30px;"/> のマス (半角2文字 例:76 84 ※省略可)<br>
 <span id="turn_span">手番: <input type="radio" name="turn" value="b" checked>先手番</input> <input type="radio" name="turn" value="w">後手番</input></span> <input type="checkbox" id="turn_check" value="off"/>表示しない (注:<strong>ponanza先生に聞く時は適切に設定してください。</strong>)<br>
 駒の種類: <input type="radio" name="piece" value="kanji" checked />漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒 <br>
@@ -129,7 +135,7 @@ pieceは駒の種類を指定します。kanji を指定すると通常の一字
 alphabet を指定すると将棋盤の段の数字がアラビア数字になります。<br>
 <p>
 turn は先手番、後手番のマークを強調して手番を表示するかどうかを表します。<br>
-&turn=on または &turn=off で指定します。<br>
+&amp;turn=on または &amp;turn=off で指定します。<br>
 省略するとonと同じ動作になります。<br>
 SFENに手番の情報が含まれていない場合は手番の強調を行いません。<br>
 <!--

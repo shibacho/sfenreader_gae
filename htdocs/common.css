@@ -1,2 +1,8 @@
 div.none { display:none; }
 .none { display:none; }
+
+div.container { width: 1024px; margin-left:auto; margin-right:auto; text-align:left; }
+.left { float:left; }
+.right { float:right; }
+
+canvas.board { textBaseline:top; }
