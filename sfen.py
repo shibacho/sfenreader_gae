@@ -37,6 +37,11 @@ class BadSfenStringException(Exception):
     def __str__(self):
         return repr(self.value)
 
+class PieceKindException(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
 
 class SfenHandler(webapp.RequestHandler):
     board_img = ''
@@ -114,12 +119,13 @@ class SfenHandler(webapp.RequestHandler):
             self.draw_piece_img = self.piece_img
             self.board_img_init()
             self.draw_board_img = self.board_img
-
         elif piece_kind == 'alphabet':
             self.piece_alphabet_img_init()
             self.draw_piece_img = self.piece_alphabet_img
             self.board_alphabet_img_init()
             self.draw_board_img = self.board_alphabet_img
+        else:
+            raise PieceKindException('No piece kind (' + piece_kind + ')')
 
         self.mark_img_init()
 
@@ -401,6 +407,7 @@ class SfenHandler(webapp.RequestHandler):
         board = {}
         white_hand = {}
         black_hand = {}
+        move_count = '0'
 
         sfen_tokens = sfen.split(' ')
         logging.info('sfen:' + sfen + ' :token_num:' + str(len(sfen_tokens)))
@@ -475,7 +482,7 @@ class SfenHandler(webapp.RequestHandler):
                     white_hand[a_hand] = hand_num
                     hand_num = 0
 
-        return (board, black_hand, white_hand, turn)
+        return (board, black_hand, white_hand, turn, move_count)
 
     def draw_hand_pieces(self, img, hand_tuples, x, y, turn):
         img_list = [(img, 0, 0, 1.0, images.TOP_LEFT)]
@@ -603,6 +610,13 @@ class SfenHandler(webapp.RequestHandler):
             self.response.out.write('Please, specify SFEN string.')
             return
 
+        if piece_kind == 'kanji':
+            move_count_prefix = ''
+            move_count_suffix = u' 手目'
+        else:
+            move_count_prefix = 'at '
+            move_count_suffix = ''
+
         ### Remove CR LF
         sfen = sfen.replace('\r','')
         sfen = sfen.replace('\n','')
@@ -611,7 +625,38 @@ class SfenHandler(webapp.RequestHandler):
         white_name = urllib.unquote(self.request.get('gname'))
         title = urllib.unquote(self.request.get('title'))
 
-        if black_name != '' or white_name != '' or title != '':
+        font_size_str = urllib.unquote(self.request.get('fontsize'))
+        if font_size_str.isdigit():
+            font_size = int(font_size_str)
+        else:
+            font_size = self.DEFAULT_FONT_SIZE
+
+        try:
+            self.img_init(piece_kind = piece_kind)
+            img_list = []
+            (board, black_hand, white_hand, turn_sfen, move_count) = self.sfen_parse(sfen)
+            (black_name_img, black_name_img_obj) = self.get_string_img(black_name, font_size)
+            (white_name_img, white_name_img_obj) = self.get_string_img(white_name, font_size)
+            (title_img, title_img_obj) = self.get_string_img(title, font_size)
+
+            if move_count != '0':
+                move_count_str = move_count_prefix + move_count + move_count_suffix
+                (move_count_img, move_count_img_obj) = self.get_string_img(move_count_str, font_size)
+
+        except BadSfenStringException, e:
+            logging.error('Invalid sfen string:' + str(e))
+            self.response.out.write('Invalid sfen string:' + str(e))
+            return
+        except PieceKindException, e:
+            logging.error('Invalid piece kind:' + str(e))
+            self.response.out.write('Invalid piece kind:' + str(e))
+            return
+        except IOError, e:
+            logging.error('Cannot create string image:' + str(e))
+            self.response.out.write('Cannot create string image:' + str(e))
+            return
+
+        if black_name != '' or white_name != '' or title != '' or move_count != '0':
             self.exist_title_flag = True
             if black_name is not None:
                 logging.info('black_name:' + u2utf8(black_name))
@@ -621,34 +666,14 @@ class SfenHandler(webapp.RequestHandler):
 
             if title is not None:
                 logging.info('title:' + u2utf8(title))
+
+            if move_count != '0':
+                logging.info('move_count:' + move_count)
         else:
             logging.info('No titles found.')
             self.exist_title_flag = False
             self.max_title_height = 0
             self.title_height = 0
-
-        font_size_str = urllib.unquote(self.request.get('fontsize'))
-        if font_size_str.isdigit():
-            font_size = int(font_size_str)
-        else:
-            font_size = self.DEFAULT_FONT_SIZE
-
-        try:
-            (board, black_hand, white_hand, turn_sfen) = self.sfen_parse(sfen)
-            (black_name_img, black_name_img_obj) = self.get_string_img(black_name, font_size)
-            (white_name_img, white_name_img_obj) = self.get_string_img(white_name, font_size)
-            (title_img, title_img_obj) = self.get_string_img(title, font_size)
-        except BadSfenStringException, e:
-            logging.error('Invalid sfen string:' + str(e))
-            self.response.out.write('Invalid sfen string:' + str(e))
-            return
-        except IOError, e:
-            logging.error('Cannot create string image:' + str(e))
-            self.response.out.write('Cannot create string image:' + str(e))
-            return
-
-        self.img_init(piece_kind = piece_kind)
-        img_list = []
 
         ### タイトル等が存在したら最大の高さを求めて必要に応じて描画する
         if self.exist_title_flag == True:
@@ -700,6 +725,7 @@ class SfenHandler(webapp.RequestHandler):
                                        white_name_img_obj.width + 
                                        self.IMAGE_PADDING_X)
 
+            
             ### 中央タイトルの描画
             if title_img is not None:
                 center = self.IMAGE_WIDTH / 2
@@ -709,6 +735,12 @@ class SfenHandler(webapp.RequestHandler):
                 img_list.append( (title_img, center_x,
                                   self.TITLE_Y + self.max_title_height + self.IMAGE_PADDING_Y,
                                   1.0, images.TOP_LEFT) )
+
+            if move_count != '0':
+                center = self.IMAGE_WIDTH / 2
+                center_x = center - move_count_img_obj.width / 2
+                img_list.append( (move_count_img, center_x, self.TITLE_Y, 1.0, images.TOP_LEFT) )
+
 
         logging.info('max_title_height:' + str(self.max_title_height))
         if len(img_list) != 0:
