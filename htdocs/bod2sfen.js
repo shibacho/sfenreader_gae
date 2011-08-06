@@ -99,11 +99,11 @@ $(document).ready(function(){
     });
 
     $('#sfen_img_width').change(function () {
-        update_img_url('width');
+        UpdateImgUrl('width');
     });
 
     $('#sfen_img_height').change(function () {
-        update_img_url('height');
+        UpdateImgUrl('height');
     });
 
     var board_focus_first = true;
@@ -115,6 +115,13 @@ $(document).ready(function(){
         }
     });
 
+    /// 
+    $('#board').change(function(e) {
+        ChangePlayerNames($('#board').val());
+        if ($('#board_result').css('display') != 'none') {
+            BoardConvert();
+        }
+    });
 
     $('#long_url').blur(function(e) {
         $('#long_url').val(URL);
@@ -257,8 +264,8 @@ function Bod2Sfen(bod)
         sfen += sfen_black_hand + sfen_white_hand + ' ';
     }
     
-    if (move_count == 0) { /// 手数の情報がない場合は初手とみなす
-        sfen += '1';
+    if (move_count == 0) { /// 手数の情報がない場合は0とみなす
+        sfen += '0';
     } else {
         sfen += String(move_count);
     }
@@ -266,11 +273,25 @@ function Bod2Sfen(bod)
     return sfen;
 }
 
-function update_img_url(priority) {
+function ChangePlayerNames(bod) {
+    var lines = bod.split(/\r|\n|\r\n/);
+    for (var i=0 ; i < lines.length; i++) {
+        var line = lines[i];
+        if (line.match(/^先手：(.*)/)) {
+            var black_name = RegExp.$1;
+            $('#sente_name').val(black_name);
+        } else if (line.match(/後手：(.*)/)) {
+            var white_name = RegExp.$1;
+            $('#gote_name').val(white_name);
+        }
+    }
+}
+
+function UpdateImgUrl(priority) {
     var img_url = 'img src="' + URL + '"';
     var width  = $('#sfen_img_width').val();
     var height = $('#sfen_img_height').val();
-    console.log('update_img_url(): width:' + width + ' height:' + height);
+    console.log('UpdateImgUrl(): width:' + width + ' height:' + height);
 
     if ($('#keep_sfen_img_aspect').attr('checked') == 'checked') {
         console.log('KEEP_ASPECT_RATIO: true priority:' + priority);
@@ -334,11 +355,9 @@ function Handpiece2Sfen(str)
     return sfen_hand;
 }
 
-var SFEN_IMAGE = undefined;
-function BoardConvert(e) 
-{
-    console.log('BoardConvert() Called:');
-    SFEN = Bod2Sfen($('#board')[0].value);
+function UpdateUrl() {
+    console.log('UpdateUrl(): Called.');
+    SFEN = Bod2Sfen($('#board').val());
     console.log("sfen:" + SFEN);
 
     var sfen_encode = encodeURIComponent(SFEN);
@@ -366,6 +385,13 @@ function BoardConvert(e)
         URL += '&turn=off';
     }
     URL += '&piece=' + $('input[name=piece]:checked').val() ;
+}
+
+var SFEN_IMAGE = undefined;
+function BoardConvert(e) 
+{
+    console.log('BoardConvert() Called:');
+    UpdateUrl();
 
     $('#long_url').val(URL);
     $('#sfen').val(SFEN);
@@ -381,7 +407,7 @@ function BoardConvert(e)
         $('#sfen_img_width').val(width);
         $('#sfen_img_height').val(height);
         ASPECT_RATIO = width / height;
-        update_img_url();
+        UpdateImgUrl();
     };
     SFEN_IMAGE.src = URL;
     $('#sfen_preview').attr('src',SFEN_IMAGE.src);
