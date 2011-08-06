@@ -6,3 +6,4 @@ div.container { width: 1024px; margin-left:auto; margin-right:auto; text-align:l
 .right { float:right; }
 
 canvas.board { textBaseline:top; }
+strong.underline { text-decoration:underline; font-weight:bold; }
