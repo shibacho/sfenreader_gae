@@ -4,7 +4,11 @@ runtime: python
 api_version: 1
 
 handlers:
-- url: /(.*\.(html|ico|css|js|ttf|js))
+- url: /(.*\.(html|ico|css|js|ttf|js|swf))
+  static_files: htdocs/\1
+  upload: htdocs/
+
+- url: /(static_img\/.*\.png)
   static_files: htdocs/\1
   upload: htdocs/
 
