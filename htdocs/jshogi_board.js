@@ -402,7 +402,6 @@ if (!this['ShogiBoard']) {
             return sfen;
         },
         getBoardString: function() {
-            console.log('getBoardString:');
             var str = '';
             var white_hand_pieces = this.getHandPieces(this.WHITE);
 
@@ -439,7 +438,6 @@ if (!this['ShogiBoard']) {
             var black_hand_pieces = this.getHandPieces(this.BLACK);
             str += '先手の持駒：';
             str += this.getHandString(black_hand_pieces);
-            str += '\n';
             return str;
         },
         getHandString: function(hand_pieces) {
@@ -843,7 +841,7 @@ if (!this['BoardCanvas']) {
             console.log('pos_x:' + pos_x);
             pos_x = pos_x / this.BOARD_MULTIPLE_X;
             console.log('pos_x:' + pos_x);
-            if (pos_x < -0.1) {
+            if (pos_x < 0) {
                 pos_x = 10;
             } else {
                 pos_x = 9 - parseInt(pos_x);
@@ -855,7 +853,11 @@ if (!this['BoardCanvas']) {
             console.log('pos_y:' + pos_y);
             pos_y = pos_y / this.BOARD_MULTIPLE_Y;
             console.log('pos_y:' + pos_y);
-            pos_y = parseInt(pos_y) + 1;
+            if (pos_y < 0) {
+                pos_y = 0;
+            } else {
+                pos_y = parseInt(pos_y) + 1;
+            }
             console.log('pos_y:' + pos_y);
 
             console.log('convertPositionToBoard:x' + x + ' y:' + y + 
@@ -865,12 +867,32 @@ if (!this['BoardCanvas']) {
         getPos: function(evt, board_canvas) {
             // Get Position of inside canvas
             // Reference: http://docs.jquery.com/Tutorials:Mouse_Position
+            // Reference: http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
+            console.log('getPos() Called:');
 	    var pos_x = 0;
 	    var pos_y = 0;
+
             if (!evt) {
                 evt = windows.evt;
             }
 
+            if (evt.pageX || evt.pageY) { 
+                pos_x = evt.pageX;
+                pos_y = evt.pageY;
+            }
+            else { 
+                pos_x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+                pos_y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+            } 
+
+            console.log('pos_x:' + pos_x + ' pos_y:' + pos_y);
+
+            pos_x -= board_canvas.canvas.offsetLeft;
+            pos_y -= board_canvas.canvas.offsetTop;              
+
+            console.log('pos_x:' + pos_x + ' pos_y:' + pos_y);
+
+/*
             if ($(board_canvas).offset()) {
                 console.log('Using offset...');
                 pos_x = evt.pageX - $(board_canvas).offset().left;
@@ -880,7 +902,7 @@ if (!this['BoardCanvas']) {
                 pos_x = evt.layerX;
                 pos_y = evt.layerY;
             }
-
+*/
             return [pos_x, pos_y];
         },
 
