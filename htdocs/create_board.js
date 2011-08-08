@@ -82,11 +82,9 @@ $(document).ready(function(){
         $('#sfen').val(sfen);
 
         img_url = '<' + img_url + '>';
-
         $('#blog_code').val(img_url);
 
-        console.log('board_string:' + shogi_board.getBoardString());
-        $('#board_text').val(shogi_board.getBoardString());
+        SetBoardString(shogi_board);
     };
 
     var rot_canvas = $('#rot_canvas')[0];
@@ -102,11 +100,13 @@ $(document).ready(function(){
     $('#sente_name').change(function(evt) {
         board_canvas.drawBlackName($('#sente_name').val());
         board_canvas.drawAll();
+        SetBoardString(shogi_board);
     });
 
     $('#gote_name').change(function(evt) {
         board_canvas.drawWhiteName($('#gote_name').val());
         board_canvas.drawAll();
+        SetBoardString(shogi_board);
     });
 
     $('#shogi_title').change(function(evt) {
@@ -165,3 +165,23 @@ $(document).ready(function(){
         board_canvas.drawPieces();
     });
 });
+
+function SetBoardString(shogi_board) {
+    var black_name = $('#sente_name').val();
+    var white_name = $('#gote_name').val();
+    var board_string = '';
+
+    if (white_name != '') {
+        board_string += '後手：' + white_name + '\n';
+    }
+
+    board_string += shogi_board.getBoardString();
+
+    if (black_name != '') {
+        board_string += '先手：' + black_name + '\n';
+    }
+
+
+    $('#board_text').val(board_string);
+    
+}
