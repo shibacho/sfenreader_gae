@@ -158,11 +158,10 @@ $(document).ready(function(){
     board_canvas.onBoardChange();
     
     /// 全ての読み込みが完了した後に描画する
-    /// TODO:準備中のインジケータを書いて最後にCSSでスタイルを出すというテクニックを使う
     number_images.initImages();
-
     piece_images.initImages(function () { 
         board_canvas.drawPieces();
+	$('#indicator').css('display', 'none');
     });
 });
 
