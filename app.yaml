@@ -8,7 +8,7 @@ handlers:
   static_files: htdocs/\1
   upload: htdocs/
 
-- url: /(static_img\/.*\.png)
+- url: /(static_img\/.*\.(png|gif))
   static_files: htdocs/\1
   upload: htdocs/
 
