@@ -472,6 +472,7 @@ if (!this['ShogiBoard']) {
 if (!this['BoardCanvas']) {
     var BoardCanvas = function(canvas, shogi_board, 
                                piece_images, number_images) {
+        var self = this;
         this.canvas = canvas;
         console.log('canvas textBaseline set:');
         var ctx = this.canvas.getContext('2d');
@@ -483,43 +484,36 @@ if (!this['BoardCanvas']) {
 
         this.black_hand_pieces_y = {}; 
         this.white_hand_pieces_y = {};
-    };
 
-    BoardCanvas.prototype = {
-        BOARD_X:50,  BOARD_Y:5,
-        BLACK_X:360, BLACK_Y:5,
-        BLACK_MARK_WIDTH:32, BLACK_MARK_HEIGHT:32,
-        BOARD_WIDTH_PADDING:4, BOARD_HEIGHT_PADDING:14,
-        BOARD_MULTIPLE_X:31, BOARD_MULTIPLE_Y: 32,
-        WHITE_X:10,  WHITE_Y: 310,
-        WHITE_MARK_WIDTH:32, WHITE_MARK_HEIGHT:32,
-        SQUARE_ORIGIN_X:8,    SQUARE_ORIGIN_Y:16,
-        SQUARE_MULTIPLE_X:31, SQUARE_MULTIPLE_Y: 32,
-        SQUARE_WIDTH:30, SQUARE_HEIGHT:30,
+        this.BOARD_X = 50; this.BOARD_Y = 5;
+        this.BLACK_X = 360; this.BLACK_Y = 5;
+        this.BLACK_MARK_WIDTH = 32; this.BLACK_MARK_HEIGHT = 32;
+        this.BOARD_WIDTH_PADDING = 4; this.BOARD_HEIGHT_PADDING = 14;
+        this.MULTIPLE_X = 31; this.BOARD_MULTIPLE_Y = 32;
+        this.BOARD_MULTIPLE_X = 31; this.BOARD_MULTIPLE_Y = 32;
+        this.WHITE_X = 10; this.WHITE_Y = 310;
+        this.WHITE_MARK_WIDTH = 32; this.WHITE_MARK_HEIGHT = 32;
+        this.SQUARE_ORIGIN_X = 8; this.SQUARE_ORIGIN_Y = 16;
+        this.SQUARE_MULTIPLE_X = 31; this.SQUARE_MULTIPLE_Y = 32;
+        this.SQUARE_WIDTH = 30; this.SQUARE_HEIGHT = 30;
 
-        CANVAS_WIDTH:400, CANVAS_HEIGHT:420,
-        PIECE_IMAGE_WIDTH:24, PIECE_IMAGE_HEIGHT:24,
-        IMAGE_PADDING_X:4, IMAGE_PADDING_Y:4,
-        NUMBER_IMAGE_WIDTH:12, NUMBER_IMAGE_HEIGHT:12,
-        TITLE_HEIGHT:50,
-        onMouseOver: function(evt, board_canvas) {
-            /// This is event handler, so in this function DO NOT use "this".
-            /// instead of "this", use "board_canvas".
+        this.CANVAS_WIDTH = 400; this.CANVAS_HEIGHT = 420;
+        this.PIECE_IMAGE_WIDTH = 24; this.PIECE_IMAGE_HEIGHT = 24;
+        this.IMAGE_PADDING_X = 4; this.IMAGE_PADDING_Y = 4;
+        this.NUMBER_IMAGE_WIDTH = 12; this.NUMBER_IMAGE_HEIGHT = 12;
+        this.TITLE_HEIGHT = 50;
+        this.onMouseOver = function(evt) {
             return '';
-        },
-        onMouseMove: function(evt, board_canvas) {
-            /// This is event handler, so in this function DO NOT use "this".
-            /// instead of "this", use "board_canvas".
+        };
+        this.onMouseMove = function(evt) {
             return '';
-        },
-        onClick: function(evt, board_canvas) {
-            /// This is event handler, so in this function DO NOT use "this".
-            /// instead of "this", use "board_canvas".
+        };
+        this.onClick = function(evt) {
             var temp;
-            var ctx = board_canvas.canvas.getContext('2d');
-            console.log('board_canvas:' + typeof board_canvas);
+            var ctx = self.canvas.getContext('2d');
+            console.log('self:' + typeof self);
 
-            temp = board_canvas.getPos(evt, board_canvas);
+            temp = self.getPos(evt);
             var x = temp[0];
             var y = temp[1];
 
@@ -542,44 +536,44 @@ if (!this['BoardCanvas']) {
                 pos = 1;
             }
             
-            var click_status = board_canvas.click_status.pos;
+            var click_status = self.click_status.pos;
             console.log('click_status:' + click_status);
 
             if (typeof click_status == 'undefined') {
                 /// if nothing is selected.
                 if (pos_x >= 1 && pos_x <= 9) {
-                    var status = board_canvas.shogi_board.getBoardStatus(pos);
+                    var status = self.shogi_board.getBoardStatus(pos);
                     console.log('pos:' + pos + ' status:' + status[0]);
-                    if (status[0] != board_canvas.shogi_board.EMPTY) {
+                    if (status[0] != self.shogi_board.EMPTY) {
                         /// 全書き全消し
-                        console.log('width: ' + board_canvas.canvas.width +
-                                    ' height: ' + board_canvas.canvas.height);
-                        board_canvas.drawSquareOnBoard(pos_x, pos_y);
-                        board_canvas.drawAll();
+                        console.log('width: ' + self.canvas.width +
+                                    ' height: ' + self.canvas.height);
+                        self.drawSquareOnBoard(pos_x, pos_y);
+                        self.drawAll();
 
-                        board_canvas.click_status.pos = pos;
-                        console.log('pos:' + board_canvas.click_status.pos);
+                        self.click_status.pos = pos;
+                        console.log('pos:' + self.click_status.pos);
                     }
                 } else if (pos_x > 9) { 
                     /// Clicked White Piece Stand
                     /// Detect which hand piece is selected.
                     var selected_y = 0;
                     var selected_piece = undefined;
-                    for (var piece in board_canvas.white_hand_pieces_y) {
-                        if (y > board_canvas.white_hand_pieces_y[piece] && 
-                            y < (board_canvas.white_hand_pieces_y[piece] +
-                                 board_canvas.PIECE_IMAGE_HEIGHT) ) {
+                    for (var piece in self.white_hand_pieces_y) {
+                        if (y > self.white_hand_pieces_y[piece] && 
+                            y < (self.white_hand_pieces_y[piece] +
+                                 self.PIECE_IMAGE_HEIGHT) ) {
                             selected_piece = piece;
-                            selected_y = board_canvas.white_hand_pieces_y[piece];
+                            selected_y = self.white_hand_pieces_y[piece];
                         }
                     }
 
                     if (selected_y != 0 && typeof selected_piece != 'undefined') {
-                        board_canvas.drawSquare(board_canvas.WHITE_X, selected_y);
-                        board_canvas.drawAll();
+                        self.drawSquare(self.WHITE_X, selected_y);
+                        self.drawAll();
 
-                        board_canvas.click_status.pos = board_canvas.shogi_board.WHITE;
-                        board_canvas.click_status.piece = selected_piece;
+                        self.click_status.pos = self.shogi_board.WHITE;
+                        self.click_status.piece = selected_piece;
                     }
                     
                     console.log('white piece stand clicked.');
@@ -590,22 +584,22 @@ if (!this['BoardCanvas']) {
                    /// Detect which hand piece is selected.
                     var selected_y = 0;
                     var selected_piece = undefined;
-                    for (var piece in board_canvas.black_hand_pieces_y) {
-                        if (y > board_canvas.black_hand_pieces_y[piece] &&
-                            y < (board_canvas.black_hand_pieces_y[piece] + 
-                                 board_canvas.PIECE_IMAGE_HEIGHT)) {
+                    for (var piece in self.black_hand_pieces_y) {
+                        if (y > self.black_hand_pieces_y[piece] &&
+                            y < (self.black_hand_pieces_y[piece] + 
+                                 self.PIECE_IMAGE_HEIGHT)) {
                             selected_piece = piece;
-                            selected_y = board_canvas.black_hand_pieces_y[piece];
+                            selected_y = self.black_hand_pieces_y[piece];
                         }
                     }
 
                     if (selected_y != 0 && typeof selected_piece != 'undefined') {
                         console.log('black hand piece clicked.');
-                        board_canvas.drawSquare(board_canvas.BLACK_X, selected_y);
-                        board_canvas.drawAll();
+                        self.drawSquare(self.BLACK_X, selected_y);
+                        self.drawAll();
 
-                        board_canvas.click_status.pos = board_canvas.shogi_board.BLACK;
-                        board_canvas.click_status.piece = selected_piece;
+                        self.click_status.pos = self.shogi_board.BLACK;
+                        self.click_status.piece = selected_piece;
                     }
 
                     console.log('black piece stand clicked.');
@@ -615,47 +609,49 @@ if (!this['BoardCanvas']) {
             } else if (click_status > 10 && click_status < 100) {
                 /// if already selected any square.
                 console.log('click_status:' + click_status + ' -> ' + pos);
-                board_canvas.shogi_board.swapBoardPieces(click_status, pos);
-                board_canvas.removeSquare();
+                self.shogi_board.swapBoardPieces(click_status, pos);
+                self.removeSquare();
 
-                board_canvas.drawAll();
-                board_canvas.click_status.pos = undefined;
-                board_canvas.click_status.piece = undefined;
+                self.drawAll();
+                self.click_status.pos = undefined;
+                self.click_status.piece = undefined;
             } else if (click_status < 10) {
                 if (pos < 10) {
-                    var piece_name = board_canvas.click_status.piece;
-                    if (pos == 0 && click_status == board_canvas.shogi_board.WHITE) {
-                        board_canvas.shogi_board.givePieceFromStand(board_canvas.shogi_board.WHITE, piece_name);
-                    } else if (pos == 1 && click_status == board_canvas.shogi_board.BLACK) {
-                        board_canvas.shogi_board.givePieceFromStand(board_canvas.shogi_board.BLACK, piece_name);
+                    var piece_name = self.click_status.piece;
+                    if (pos == 0 && click_status == self.shogi_board.WHITE) {
+                        self.shogi_board.givePieceFromStand(self.shogi_board.WHITE, piece_name);
+                    } else if (pos == 1 && click_status == self.shogi_board.BLACK) {
+                        self.shogi_board.givePieceFromStand(self.shogi_board.BLACK, piece_name);
                     }
                     
-                    board_canvas.removeSquare();
-                    board_canvas.drawAll();
+                    self.removeSquare();
+                    self.drawAll();
 
-                    board_canvas.click_status.pos = undefined;
-                    board_canvas.click_status.piece = undefined;
+                    self.click_status.pos = undefined;
+                    self.click_status.piece = undefined;
                 } else {
-                    var from_pos = board_canvas.click_status.pos;
-                    var piece_name = board_canvas.click_status.piece;
+                    var from_pos = self.click_status.pos;
+                    var piece_name = self.click_status.piece;
                     var to_pos = temp.join('');
-                    var to_pos_status = board_canvas.shogi_board.getBoardStatus(to_pos);
+                    var to_pos_status = self.shogi_board.getBoardStatus(to_pos);
 
                     console.log('to_pos_status:' + to_pos + ':' + to_pos_status[0]);
 
-                    if (to_pos_status[0] == board_canvas.shogi_board.EMPTY) {
-                        board_canvas.shogi_board.dropPieceFromStand(from_pos, piece_name, to_pos);
-                        board_canvas.removeSquare();
-                        board_canvas.drawAll();
+                    if (to_pos_status[0] == self.shogi_board.EMPTY) {
+                        self.shogi_board.dropPieceFromStand(from_pos, piece_name, to_pos);
+                        self.removeSquare();
+                        self.drawAll();
 
-                        board_canvas.click_status.pos = undefined;
-                        board_canvas.click_status.piece = undefined;
+                        self.click_status.pos = undefined;
+                        self.click_status.piece = undefined;
                     }
                 }
             }
-        },
-        select_square_x:undefined, select_square_y:undefined,
-        drawSquare: function(x, y) {
+        };
+
+        this.select_square_x = undefined;
+        this.select_square_y = undefined;
+        this.drawSquare = function(x, y) {
             console.log('drawSquare: x:' + x + ' y:' + y);
             var ctx = this.canvas.getContext('2d');
             ctx.fillStyle = "rgb(255, 255, 192)";
@@ -663,35 +659,35 @@ if (!this['BoardCanvas']) {
 
             this.select_square_x = x;
             this.select_square_y = y;
-        },
-        drawSquareOnBoard: function (pos_x, pos_y) {
+        };
+        this.drawSquareOnBoard = function (pos_x, pos_y) {
             console.log('drawSquareOnBoard: ' + pos_x + '' + pos_y);
-            var ctx = this.canvas.getContext('2d');
+            var ctx = self.canvas.getContext('2d');
             /// 黄色のマスを書く
             ctx.fillStyle = "rgb(255, 255, 192)";
             
-            var origin_x = this.BOARD_X + this.BOARD_WIDTH_PADDING;
-            var origin_y = this.BOARD_Y + this.TITLE_HEIGHT + this.BOARD_HEIGHT_PADDING;
-            console.log('fillRect:(' + (origin_x + (9 - pos_x) * this.SQUARE_MULTIPLE_X) + ',' + (origin_y + (pos_y - 1) * this.SQUARE_MULTIPLE_Y) + ',' +  this.SQUARE_MULTIPLE_X + ',' + this.SQUARE_MULTIPLE_Y + ')');
+            var origin_x = self.BOARD_X + self.BOARD_WIDTH_PADDING;
+            var origin_y = self.BOARD_Y + self.TITLE_HEIGHT + self.BOARD_HEIGHT_PADDING;
+            console.log('fillRect:(' + (origin_x + (9 - pos_x) * self.SQUARE_MULTIPLE_X) + ',' + (origin_y + (pos_y - 1) * self.SQUARE_MULTIPLE_Y) + ',' +  self.SQUARE_MULTIPLE_X + ',' + self.SQUARE_MULTIPLE_Y + ')');
 
-            var x = origin_x + (9 - pos_x) * this.SQUARE_MULTIPLE_X;
-            var y = origin_y + (pos_y - 1) * this.SQUARE_MULTIPLE_Y;
+            var x = origin_x + (9 - pos_x) * self.SQUARE_MULTIPLE_X;
+            var y = origin_y + (pos_y - 1) * self.SQUARE_MULTIPLE_Y;
 
             ctx.fillRect(x, y,
-                         this.SQUARE_WIDTH, this.SQUARE_HEIGHT);
+                         self.SQUARE_WIDTH, self.SQUARE_HEIGHT);
             console.log('fillRect: pos_x:' + pos_x + ' pos_y:' + pos_y);
 
-            this.select_square_x = x;
-            this.select_square_y = y;
-        },
-        removeSquare: function() {
-            this.select_square_x = undefined;
-            this.select_square_y = undefined;
-        },
-        onDoubleClick: function(evt, board_canvas) {
-            /// This is event handler, so in this function DO NOT use "this".
-            /// instead of "this", use "board_canvas".
-            var temp  = this.getPos(evt, board_canvas);
+            self.select_square_x = x;
+            self.select_square_y = y;
+        };
+
+        this.removeSquare = function() {
+            self.select_square_x = undefined;
+            self.select_square_y = undefined;
+        };
+
+        this.onDoubleClick = function(evt) {
+            var temp  = this.getPos(evt);
             var x = temp[0];
             var y = temp[1];
             temp = this.convertPositionToBoard(x, y);
@@ -700,26 +696,29 @@ if (!this['BoardCanvas']) {
 
             var pos = temp.join('');
             console.log('DoubleClick: pos_x:' + pos_x + ' y:' + pos_y);
-            board_canvas.shogi_board.changePieceKind(pos);
-            board_canvas.removeSquare();
+            self.shogi_board.changePieceKind(pos);
+            self.removeSquare();
 
-            board_canvas.drawAll();
-        },
-        drawPieces: function() {
-            console.log('drawPieces width:' + this.canvas.width + 
-                        ' height:' + this.canvas.height );
-            var ctx = this.canvas.getContext('2d');
+            self.drawAll();
+        };
+
+        this.drawPieces = function() {
+            console.log('drawPieces width:' + self.canvas.width + 
+                        ' height:' + self.canvas.height );
+            var ctx = self.canvas.getContext('2d');
             var image;
-            image = this.piece_images.getBoardImage();
-            console.log('x: ' + this.BOARD_X + 
-                        ' y:' + (this.BOARD_Y + this.TITLE_HEIGHT) + ' image:' + typeof image);
-            ctx.drawImage(image, this.BOARD_X, this.BOARD_Y + this.TITLE_HEIGHT);
-            image = this.piece_images.getBlackImage();
-            ctx.drawImage(image, this.BLACK_X, this.BLACK_Y + this.TITLE_HEIGHT);
-            image = this.piece_images.getWhiteImage(Math.PI);
-            ctx.drawImage(image, this.WHITE_X, this.WHITE_Y + this.TITLE_HEIGHT);
+            image = self.piece_images.getBoardImage();
+            console.log('x: ' + self.BOARD_X + 
+                        ' y:' + (self.BOARD_Y + self.TITLE_HEIGHT) + ' image:' + typeof image);
+            ctx.drawImage(image, self.BOARD_X, self.BOARD_Y + self.TITLE_HEIGHT);
 
-            var pieces = this.shogi_board.getAllPieces();
+            image = self.piece_images.getBlackImage();
+            ctx.putImageData(image, self.BLACK_X, self.BLACK_Y + self.TITLE_HEIGHT);
+
+            image = self.piece_images.getWhiteImage(Math.PI);
+            ctx.putImageData(image, self.WHITE_X, self.WHITE_Y + self.TITLE_HEIGHT);
+
+            var pieces = self.shogi_board.getAllPieces();
             for(var i = 0;i < pieces.length; i++) {
                 var pos = pieces[i][0];
                 var turn = pieces[i][1][0];
@@ -728,45 +727,45 @@ if (!this['BoardCanvas']) {
                             ' turn:' + turn + 
                             ' piece:' + piece);
                 
-                var x = this.BOARD_X + this.SQUARE_ORIGIN_X + 
-                        this.SQUARE_MULTIPLE_X * (9 - parseInt(pos / 10));
-                var y = this.BOARD_Y + this.TITLE_HEIGHT + this.SQUARE_ORIGIN_Y + 
-                        this.SQUARE_MULTIPLE_Y * ((pos % 10) - 1);
+                var x = self.BOARD_X + self.SQUARE_ORIGIN_X + 
+                        self.SQUARE_MULTIPLE_X * (9 - parseInt(pos / 10));
+                var y = self.BOARD_Y + self.TITLE_HEIGHT + self.SQUARE_ORIGIN_Y + 
+                        self.SQUARE_MULTIPLE_Y * ((pos % 10) - 1);
                 
-                image = this.piece_images.getBoardImage();
+                image = self.piece_images.getBoardImage();
 
-                if (turn == this.shogi_board.BLACK) {
-                    image = this.piece_images.getImage(piece);
-                } else if (turn == this.shogi_board.WHITE) {
-                    image = this.piece_images.getImage(piece, Math.PI);
+                if (turn == self.shogi_board.BLACK) {
+                    image = self.piece_images.getImage(piece);
+                } else if (turn == self.shogi_board.WHITE) {
+                    image = self.piece_images.getImage(piece, Math.PI);
                 }
                 console.log('typeof image:' + typeof image);
                 if (typeof image != 'undefined') {
-                    ctx.drawImage(image, x, y);
+                    ctx.putImageData(image, x, y);
                 }
             }
 
             /// Draw Hand Pieces
             /// Draw Black Hand Pieces
             console.log('Draw White Hand Pieces:');
-            pieces = this.shogi_board.getHandPieces(this.shogi_board.BLACK);
-            this.black_hand_pieces_y = {};
+            pieces = self.shogi_board.getHandPieces(self.shogi_board.BLACK);
+            self.black_hand_pieces_y = {};
 
-            var piece_order = this.shogi_board.hand_piece_order;
-            var y = this.BLACK_Y + this.TITLE_HEIGHT + this.BLACK_MARK_HEIGHT ;
+            var piece_order = self.shogi_board.hand_piece_order;
+            var y = self.BLACK_Y + self.TITLE_HEIGHT + self.BLACK_MARK_HEIGHT ;
             for (var i = 0;i < piece_order.length; i++) {
-                var x = this.BLACK_X;
+                var x = self.BLACK_X;
                 var piece_name = piece_order[i];
                 var piece_num = pieces[piece_name];
                 console.log('piece_name:' + piece_name + 
                             ' piece_num:' + piece_num);
 
                 if (piece_num > 0) {
-                    image = this.piece_images.getImage(piece_name);
-                    ctx.drawImage(image, x, y);
-                    this.black_hand_pieces_y[piece_name] = y;
+                    image = self.piece_images.getImage(piece_name);
+                    ctx.putImageData(image, x, y);
+                    self.black_hand_pieces_y[piece_name] = y;
 
-                    y += this.PIECE_IMAGE_HEIGHT + this.IMAGE_PADDING_Y;
+                    y += self.PIECE_IMAGE_HEIGHT + self.IMAGE_PADDING_Y;
 
                     /// 数字の描画
                     if (piece_num > 1) {
@@ -774,72 +773,74 @@ if (!this['BoardCanvas']) {
                         if (piece_num >= 10) {
                             // 2桁目を描画
                             num = parseInt(piece_num / 10);
-                            image = this.number_images.getImage(num);
-                            ctx.drawImage(image, x, y);
+                            image = self.number_images.getImage(num);
+                            ctx.putImageData(image, x, y);
                         }
-                        x += this.NUMBER_IMAGE_WIDTH;
+                        x += self.NUMBER_IMAGE_WIDTH;
                         num = piece_num % 10;
-                        image = this.number_images.getImage(num);
+                        image = self.number_images.getImage(num);
 
                         console.log('image:' + typeof image + ' x:' + x +
                                    ' y:' + y);
 
-                        ctx.drawImage(image, x, y);
-                        y += this.NUMBER_IMAGE_HEIGHT + this.IMAGE_PADDING_Y;
+                        ctx.putImageData(image, x, y);
+                        y += self.NUMBER_IMAGE_HEIGHT + self.IMAGE_PADDING_Y;
                     }
                 }
             }
 
             console.log('Draw White Hand Pieces:');
             /// Draw White Hand Pieces
-            pieces = this.shogi_board.getHandPieces(this.shogi_board.WHITE);
-            y = this.WHITE_Y + this.TITLE_HEIGHT;
-            this.white_hand_pieces_y = {};
+            pieces = self.shogi_board.getHandPieces(self.shogi_board.WHITE);
+            y = self.WHITE_Y + self.TITLE_HEIGHT;
+            self.white_hand_pieces_y = {};
 
             var first_draw = true;
             for (var i = 0; i < piece_order.length; i++) {
-                var x = this.WHITE_X;
+                var x = self.WHITE_X;
                 var piece_name = piece_order[i];
                 var piece_num = pieces[piece_name];
                 console.log('piece_name:' + piece_name + 
                             ' piece_num:' + piece_num);
                 
                 if (piece_num > 0) {
-                    image = this.piece_images.getImage(piece_name, Math.PI);
+                    image = self.piece_images.getImage(piece_name, Math.PI);
                     if (first_draw == true) {
-                        y -= this.WHITE_MARK_HEIGHT;
+                        y -= self.WHITE_MARK_HEIGHT;
                         first_draw = false;
                     } else {
-                        y -= (this.PIECE_IMAGE_HEIGHT + this.IMAGE_PADDING_Y);
+                        y -= (self.PIECE_IMAGE_HEIGHT + self.IMAGE_PADDING_Y);
                     }
-                    ctx.drawImage(image, x, y);
-                    this.white_hand_pieces_y[piece_name] = y;
+                    ctx.putImageData(image, x, y);
+                    self.white_hand_pieces_y[piece_name] = y;
 
                     if (piece_num > 1) {
-                        y -= (this.NUMBER_IMAGE_HEIGHT + this.IMAGE_PADDING_Y);
+                        y -= (self.NUMBER_IMAGE_HEIGHT + self.IMAGE_PADDING_Y);
                         console.log('piece_num:' + piece_num);
                         var num;
                         num = piece_num % 10;
-                        image = this.number_images.getImage(num, Math.PI);
-                        ctx.drawImage(image, x, y);
+                        image = self.number_images.getImage(num, Math.PI);
+                        ctx.putImageData(image, x, y);
 
-                        x += this.NUMBER_IMAGE_WIDTH;
+                        x += self.NUMBER_IMAGE_WIDTH;
                         if (piece_num >= 10) {
                             num = parseInt(piece_num / 10);
-                            image = this.number_images.getImage(num, Math.PI);
-                            ctx.drawImage(image, x, y);
+                            image = self.number_images.getImage(num, Math.PI);
+                            ctx.putImageData(image, x, y);
                         }
                     }
                 }
             }
-        },
-        convertPositionToBoard: function(x, y) {
+        };
+
+        this.convertPositionToBoard = function(x, y) {
+            console.log('convertPositionToBoard(' + x + ', ' + y + ') called:');
             var pos_x = x;
             var pos_y = y;
             console.log('pos_x:' + pos_x);
-            pos_x =  pos_x - this.BOARD_X - this.BOARD_WIDTH_PADDING;
+            pos_x =  pos_x - self.BOARD_X - self.BOARD_WIDTH_PADDING;
             console.log('pos_x:' + pos_x);
-            pos_x = pos_x / this.BOARD_MULTIPLE_X;
+            pos_x = pos_x / self.BOARD_MULTIPLE_X;
             console.log('pos_x:' + pos_x);
             if (pos_x < 0) {
                 pos_x = 10;
@@ -849,9 +850,9 @@ if (!this['BoardCanvas']) {
             console.log('pos_x:' + pos_x);
 
             console.log('pos_y:' + pos_y);
-            pos_y = pos_y - this.BOARD_Y - this.BOARD_HEIGHT_PADDING - this.TITLE_HEIGHT;
+            pos_y = pos_y - self.BOARD_Y - self.BOARD_HEIGHT_PADDING - self.TITLE_HEIGHT;
             console.log('pos_y:' + pos_y);
-            pos_y = pos_y / this.BOARD_MULTIPLE_Y;
+            pos_y = pos_y / self.BOARD_MULTIPLE_Y;
             console.log('pos_y:' + pos_y);
             if (pos_y < 0) {
                 pos_y = 0;
@@ -863,8 +864,9 @@ if (!this['BoardCanvas']) {
             console.log('convertPositionToBoard:x' + x + ' y:' + y + 
                         ' pos_x:' + pos_x + ' pos_y:' + pos_y);
             return [pos_x, pos_y];
-        },
-        getPos: function(evt, board_canvas) {
+        };
+
+        this.getPos = function(evt) {
             // Get Position of inside canvas
             // Reference: http://docs.jquery.com/Tutorials:Mouse_Position
             // Reference: http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
@@ -887,31 +889,25 @@ if (!this['BoardCanvas']) {
 
             console.log('pos_x:' + pos_x + ' pos_y:' + pos_y);
 
-            pos_x -= board_canvas.canvas.offsetLeft;
-            pos_y -= board_canvas.canvas.offsetTop;              
+            pos_x -= self.canvas.offsetLeft;
+            pos_y -= self.canvas.offsetTop;              
 
             console.log('pos_x:' + pos_x + ' pos_y:' + pos_y);
 
-/*
-            if ($(board_canvas).offset()) {
-                console.log('Using offset...');
-                pos_x = evt.pageX - $(board_canvas).offset().left;
-                pos_y = evt.pageY - $(board_canvas).offset().top;
-            } else if (evt.layerX || evt.layerY) {
-                console.log('Using layerX...');
-                pos_x = evt.layerX;
-                pos_y = evt.layerY;
-            }
-*/
             return [pos_x, pos_y];
-        },
+        };
 
-        TITLE_MARK_WIDTH:16, TITLE_MARK_HEIGHT:16,
-        WHITE_TITLE_MARK_X:5, 
-        PLAYER_Y:5, TITLE_Y:30,
-        black_name:'', white_name:'', title:'',
-        drawBlackName: function(black_name) {
-            var ctx = this.canvas.getContext('2d');
+        this.TITLE_MARK_WIDTH = 16;
+        this.TITLE_MARK_HEIGHT = 16;
+        this.WHITE_TITLE_MARK_X = 5;
+        this.PLAYER_Y = 5;
+        this.TITLE_Y = 30,
+        this.black_name = '';
+        this.white_name = '';
+        this.title = '';
+
+        this.drawBlackName = function(black_name) {
+            var ctx = self.canvas.getContext('2d');
             ctx.fillStyle = 'black';
             ctx.font = '16px sans-serif';
             ctx.textBaseline = 'top';
@@ -923,7 +919,7 @@ if (!this['BoardCanvas']) {
                 var draw_black_name = black_name;
                 if (typeof black_name == 'undefined') {
                     // 今保持されている先手名を書く(または消す)
-                    draw_black_name = this.black_name;
+                    draw_black_name = self.black_name;
                 } else {
                     /// for fillText
                     draw_black_name = black_name.replace(/\s/g, '\u0020');
@@ -934,33 +930,33 @@ if (!this['BoardCanvas']) {
                 console.log('draw_black_name:' + draw_black_name);
 
                 var black_name_width = ctx.measureText(draw_black_name);
-                var clear_black_name_width = ctx.measureText(this.black_name);
+                var clear_black_name_width = ctx.measureText(self.black_name);
 
                 console.log('black_name_width:' + black_name_width.width + 
-                            ' HEIGHT:' + this.TITLE_MARK_HEIGHT);
+                            ' HEIGHT:' + self.TITLE_MARK_HEIGHT);
                 console.log('clear_black_name_width:' + clear_black_name_width.width);
 
-                var black_image = this.piece_images.getBlackImage();
-                var black_title_x_left = this.CANVAS_WIDTH - (black_name_width.width + 
-                                                             this.TITLE_MARK_WIDTH +
-                                                             this.IMAGE_PADDING_X);
-                var clear_black_title_x_left = this.CANVAS_WIDTH - 
+                var black_image = self.piece_images.getBlackImage();
+                var black_title_x_left = self.CANVAS_WIDTH - (black_name_width.width + 
+                                                             self.TITLE_MARK_WIDTH +
+                                                             self.IMAGE_PADDING_X);
+                var clear_black_title_x_left = self.CANVAS_WIDTH - 
                         (clear_black_name_width.width + 
-                         this.TITLE_MARK_WIDTH + 
-                         this.IMAGE_PADDING_X);
+                         self.TITLE_MARK_WIDTH + 
+                         self.IMAGE_PADDING_X);
 
-                var black_title_x = black_title_x_left + this.IMAGE_PADDING_X;
-                ctx.drawImage(black_image, black_title_x, this.PLAYER_Y,
-                             this.TITLE_MARK_WIDTH, this.TITLE_MARK_HEIGHT);
-                black_title_x += this.TITLE_MARK_WIDTH;
-                ctx.fillText(draw_black_name, black_title_x, this.PLAYER_Y,
-                            this.NAME_IMAGE_WIDTH);
-                this.black_name = draw_black_name;
+                var black_title_x = black_title_x_left + self.IMAGE_PADDING_X;
+                ctx.putImageData(black_image, black_title_x, self.PLAYER_Y,
+                             self.TITLE_MARK_WIDTH, self.TITLE_MARK_HEIGHT);
+                black_title_x += self.TITLE_MARK_WIDTH;
+                ctx.fillText(draw_black_name, black_title_x, self.PLAYER_Y,
+                            self.NAME_IMAGE_WIDTH);
+                self.black_name = draw_black_name;
             }
-
-        },
-        drawWhiteName: function(white_name) {
-            var ctx = this.canvas.getContext('2d');
+        };
+        
+        this.drawWhiteName = function(white_name) {
+            var ctx = self.canvas.getContext('2d');
             ctx.fillStyle = 'black';
             ctx.font = '16px sans-serif';
             ctx.textBaseline = 'top';
@@ -969,7 +965,7 @@ if (!this['BoardCanvas']) {
                 var draw_white_name;
                 if (typeof white_name == 'undefined') {
                     // 今保持されている後手名を書く
-                    draw_white_name = this.white_name;
+                    draw_white_name = self.white_name;
                 } else {
                     /// for fillText
                     draw_white_name = white_name.replace(/\s/g, '\u0020');
@@ -980,91 +976,99 @@ if (!this['BoardCanvas']) {
                 console.log('draw_white_name:' + draw_white_name);
 
                 var white_name_width  = ctx.measureText(draw_white_name);
-                var clear_white_name_width = ctx.measureText(this.white_name);
+                var clear_white_name_width = ctx.measureText(self.white_name);
 
                 console.log('white_name_width:' + white_name_width.width + 
-                            ' HEIGHT:' + this.TITLE_MARK_HEIGHT);
+                            ' HEIGHT:' + self.TITLE_MARK_HEIGHT);
 
                 // 白のマークを書く
-                var white_image = this.piece_images.getWhiteImage();
-                var white_title_x = this.WHITE_TITLE_MARK_X;
+                var white_image = self.piece_images.getWhiteImage(Math.PI);
+                var white_title_x = self.WHITE_TITLE_MARK_X;
 
-                ctx.drawImage(white_image, white_title_x, this.PLAYER_Y,
-                              this.TITLE_MARK_WIDTH, this.TITLE_MARK_HEIGHT);
-                white_title_x += this.TITLE_MARK_WIDTH + this.IMAGE_PADDING_X;
-                ctx.fillText(draw_white_name, white_title_x, this.PLAYER_Y);
+                ctx.putImageData(white_image, white_title_x, self.PLAYER_Y,
+                              self.TITLE_MARK_WIDTH, self.TITLE_MARK_HEIGHT);
+                white_title_x += self.TITLE_MARK_WIDTH + self.IMAGE_PADDING_X;
+                ctx.fillText(draw_white_name, white_title_x, self.PLAYER_Y);
 
-                this.white_name = draw_white_name;
+                self.white_name = draw_white_name;
             } 
-        },
-        drawTitle: function(title) {
-            var ctx = this.canvas.getContext('2d');
+        };
+
+        this.drawTitle = function(title) {
+            var ctx = self.canvas.getContext('2d');
             ctx.fillStyle = 'black';
             ctx.font = '16px sans-serif';
             ctx.textBaseline = 'top';
 
 
-            ctx.clearRect(0, this.TITLE_Y, this.canvas.width, this.TITLE_HEIGHT);
+            ctx.clearRect(0, self.TITLE_Y, self.canvas.width, self.TITLE_HEIGHT);
 
             var title_name_width  = ctx.measureText(title);
             console.log('title_name_width:' + title_name_width.width + 
-                        ' HEIGHT:' + this.TITLE_MARK_HEIGHT);
+                        ' HEIGHT:' + self.TITLE_MARK_HEIGHT);
             console.log('draw_title');
 
             if (title != '') {
                 var draw_title;
                 if (typeof title == 'undefined') {
                     // 今保持されているタイトルを書く
-                    draw_title = this.title;
+                    draw_title = self.title;
                 } else {
                     draw_title = title.replace(/\s/g, '\u0020');
                 }
 
                 // 書く文字の長さに応じて中央を求める
-                var center = parseInt(this.CANVAS_WIDTH / 2);
+                var center = parseInt(self.CANVAS_WIDTH / 2);
                 var title_width = ctx.measureText(draw_title);
                 var center_x = center - parseInt(title_width.width / 2);
-                ctx.fillText(draw_title, center_x, this.TITLE_Y);
+                ctx.fillText(draw_title, center_x, self.TITLE_Y);
 
-                this.title = draw_title;
+                self.title = draw_title;
             } 
-        },
-        getTitle: function() {
-            return this.title.replace(/\u0020/g, ' ');
-        },
-        getBlackName: function() {
-            return this.black_name.replace(/\u0020/g, ' ');
-        },
-        getWhiteName: function() {
-            return this.white_name.replace(/\u0020/g, ' ');
-        },
-        clearAll: function() {
-            var ctx = this.canvas.getContext('2d');
+        };
+
+        this.getTitle = function() {
+            return self.title.replace(/\u0020/g, ' ');
+        };
+        
+        this.getBlackName = function() {
+            return self.black_name.replace(/\u0020/g, ' ');
+        };
+
+        this.getWhiteName = function() {
+            return self.white_name.replace(/\u0020/g, ' ');
+        };
+        
+        this.clearAll = function() {
+            var ctx = self.canvas.getContext('2d');
             ctx.clearRect(0, 0, 
                           this.canvas.width, 
                           this.canvas.height);
-        },
-        drawHeader: function() {
-            this.drawBlackName();
-            this.drawWhiteName();
-            this.drawTitle();
-        },
-        drawAll: function() {
-            this.clearAll();
-            this.drawBlackName();
-            this.drawWhiteName();
-            this.drawTitle();
-            if (typeof this.select_square_x != 'undefined') {
-                console.log('Square x:' + this.select_square_x + 
-                            ' y:' + this.select_square_y);
-                this.drawSquare(this.select_square_x, this.select_square_y);
-            }
-            this.drawPieces();
+        };
+        
+        this.drawHeader = function() {
+            self.drawBlackName();
+            self.drawWhiteName();
+            self.drawTitle();
+        };
 
-            this.onBoardChange();
-        },
-        onBoardChange: function() {
-        }
+        this.drawAll = function() {
+            self.clearAll();
+            self.drawBlackName();
+            self.drawWhiteName();
+            self.drawTitle();
+            if (typeof self.select_square_x != 'undefined') {
+                console.log('Square x:' + self.select_square_x + 
+                            ' y:' + self.select_square_y);
+                self.drawSquare(self.select_square_x, self.select_square_y);
+            }
+            self.drawPieces();
+
+            self.onBoardChange();
+        };
+
+        this.onBoardChange = function() {
+        };
     };
 }
 
@@ -1146,7 +1150,7 @@ if (!this['PieceImages']) {
             console.log('name:' + name);
             name = name.toUpperCase();
             if (typeof rotate == 'undefined') {
-                return this.piece_images[name];
+                return this.rotate_image(this.piece_images[name], 0);
             } else { // rot_canvas(180度回転)に描画してその結果を返す
                 return this.rotate_image(this.piece_images[name], rotate);
             }
@@ -1156,34 +1160,38 @@ if (!this['PieceImages']) {
         },
         getBlackImage: function(rotate) {
             if (typeof rotate == 'undefined') {
-                return this.black_image;
-            } else {
                 return this.rotate_image(this.black_image);
+            } else {
+                return this.rotate_image(this.black_image, rotate);
             }
         },
         getWhiteImage: function(rotate) {
             if (typeof rotate == 'undefined') {
                 return this.white_image;
             } else {
-                return this.rotate_image(this.white_image);
+                return this.rotate_image(this.white_image, Math.PI);
             }
         },
         rotate_image: function(image, rotate) {
-            if (typeof image == 'undefined') {
-                return image;
-            }
+            console.log('rotate_image: called');
+            console.log('typeof rotate:' + typeof rotate + ' rotate:' + rotate);
             var rot_canvas = $('#rot_canvas')[0];
             var rot_ctx = rot_canvas.getContext('2d');
 
-            rot_ctx.restore();
+            // reset transform matrix
+            rot_ctx.setTransform(1, 0, 0, 1, 0, 0);
             rot_ctx.clearRect(0, 0, rot_canvas.width, rot_canvas.height);
 
-            rot_ctx.save();
-            rot_ctx.translate(image.width, image.height);
-            rot_ctx.rotate(Math.PI);
+            if (typeof rotate != 'undefined' && rotate != 0) {
+                console.log('rotate');
+                rot_ctx.translate(image.width, image.height);
+                rot_ctx.rotate(rotate);
+            }
+            else {
+                console.log('normal drawj');
+            }
             rot_ctx.drawImage(image, 0, 0);
-
-            return rot_canvas;
+            return rot_ctx.getImageData(0, 0, image.width, image.height);
         }
     };
 }
@@ -1194,6 +1202,7 @@ if (!this['NumberImages']) {
         this.num_loaded = 0;
         this.is_loaded = false;
         this.num_image = {};
+
     };
 
     NumberImages.prototype = {
@@ -1226,21 +1235,20 @@ if (!this['NumberImages']) {
         },
         getImage: function (num, rotate) {
             var image = this.num_image[num];
-            if (typeof rotate == 'undefined') {
-                return image;
-            }
             var rot_canvas = $('#rot_canvas')[0];
             var rot_ctx = rot_canvas.getContext('2d');
             
-            rot_ctx.restore();
+            // reset transform matrix
+            rot_ctx.setTransform(1, 0, 0, 1, 0, 0);
             rot_ctx.clearRect(0, 0, rot_canvas.width, rot_canvas.height);
-
-            rot_ctx.save();
-            rot_ctx.translate(image.width, image.height);
-            rot_ctx.rotate(Math.PI);
+            
+            if (typeof rotate != 'undefined' && rotate != 0) {
+                rot_ctx.translate(image.width, image.height);
+                rot_ctx.rotate(Math.PI);
+            }
             rot_ctx.drawImage(image, 0, 0);
 
-            return rot_canvas;
+            return rot_ctx.getImageData(0, 0, image.width, image.height);
         }
     };
 }
