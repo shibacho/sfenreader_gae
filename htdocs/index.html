@@ -95,7 +95,7 @@ Twitterにログインした状態で「ponanza先生に聞く」ボタンを押
 <!-- 手数: <input type="text" id="shogi_title" style="width: 100px;" /> (※省略可)<br> -->
 強調表示: <input type="text" id="last_move" style="width:30px;"/> のマス (半角2文字 例:76 84 ※省略可)<br>
 <span id="turn_span">手番: <input type="radio" name="turn" value="b" checked>先手番</input> <input type="radio" name="turn" value="w">後手番</input></span> <input type="checkbox" id="turn_check" value="off"/>表示しない (注:<strong>ponanza先生に聞く時は適切に設定してください。</strong>)<br>
-駒の種類: <input type="radio" name="piece" value="kanji" checked />漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒 <br>
+駒の種類: <input type="radio" name="piece" value="kanji" checked />漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒 <input type="radio" name="piece" value="international"/>国際駒 <br>
 
 <button id="board_convert">変換する</button><span id="board_converted_text" class="none">変換完了</span>
 <div id="board_result" class="none">
@@ -115,7 +115,7 @@ SFEN:<input type="text" id="sfen" style="width:400px;"/> <button id="ponanza_ana
 <hr>
 <h2>使い方(開発者向け)</h2>
 <blockquote>
-http://sfenreader.appspot.com/sfen?sfen=<i>sfen_string</i>&lm=<i>last_move_square_num</i>&sname=<i>name_of_sente</i>&gname=<i>name_of_gote</i>&title=<i>title</i>&piece=<i>kanji_or_alphabet</i>&turn=<i>on_or_off</i>
+http://sfenreader.appspot.com/sfen?sfen=<i>sfen_string</i>&lm=<i>last_move_square_num</i>&sname=<i>name_of_sente</i>&gname=<i>name_of_gote</i>&title=<i>title</i>&piece=<i>kanji_or_alphabet_or_international</i>&turn=<i>on_or_off</i>
 </blockquote>
 にアクセスすると<i>sfen_string</i>で示された局面がpng画像で返ってきます。<br>
 <i>sfen_string</i>は空白を含むのでURIencodeされている必要があります。<br>
@@ -133,9 +133,9 @@ titleは棋戦名などを入れます。盤の中央上に出る文字列です
 sname、gname同様にUTF-8でURIencodeされている必要があります。<br>
 &amp;title=第52期王位戦第1局 のように使います。<br>
 <p>
-pieceは駒の種類を指定します。kanji を指定すると通常の一字駒に、alphabet を指定するとアルファベット一字駒になります。<br>
+pieceは駒の種類を指定します。kanji を指定すると通常の一字駒に、alphabet を指定するとアルファベット一字駒に、internationalを指定すると国際駒になります。<br>
 省略すると、kanji を指定したのと同じことになります。<br>
-alphabet を指定すると将棋盤の段の数字がアラビア数字になります。<br>
+alphabet か international を指定すると将棋盤の段の数字がアラビア数字になり、手数を表す「～手目」の表示が「at ～」と英語表記になります。<br>
 <p>
 turn は先手番、後手番のマークを強調して手番を表示するかどうかを表します。<br>
 &amp;turn=on または &amp;turn=off で指定します。<br>
@@ -222,6 +222,7 @@ Google App Engine 上で文字を画像に合成する方法を書いてくだ�
 <hr>
 <h2>更新履歴</h2>
 <ul>
+<li> 2011/08/28 国際駒(by <a href="http://hidetchi.blog68.fc2.com/">HIDETCHI</a>)を暫定的に追加
 <li> 2011/08/06 Kifu for Windowsの局面図で出力される先手/後手の名前を解釈するようにした
 <li> 2011/08/06 SFEN文字列に含まれる手数を解釈し画像に含めるようにした
 <li> 2011/08/04 Web上で局面を作成するUIを暫定公開(使用ブラウザに制限あり)

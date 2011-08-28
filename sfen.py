@@ -50,6 +50,7 @@ class SfenHandler(webapp.RequestHandler):
 
     piece_img = {}
     piece_alphabet_img = {}
+    piece_international_img = {}
     draw_piece_img = {}
 
     number_img = {}
@@ -122,6 +123,11 @@ class SfenHandler(webapp.RequestHandler):
         elif piece_kind == 'alphabet':
             self.piece_alphabet_img_init()
             self.draw_piece_img = self.piece_alphabet_img
+            self.board_alphabet_img_init()
+            self.draw_board_img = self.board_alphabet_img
+        elif piece_kind == 'international':
+            self.piece_international_img_init()
+            self.draw_piece_img = self.piece_international_img
             self.board_alphabet_img_init()
             self.draw_board_img = self.board_alphabet_img
         else:
@@ -287,6 +293,84 @@ class SfenHandler(webapp.RequestHandler):
         self.piece_alphabet_img['+r'] = (ry_img, images.rotate(ry_img, 180))
         self.piece_alphabet_img['+b'] = (um_img, images.rotate(um_img, 180))
         self.piece_alphabet_img['+g'] = (ki_img, images.rotate(ki_img, 180))
+    
+    def piece_international_img_init(self):
+        if self.piece_international_img != {}:
+            return
+
+        logging.info('Loading International Piece Image...')
+
+        f = open("img/fu_international.png", "rb")
+        fu_img = f.read()
+        f.close()
+
+        f = open("img/ky_international.png", "rb")
+        ky_img = f.read()
+        f.close()
+        
+        f = open("img/ke_international.png", "rb")
+        ke_img = f.read()
+        f.close()
+
+        f = open("img/gi_international.png", "rb")
+        gi_img = f.read()
+        f.close()
+
+        f = open("img/ki_international.png", "rb")
+        ki_img = f.read()
+        f.close()
+
+        f = open("img/hi_international.png", "rb")
+        hi_img = f.read()
+        f.close()
+
+        f = open("img/ka_international.png", "rb")
+        ka_img = f.read()
+        f.close()
+
+        f = open("img/ou_international.png", "rb")
+        ou_img = f.read()
+        f.close()
+
+        f = open("img/to_international.png", "rb")
+        to_img = f.read()
+        f.close()
+
+        f = open("img/ny_international.png", "rb")
+        ny_img = f.read()
+        f.close()
+
+        f = open("img/nk_international.png", "rb")
+        nk_img = f.read()
+        f.close()
+
+        f = open("img/ng_international.png", "rb")
+        ng_img = f.read()
+        f.close()
+
+        f = open("img/ry_international.png", "rb")
+        ry_img = f.read()
+        f.close()
+
+        f = open("img/um_international.png", "rb")
+        um_img = f.read()
+        f.close()
+
+        self.piece_international_img['p']  = (fu_img, images.rotate(fu_img, 180))
+        self.piece_international_img['l']  = (ky_img, images.rotate(ky_img, 180))
+        self.piece_international_img['n']  = (ke_img, images.rotate(ke_img, 180))
+        self.piece_international_img['s']  = (gi_img, images.rotate(gi_img, 180))
+        self.piece_international_img['g']  = (ki_img, images.rotate(ki_img, 180))
+        self.piece_international_img['r']  = (hi_img, images.rotate(hi_img, 180))
+        self.piece_international_img['b']  = (ka_img, images.rotate(ka_img, 180))
+        self.piece_international_img['k']  = (ou_img, images.rotate(ou_img, 180))
+        self.piece_international_img['+p'] = (to_img, images.rotate(to_img, 180))
+        self.piece_international_img['+l'] = (ny_img, images.rotate(ny_img, 180))
+        self.piece_international_img['+n'] = (nk_img, images.rotate(nk_img, 180))
+        self.piece_international_img['+s'] = (ng_img, images.rotate(ng_img, 180))
+        self.piece_international_img['+r'] = (ry_img, images.rotate(ry_img, 180))
+        self.piece_international_img['+b'] = (um_img, images.rotate(um_img, 180))
+        self.piece_international_img['+g'] = (ki_img, images.rotate(ki_img, 180))
     
 
     def board_img_init(self):
