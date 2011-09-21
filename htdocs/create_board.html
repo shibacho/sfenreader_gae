@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
 <meta content="クラウド将棋盤ジェネレーターは将棋局面図を作成するWebサービスです。" name="description" />
 <meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/> 
 <title>将棋盤局面図を作成</title>
+<!--
 <script type="text/javascript">
 var user_agent = window.navigator.userAgent.toLowerCase();
 if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
     location.href = 'create_board_mobile.html';
 }
+-->
 </script>
 <script type="text/javascript" src="jquery-1.6.2.min.js"></script>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="flashcanvas.js"></script>
 <![endif]-->
-<script type="text/javascript" src="jshogi_board.js?2011073001"></script>
-<script type="text/javascript" src="create_board.js?2011073001"></script>
-<script type="text/javascript" src="google_analytics.js"></script>
+<script type="text/javascript" src="jshogi_board.js?2011082607"></script>
+<script type="text/javascript" src="create_board.js?2011082602"></script>
+<script type="text/javascript" src="google_analytics.js" async></script>
 <link rel="stylesheet" type="text/css" href="common.css" />
 </head>
 <body>
 <div id="container" class="container">
 <h1>局面図をWebで作成</h1>
 <div id="left_canvas" class="left">
-<canvas id="board" width="400" height="420"></canvas>
-<canvas id="rot_canvas" style="display:none;"></canvas><br>
+<div style="text-align:center;"><img src="./static_img/indicator.gif" id="indicator"></div>
+<canvas id="board" width="400" height="420"></canvas><br>
 URL :<input type="text" id="long_url" style="width:400px;"/> <br>
 <button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
@@ -69,11 +71,15 @@ Kifu for Windows で出力される局面図と同じフォーマットが表示
 左クリック: 駒を選択、移動。移動先のマスに駒がある場合は交換、または選択元の対局者の持ち駒にします。<br>
 ダブルクリック: 駒の種類を変更(先手駒->先手成り駒->後手駒->後手成り駒)<br>
 <hr>
+<h2>動作環境(ブラウザ)</h2>
+IE9、Firefox(6、7)、Google Chrome、Opera11、Safar5.1、(iPhone Safari) で動作確認しております。<br>
+動作OSは選ばないはずです。<br>
+<hr>
 <h2>既知の問題点</h2>
-対応しているブラウザに制限があります。
-現状IE8、Firefox5で不具合を確認しています。<br>
-32bit版のIE9、Firefox6、Chrome13、Opera11、Safar5.1、(iPhone Safari) で動作確認しております。<br>
-Firefox5についてはすぐにFirefox6にアップデートされることが発表されていますので、対応予定はありません。<br>
+駒落ちの局面図には対応しておりません（駒箱という概念がないため）<br>
+対応しているブラウザに制限があります。<br>
+現状IE8以前とFirefox5以前では動きません。<br>
+IE8については<a href="http://sfenreader.appspot.com/">Kifu for Windowsを使って局面図を作成する</a>という代替手段があるので対応は遅れる（もしくはしない）と思います。<br>
 <hr>
 <h2>既知の問題点以外のフィードバックやバグ報告</h2>
 <a href="http://twitter.com/fantakeshi">@fantakeshi</a>までお願いします。
@@ -98,6 +104,8 @@ Firefox5についてはすぐにFirefox6にアップデートされることが�
 <hr>
 <h2>更新履歴</h2>
 <ul>
+<li>2011/09/11 getImageDataにクロスドメインの問題があることがわかったため、drawImageを使った方法に修正
+<li><s>2011/08/26 Firefox7でも動くように内部的に大幅改修(drawImageではなくgetImageDataを使うようにした)</s>
 <li>2011/08/09 掲示板貼り付けフォーマットに先手、後手を含めるようにした。
 <li>2011/08/09 Firefox6、64bit版ブラウザに対応
 </ul>
