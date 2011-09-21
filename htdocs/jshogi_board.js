@@ -14,6 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+var PATH = 'http://' + location.host + '/';
+
 String.prototype.toArray = function() {
     var array = new Array;
     for (var i=0 ; i < this.length; i++) {
@@ -48,7 +50,7 @@ if (!this['ShogiBoard']) {
                            'TO':'+p', 'NY':'+l', 'NK':'+n', 'NG':'+s',
                            'NA':'+g', 'UM':'+b', 'RY':'+r' };
         this.piece_kanji_dict = { 'FU':'歩', 'KY':'香' , 'KE':'桂' , 'GI':'銀',
-                                  'KI':'金', 'KA':'角' , 'HI':'飛' , 'OU':'王',
+                                  'KI':'金', 'KA':'角' , 'HI':'飛' , 'OU':'玉',
                                   'TO':'と', 'NY':'杏' , 'NK':'圭' , 'NG':'全',
                                   'NA':'金', 'UM':'馬' , 'RY':'龍'};
         this.kanji_num = [ '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十',
@@ -713,10 +715,10 @@ if (!this['BoardCanvas']) {
             ctx.drawImage(image, self.BOARD_X, self.BOARD_Y + self.TITLE_HEIGHT);
 
             image = self.piece_images.getBlackImage();
-            ctx.putImageData(image, self.BLACK_X, self.BLACK_Y + self.TITLE_HEIGHT);
+            ctx.drawImage(image, self.BLACK_X, self.BLACK_Y + self.TITLE_HEIGHT);
 
-            image = self.piece_images.getWhiteImage(Math.PI);
-            ctx.putImageData(image, self.WHITE_X, self.WHITE_Y + self.TITLE_HEIGHT);
+            image = self.piece_images.getWhiteImage();
+            self.drawRotateImage(image, self.WHITE_X, self.WHITE_Y + self.TITLE_HEIGHT);
 
             var pieces = self.shogi_board.getAllPieces();
             for(var i = 0;i < pieces.length; i++) {
@@ -736,18 +738,17 @@ if (!this['BoardCanvas']) {
 
                 if (turn == self.shogi_board.BLACK) {
                     image = self.piece_images.getImage(piece);
+                    ctx.drawImage(image, x, y);
                 } else if (turn == self.shogi_board.WHITE) {
-                    image = self.piece_images.getImage(piece, Math.PI);
+                    image = self.piece_images.getImage(piece);
+                    self.drawRotateImage(image, x, y);
                 }
-                console.log('typeof image:' + typeof image);
-                if (typeof image != 'undefined') {
-                    ctx.putImageData(image, x, y);
-                }
+
             }
 
             /// Draw Hand Pieces
             /// Draw Black Hand Pieces
-            console.log('Draw White Hand Pieces:');
+            console.log('Draw Black Hand Pieces:');
             pieces = self.shogi_board.getHandPieces(self.shogi_board.BLACK);
             self.black_hand_pieces_y = {};
 
@@ -762,7 +763,7 @@ if (!this['BoardCanvas']) {
 
                 if (piece_num > 0) {
                     image = self.piece_images.getImage(piece_name);
-                    ctx.putImageData(image, x, y);
+                    ctx.drawImage(image, x, y);
                     self.black_hand_pieces_y[piece_name] = y;
 
                     y += self.PIECE_IMAGE_HEIGHT + self.IMAGE_PADDING_Y;
@@ -774,7 +775,7 @@ if (!this['BoardCanvas']) {
                             // 2桁目を描画
                             num = parseInt(piece_num / 10);
                             image = self.number_images.getImage(num);
-                            ctx.putImageData(image, x, y);
+                            ctx.drawImage(image, x, y);
                         }
                         x += self.NUMBER_IMAGE_WIDTH;
                         num = piece_num % 10;
@@ -783,7 +784,7 @@ if (!this['BoardCanvas']) {
                         console.log('image:' + typeof image + ' x:' + x +
                                    ' y:' + y);
 
-                        ctx.putImageData(image, x, y);
+                        ctx.drawImage(image, x, y);
                         y += self.NUMBER_IMAGE_HEIGHT + self.IMAGE_PADDING_Y;
                     }
                 }
@@ -804,14 +805,14 @@ if (!this['BoardCanvas']) {
                             ' piece_num:' + piece_num);
                 
                 if (piece_num > 0) {
-                    image = self.piece_images.getImage(piece_name, Math.PI);
+                    image = self.piece_images.getImage(piece_name);
                     if (first_draw == true) {
                         y -= self.WHITE_MARK_HEIGHT;
                         first_draw = false;
                     } else {
                         y -= (self.PIECE_IMAGE_HEIGHT + self.IMAGE_PADDING_Y);
                     }
-                    ctx.putImageData(image, x, y);
+                    self.drawRotateImage(image, x, y);
                     self.white_hand_pieces_y[piece_name] = y;
 
                     if (piece_num > 1) {
@@ -819,18 +820,30 @@ if (!this['BoardCanvas']) {
                         console.log('piece_num:' + piece_num);
                         var num;
                         num = piece_num % 10;
-                        image = self.number_images.getImage(num, Math.PI);
-                        ctx.putImageData(image, x, y);
+                        image = self.number_images.getImage(num);
+                        self.drawRotateImage(image, x, y);
 
                         x += self.NUMBER_IMAGE_WIDTH;
                         if (piece_num >= 10) {
                             num = parseInt(piece_num / 10);
-                            image = self.number_images.getImage(num, Math.PI);
-                            ctx.putImageData(image, x, y);
+                            image = self.number_images.getImage(num);
+                            self.drawRotateImage(image, x, y);
                         }
                     }
                 }
             }
+        };
+
+        this.drawRotateImage = function(image, x, y) {
+            console.log('drawRotateImage(' + image + ',' + x + ',' + y + ')');
+            var ctx = self.canvas.getContext('2d');
+            ctx.save();
+            ctx.translate(x * 2 + image.width, y * 2 + image.height);
+            ctx.rotate(Math.PI);
+            ctx.drawImage(image, x, y);
+
+            ctx.restore();
+            
         };
 
         this.convertPositionToBoard = function(x, y) {
@@ -946,7 +959,7 @@ if (!this['BoardCanvas']) {
                          self.IMAGE_PADDING_X);
 
                 var black_title_x = black_title_x_left + self.IMAGE_PADDING_X;
-                ctx.putImageData(black_image, black_title_x, self.PLAYER_Y,
+                ctx.drawImage(black_image, black_title_x, self.PLAYER_Y,
                              self.TITLE_MARK_WIDTH, self.TITLE_MARK_HEIGHT);
                 black_title_x += self.TITLE_MARK_WIDTH;
                 ctx.fillText(draw_black_name, black_title_x, self.PLAYER_Y,
@@ -985,7 +998,7 @@ if (!this['BoardCanvas']) {
                 var white_image = self.piece_images.getWhiteImage(Math.PI);
                 var white_title_x = self.WHITE_TITLE_MARK_X;
 
-                ctx.putImageData(white_image, white_title_x, self.PLAYER_Y,
+                ctx.drawImage(white_image, white_title_x, self.PLAYER_Y,
                               self.TITLE_MARK_WIDTH, self.TITLE_MARK_HEIGHT);
                 white_title_x += self.TITLE_MARK_WIDTH + self.IMAGE_PADDING_X;
                 ctx.fillText(draw_white_name, white_title_x, self.PLAYER_Y);
@@ -1079,6 +1092,11 @@ if (!this['PieceImages']) {
         this.white_image = '';
         this.piece_images = {};
 
+        this.board_url = '';
+        this.black_url = '';
+        this.white_url = '';
+        this.piece_urls = {};
+
         this.callback = {};
         this.num_loaded = 0;
     };
@@ -1087,45 +1105,69 @@ if (!this['PieceImages']) {
         ALL_IMAGE_NUM:17,
         initImages: function (on_complete_callback, kind) {
             this.callback = on_complete_callback;
-            if (typeof kind == 'undefined' || kind == 'kanji') {
-                this.board_image = 
-                        this.loadFromFile('./static_img/board.png');
-                this.black_image = 
-                        this.loadFromFile('./static_img/black.png');
-                this.white_image = 
-                        this.loadFromFile('./static_img/white.png');
+            this.board_url = PATH + 'static_img/board.png';
+            var suffix = '';
 
-                this.piece_images['FU'] = 
-                        this.loadFromFile('./static_img/fu.png');
-                this.piece_images['KY'] = 
-                        this.loadFromFile('./static_img/ky.png');
-                this.piece_images['KE'] = 
-                        this.loadFromFile('./static_img/ke.png');
-                this.piece_images['GI'] = 
-                        this.loadFromFile('./static_img/gi.png');
-                this.piece_images['KI'] = 
-                        this.loadFromFile('./static_img/ki.png');
-                this.piece_images['HI'] = 
-                        this.loadFromFile('./static_img/hi.png');
-                this.piece_images['KA'] = 
-                        this.loadFromFile('./static_img/ka.png');
-                this.piece_images['OU'] = 
-                        this.loadFromFile('./static_img/ou.png');
-                this.piece_images['TO'] = 
-                        this.loadFromFile('./static_img/to.png');
-                this.piece_images['NY'] = 
-                        this.loadFromFile('./static_img/ny.png');
-                this.piece_images['NK'] = 
-                        this.loadFromFile('./static_img/nk.png');
-                this.piece_images['NG'] = 
-                        this.loadFromFile('./static_img/ng.png');
-                this.piece_images['UM'] = 
-                        this.loadFromFile('./static_img/um.png');
-                this.piece_images['RY'] = 
-                        this.loadFromFile('./static_img/ry.png');
-            } else if (kind == 'alphabet') {
-
+            if (typeof kind != 'undefined' || kind != 'kanji') {
+                if (kind == 'alphabet' || kind == 'international') {
+                    this.board_url = PATH + 'static_img/board_alphabet.png';
+                    suffix = '_' + kind;
+                }
             }
+
+            this.black_url = PATH + 'static_img/black.png';
+            this.white_url = PATH + 'static_img/white.png';
+            this.piece_urls['FU'] = PATH + 'static_img/fu' + suffix + '.png';
+            this.piece_urls['KY'] = PATH + 'static_img/ky' + suffix + '.png';
+            this.piece_urls['KE'] = PATH + 'static_img/ke' + suffix + '.png';
+            this.piece_urls['GI'] = PATH + 'static_img/gi' + suffix + '.png';
+            this.piece_urls['KI'] = PATH + 'static_img/ki' + suffix + '.png';
+            this.piece_urls['HI'] = PATH + 'static_img/hi' + suffix + '.png';
+            this.piece_urls['KA'] = PATH + 'static_img/ka' + suffix + '.png';
+            this.piece_urls['OU'] = PATH + 'static_img/ou' + suffix + '.png';
+            this.piece_urls['TO'] = PATH + 'static_img/to' + suffix + '.png';
+            this.piece_urls['NY'] = PATH + 'static_img/ny' + suffix + '.png';
+            this.piece_urls['NK'] = PATH + 'static_img/nk' + suffix + '.png';
+            this.piece_urls['NG'] = PATH + 'static_img/ng' + suffix + '.png';
+            this.piece_urls['UM'] = PATH + 'static_img/um' + suffix + '.png';
+            this.piece_urls['RY'] = PATH + 'static_img/ry' + suffix + '.png';
+            
+
+            this.board_image = 
+                    this.loadFromFile(this.board_url);
+            this.black_image = 
+                    this.loadFromFile(this.black_url);
+            this.white_image = 
+                    this.loadFromFile(this.white_url);
+            
+            this.piece_images['FU'] = 
+                    this.loadFromFile(this.piece_urls['FU']);
+            this.piece_images['KY'] = 
+                    this.loadFromFile(this.piece_urls['KY']);
+            this.piece_images['KE'] = 
+                    this.loadFromFile(this.piece_urls['KE']);
+            this.piece_images['GI'] = 
+                    this.loadFromFile(this.piece_urls['GI']);
+            this.piece_images['KI'] = 
+                    this.loadFromFile(this.piece_urls['KI']);
+            this.piece_images['HI'] = 
+                    this.loadFromFile(this.piece_urls['HI']);
+            this.piece_images['KA'] = 
+                    this.loadFromFile(this.piece_urls['KA']);
+            this.piece_images['OU'] = 
+                    this.loadFromFile(this.piece_urls['OU']);
+            this.piece_images['TO'] = 
+                    this.loadFromFile(this.piece_urls['TO']);
+            this.piece_images['NY'] = 
+                    this.loadFromFile(this.piece_urls['NY']);
+            this.piece_images['NK'] = 
+                    this.loadFromFile(this.piece_urls['NK']);
+            this.piece_images['NG'] = 
+                    this.loadFromFile(this.piece_urls['NG']);
+            this.piece_images['UM'] = 
+                    this.loadFromFile(this.piece_urls['UM']);
+            this.piece_images['RY'] = 
+                    this.loadFromFile(this.piece_urls['RY']);
         },
         onLoad: function() {
             this.piece_images.num_loaded++;
@@ -1146,52 +1188,31 @@ if (!this['PieceImages']) {
             image.src = filename;
             return image;
         },
-        getImage: function(name, rotate) {
+        getImage: function(name) {
             console.log('name:' + name);
             name = name.toUpperCase();
-            if (typeof rotate == 'undefined') {
-                return this.rotate_image(this.piece_images[name], 0);
-            } else { // rot_canvas(180度回転)に描画してその結果を返す
-                return this.rotate_image(this.piece_images[name], rotate);
-            }
+            return this.piece_images[name];
+        },
+        getBoardUrl: function() {
+            return this.board_url;
+        },
+        getBlackUrl: function() {
+            return this.black_url;
+        },
+        getWhiteUrl: function() {
+            return this.white_url;
+        },
+        getImageUrl: function(name) {
+            return this.piece_urls[name];
         },
         getBoardImage: function() {
             return this.board_image;
         },
-        getBlackImage: function(rotate) {
-            if (typeof rotate == 'undefined') {
-                return this.rotate_image(this.black_image);
-            } else {
-                return this.rotate_image(this.black_image, rotate);
-            }
+        getBlackImage: function() {
+            return this.black_image;
         },
-        getWhiteImage: function(rotate) {
-            if (typeof rotate == 'undefined') {
-                return this.white_image;
-            } else {
-                return this.rotate_image(this.white_image, Math.PI);
-            }
-        },
-        rotate_image: function(image, rotate) {
-            console.log('rotate_image: called');
-            console.log('typeof rotate:' + typeof rotate + ' rotate:' + rotate);
-            var rot_canvas = $('#rot_canvas')[0];
-            var rot_ctx = rot_canvas.getContext('2d');
-
-            // reset transform matrix
-            rot_ctx.setTransform(1, 0, 0, 1, 0, 0);
-            rot_ctx.clearRect(0, 0, rot_canvas.width, rot_canvas.height);
-
-            if (typeof rotate != 'undefined' && rotate != 0) {
-                console.log('rotate');
-                rot_ctx.translate(image.width, image.height);
-                rot_ctx.rotate(rotate);
-            }
-            else {
-                console.log('normal drawj');
-            }
-            rot_ctx.drawImage(image, 0, 0);
-            return rot_ctx.getImageData(0, 0, image.width, image.height);
+        getWhiteImage: function() {
+            return this.white_image;
         }
     };
 }
@@ -1211,7 +1232,7 @@ if (!this['NumberImages']) {
             this.callback = on_complete_callback;
 
             for (var i = 0;i < 10; i++) {
-                this.num_image[i] = this.loadFromFile('./static_img/' + 
+                this.num_image[i] = this.loadFromFile(PATH + 'static_img/' + 
                                                       i + '.png');
             }
         },
@@ -1233,22 +1254,8 @@ if (!this['NumberImages']) {
             image.src = filename;
             return image;
         },
-        getImage: function (num, rotate) {
-            var image = this.num_image[num];
-            var rot_canvas = $('#rot_canvas')[0];
-            var rot_ctx = rot_canvas.getContext('2d');
-            
-            // reset transform matrix
-            rot_ctx.setTransform(1, 0, 0, 1, 0, 0);
-            rot_ctx.clearRect(0, 0, rot_canvas.width, rot_canvas.height);
-            
-            if (typeof rotate != 'undefined' && rotate != 0) {
-                rot_ctx.translate(image.width, image.height);
-                rot_ctx.rotate(Math.PI);
-            }
-            rot_ctx.drawImage(image, 0, 0);
-
-            return rot_ctx.getImageData(0, 0, image.width, image.height);
+        getImage: function (num) {
+            return this.num_image[num];
         }
     };
 }
