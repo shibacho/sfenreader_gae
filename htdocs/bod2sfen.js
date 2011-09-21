@@ -152,7 +152,7 @@ function ChangeExampleStatus() {
             $('#tsume_board_img')[0].src = $('#tsume_board_img_url').text();
         }
 
-        if ($('#tsume_board_img_alphabet')[0].src == BLANK) {
+        if (typeof $('#tsume_board_img_alphabet')[0] != 'undefined' && $('#tsume_board_img_alphabet')[0].src == BLANK) {
             $('#tsume_board_img_alphabet')[0].src = $('#tsume_board_img_alphabet_url').text();
         }
         
@@ -168,7 +168,7 @@ function GetSfenPiece(str) {
     var piece_ja2sfen = { '・':''  , '歩':'p' , '香':'l' , '桂':'n' , 
                           '銀':'s' , '金':'g' , '角':'b' , '飛':'r' , 
                           '玉':'k' , 'と':'+p', '杏':'+l', '圭':'+n',
-                          '全':'+g', '馬':'+b', '龍':'+r'};
+                          '全':'+s', '馬':'+b', '龍':'+r'};
     return piece_ja2sfen[str];
 }
 
