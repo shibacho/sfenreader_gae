@@ -5,12 +5,21 @@
 <meta content="クラウド将棋盤ジェネレーターは将棋局面図を作成するWebサービスです。" name="description" />
 <meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/> 
 <title>クラウド将棋局面図ジェネレーター</title>
-<script type="text/javascript" src="jquery-1.6.2.min.js"></script>
-<script type="text/javascript" src="bod2sfen.js"></script>
-<script type="text/javascript" src="google_analytics.js" async></script>
-<script type="text/javascript" src="https://apis.google.com/js/plusone.js">
-  {lang: 'ja'}
+<script type="text/javascript" src="./jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="./bod2sfen.js"></script>
+<script type="text/javascript" src="./google_analytics.js" async></script>
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"> 
+ {lang: 'ja'}
 </script>
+<!--
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#langselect').change(function(){
+    location.href = 'http://' + location.host + '/' + $('#langselect').val() + '/index.html';
+});
+});
+</script>
+-->
 <link rel="stylesheet" type="text/css" href="./common.css" />
 </head>
 <body>
@@ -18,14 +27,28 @@
 <h1>クラウド将棋局面図ジェネレーター</h1>
 </div>
 <div style="float:right">
+<table>
+<td>
+Language:<select id="langselect"><option value="ja" selected>日本語</option><option value="en">English</option></select>
+</td>
+<td>
 <!-- hatena bookmark button -->
 <a href="http://b.hatena.ne.jp/entry/http://sfenreader.appspot.com/" class="hatena-bookmark-button" data-hatena-bookmark-title="クラウド将棋盤ジェネレーター" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
-
+</td>
+<td>
 <!-- twitter button -->
 <a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-lang="ja">ツイート</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-
+</td>
+<!--
+<td>
+<div id="fb-root"></div><script src="http://connect.facebook.net/ja_JP/all.js#xfbml=1"></script><fb:like href="http://sfenreader.appspot.com/" send="false" layout="button_count" width="50" show_faces="false" font="arial"></fb:like>
+</td>
+-->
+<td>
 <!-- Google Plus one Button -->
 <g:plusone size="medium"></g:plusone> 
+</td>
+</table>
 </div>
 <div id="abstract" style="margin-left:auto; margin-right:auto;">
 <div style="float:left; width:85%;"> 
@@ -54,7 +77,7 @@
 <hr>
 <h2>Web上で局面図を作成</h2>
 <ul>
-<li><a href="./create_board.html">こちら</a>
+<li><a href="./ja/create_board.html">こちら</a>
 </ul>
 <hr>
 <h2>Kifu for Windowsから画像(とSFEN文字列)を生成</h2>
@@ -95,7 +118,7 @@ Twitterにログインした状態で「ponanza先生に聞く」ボタンを押
 <!-- 手数: <input type="text" id="shogi_title" style="width: 100px;" /> (※省略可)<br> -->
 強調表示: <input type="text" id="last_move" style="width:30px;"/> のマス (半角2文字 例:76 84 ※省略可)<br>
 <span id="turn_span">手番: <input type="radio" name="turn" value="b" checked>先手番</input> <input type="radio" name="turn" value="w">後手番</input></span> <input type="checkbox" id="turn_check" value="off"/>表示しない (注:<strong>ponanza先生に聞く時は適切に設定してください。</strong>)<br>
-駒の種類: <input type="radio" name="piece" value="kanji" checked />漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒 <input type="radio" name="piece" value="international"/>国際駒 <br>
+駒の種類: <input type="radio" name="piece" value="kanji" checked />漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒(β) <input type="radio" name="piece" value="international"/>国際駒 <br>
 
 <button id="board_convert">変換する</button><span id="board_converted_text" class="none">変換完了</span>
 <div id="board_result" class="none">
@@ -191,15 +214,8 @@ arrowは矢印の描画を行います。矢印の開始位置と終了位置を
 <li> <a href="http://fantakeshi.web.fc2.com/">作者のホームページ(超簡素)</a>
 </ul>
 <hr>
-<h2>今後の予定</h2>
-<ul>
-<li>Web上での局面図作成UIを完全なものにする
-<li>SFEN文字列に手数が含まれていた場合「～手目」とタイトルに表示するようにする(画像スペースとの相談)
-<li>英語ページの提供
-</ul>
-<hr>
 <h2>要望、注意点等</h2>
-<a href="http://www.twitter.com/#!/ponanza_shogi">@ponanza_shogi</a>や<a href="http://81dojo.com">81dojo</a>で使っていただいてますが、正常に局面が生成されないと思う方はURLかsfenの文字列を<a href="http://www.twitter.com/#!/fantakeshi">@fantakeshi</a>宛に報告頂ければ幸いです。合わせてOSとブラウザ環境も教えて頂けると助かります。<br>
+正常に局面が生成されないと思う方はURLかsfenの文字列を<a href="http://www.twitter.com/#!/fantakeshi">@fantakeshi</a>宛に報告頂ければ幸いです。合わせてOSとブラウザ環境も教えて頂けると助かります。<br>
 <hr>
 <h2>Google App Engineの制約により出来ないこと</h2>
 <p>
@@ -216,12 +232,15 @@ ponanza作者(兼bot作者)の<a href="http://twitter.com/#!/issei_y">@issei_y</
 <p>
 Google App Engine 上で文字を画像に合成する方法を書いてくださった<a href="http://iizukak.com/?p=856">iizukakさん</a>に感謝します。<br>
 <p>
-<a href="http://81dojo.com">81dojo</a>に機能として組み込まれました。運営者の<a href="http://twitter.com/#!/hidetchi">@HIDETCHI</a>さんありがとうございます。<br>
+<a href="http://81dojo.com">81dojo</a>に機能として組み込まれました。また、国際駒にグラフィックについて多くの尽力を頂きました。<br>
+<a href="http://twitter.com/#!/hidetchi">@HIDETCHI</a>さんありがとうございます。<br>
 <p>
 ブログでのご利用やTwitter、Webページでご紹介頂いている皆様に感謝します。<br>
 <hr>
 <h2>更新履歴</h2>
 <ul>
+<li> 2011/09/22 Kifu for Windowsからの変換時に成銀が金と表示されるバグを修正
+<li> 2011/09/04 国際駒を新デザインにリニューアル(Thanks VERY much to <a href="http://hidetchi.blog68.fc2.com/">HIDETCHI</a>)
 <li> 2011/08/28 国際駒(by <a href="http://hidetchi.blog68.fc2.com/">HIDETCHI</a>)を暫定的に追加
 <li> 2011/08/06 Kifu for Windowsの局面図で出力される先手/後手の名前を解釈するようにした
 <li> 2011/08/06 SFEN文字列に含まれる手数を解釈し画像に含めるようにした
