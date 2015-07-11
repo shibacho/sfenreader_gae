@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta content="クラウド将棋盤ジェネレーターは将棋局面図を作成するWebサービスです。" name="description" />
-<meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/> 
+<meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/>
 <title>Create Shogi Diagram on the Web.</title>
 <!--
 <script type="text/javascript">
@@ -13,7 +13,7 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
 }
 -->
 </script>
-<script type="text/javascript" src="../jquery-1.6.2.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="../flashcanvas.js"></script>
 <![endif]-->
@@ -31,12 +31,10 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
 URL :<input type="text" id="long_url" style="width:400px;"/> <br>
 <button id="tweet">Tweet Diagram</button>(Required Twitter Account) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">Diagram</span>
 <!--
-短縮URL:<input type="text" id="short_url" /><br> 
+短縮URL:<input type="text" id="short_url" /><br>
 -->
 SFEN:<input type="text" id="sfen" style="width:400px;"/> <br>
-<!--
-<button id="ponanza_analysis">ponanza先生に聞く</button>(要:Twitterアカウント)
--->
+<button id="search_kyokumenpedia">Search</button>Move to Kyokumenpedia (Japanese)
 </div> <!-- left_canvas -->
 <div id="right_control" class="right">
 <p>
@@ -45,9 +43,6 @@ White Name: <input type="text" id="gote_name" style="width: 100px;" /> (*not req
 Title: <input type="text" id="shogi_title" style="width: 300px;" /> (*not required)<br>
 Last Move: <input type="text" id="last_move" style="width:30px;"/> Square (Example:76 84 *not required)<br>
 <span id="turn_span">Which to move: <input type="radio" name="turn" value="b" checked>Black</input> <input type="radio" name="turn" value="w">White</input></span> <input type="checkbox" id="turn_check" value="off"/>Do not display <br>
-<!--
-(注:<strong>ponanza先生に聞く時は適切に設定してください。</strong>)<br>
--->
 </p>
 <p>
 <!--
@@ -84,7 +79,7 @@ Doesn't work on previous browser on IE8, and Firefox5.<br>
 Can't make Handicapped game diagram.
 <hr>
 <h2>Feedback and bug report</h2>
-Please, mention to <a href="http://twitter.com/fantakeshi">@fantakeshi</a> on Twitter with your environment. 
+Please, mention to <a href="http://twitter.com/fantakeshi">@fantakeshi</a> on Twitter with your environment.
 <hr>
 <!--
 <h2>Technical background</h2>
