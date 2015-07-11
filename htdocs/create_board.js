@@ -160,7 +160,7 @@ $(document).ready(function(){
     /// 全ての読み込みが完了した後に描画する
     number_images.initImages();
     piece_images.initImages(function () { 
-        board_canvas.drawPieces();
+        board_canvas.drawAll();
 	$('#indicator').css('display', 'none');
     });
 });

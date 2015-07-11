@@ -1,0 +1,215 @@
+<!DOCUMENT html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta content=" is the web service that you can crate a shogi diagram image on the web." name="description" />
+<meta content="Shogi, Diagram, image, blog, paste" name="keywords"/> 
+<title>Cloud Shogi Diagram Generator</title>
+<script type="text/javascript" src="../jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="../bod2sfen.js"></script>
+<script type="text/javascript" src="../google_analytics.js" async></script>
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"> 
+ {lang: 'en'}
+</script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#langselect').change(function(){
+    location.href = 'http://' + location.host + '/' + $('#langselect').val() + '/index.html';
+});
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../common.css" />
+</head>
+<body>
+<div style="float:left">
+<h1>Cloud Shogi Diagram Generator</h1>
+</div>
+<div style="float:right">
+<table>
+<td>
+Language:<select id="langselect"><option value="ja">日本語</option><option value="en" selected>English</option></select>
+</td>
+<td>
+<!-- twitter button -->
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-lang="en">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+</td>
+<td>
+<!-- Google Plus one Button -->
+<g:plusone size="medium"></g:plusone> 
+</td>
+</table>
+</div>
+<div id="abstract" style="margin-left:auto; margin-right:auto;">
+<div style="float:left; width:85%;"> 
+<h2>Abstract</h2>
+<p>
+<strong>Cloud Shogi Diagram Generator</strong> is the web service that you can create a shogi diagram image.<br>
+There is also a Web API for the developers. (e.g. Twitter shogi engine bot programmer.) <br>
+<p>
+This service can use for <strong style="color:#FF0000;">tweeting a shogi diagram on Twitter</strong>, or <strong style="color:#FF0000;">pasting a diagram image  (e.g. theme diagrams, mate problems) on your blog directly</strong> (don't need to save to local disk).This service DOES NOT use a disk space on your blog. <br>
+<p>
+This service is provided "AS IS" BASIS. So, there is no guarantee. Please, understand it.<br>
+<p>
+I took a hint from <a href="https://chrome.google.com/webstore/detail/jelboncgkpobgplihidgchijjfkkkfjd">Google Chrome Extension SFEN Reader</a> by <a href="https://twitter.com/#!/ginsho">ginsho</a>.
+</div>
+<div style="float:right; width:15%;">
+<script type="text/javascript" src="http://pc.jsamobile.jp/schedule_bp/blogparts.js"></script>
+</div>
+</div> <!-- abstract -->
+<div id="description" style="width:100%; clear:both;">
+<hr>
+<h2>Create a Shogi diagram on the Web</h2>
+<ul>
+<li><a href="./create_board.html">here</a>
+</ul>
+<hr>
+<h2>Create a diagram using <a href="http://homepage2.nifty.com/kakinoki_y/">Kifu for Windows</a>(Japanese)</h2>
+<p>
+Paste the diagram string that can get from Kifu for Windows Menu ([編集](Edit) -> [局面のコピー](Paste) -> [通常]) on the clipboard. and, push the "Convert" button. Then, generate the image URL and the img tag for your blog, and you can preview that.<br>
+<p>
+You can enter Player Names (Black and White), and a diragram title.<br>
+Player names and diagram title can use non-ascii character, but you can't use Unicode pieces character ☗☖. Please use ▲△(▽) intstead of it.
+<hr>
+<p>
+<strong>Diagram of "Kifu for Windows"</strong><br>
+<textarea id="board" style="width:260px; height:230px; font-family:'ＭＳ ゴシック', 'MS Gothic', 'Osaka－等幅', Osaka-mono, monospace; font-size:14px; color:#999;">
+後手の持駒：なし
+  ９ ８ ７ ６ ５ ４ ３ ２ １
++---------------------------+
+|v香v桂v銀v金v玉v金v銀v桂v香|一
+| ・v飛 ・ ・ ・ ・ ・v角 ・|二
+|v歩v歩v歩v歩v歩v歩v歩v歩v歩|三
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|四
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|五
+| ・ ・ ・ ・ ・ ・ ・ ・ ・|六
+| 歩 歩 歩 歩 歩 歩 歩 歩 歩|七
+| ・ 角 ・ ・ ・ ・ ・ 飛 ・|八
+| 香 桂 銀 金 玉 金 銀 桂 香|九
++---------------------------+
+先手の持駒：なし
+手数＝0    まで
+</textarea><br>
+Black Name: <input type="text" id="sente_name" style="width: 100px;" /> (*not required)<br>
+White Name: <input type="text" id="gote_name" style="width: 100px;" /> (*not required)<br>
+Title: <input type="text" id="shogi_title" style="width: 300px;" /> (*not required)<br>
+<!-- at move: <input type="text" id="shogi_title" style="width: 100px;" /> (※省略可)<br> -->
+Last Move: <input type="text" id="last_move" style="width:30px;"/> Square (Example:76 84 * not required)<br>
+<span id="turn_span">Which to move: <input type="radio" name="turn" value="b" checked>Black</input> <input type="radio" name="turn" value="w">White</input></span> <input type="checkbox" id="turn_check" value="off"/>Do not display<br> 
+Piece Kind: <input type="radio" name="piece" value="kanji" checked />Kanji <input type="radio" name="piece" value="alphabet"/>Alphabet(beta) <input type="radio" name="piece" value="international"/>International <br>
+
+<button id="board_convert">Convert</button><span id="board_converted_text" class="none">Complete</span>
+<div id="board_result" class="none">
+URL :<input type="text" id="long_url" style="width:400px;"/> <button id="tweet">Tweets Diagram</button>(Required Twitter Account) <br> <span id="versus_string" class="none">vs </span> <span id="board_default_name" class="none">Diagram</span>
+<!--
+短縮URL:<input type="text" id="short_url" /><br> 
+-->
+<!--
+SFEN:<input type="text" id="sfen" style="width:400px;"/> <button id="ponanza_analysis">ponanza先生に聞く</button>(要:Twitterアカウント)<br><br>
+-->
+Paste on your blog.<br>
+<textarea id="blog_code" style="width:500px;height:100px;"></textarea>
+<h3>Preview</h3>
+
+<h4>Setting a display size</h4>
+Width: <input type="text" id="sfen_img_width" /> Height: <input type="text" id="sfen_img_height" /> <input type="checkbox" id="keep_sfen_img_aspect" checked/> Keep Aspect Ratio<br>
+<img src="about:_blank" id="sfen_preview">
+</div>
+<hr>
+<h2>How to use (Web API)</h2>
+Send a HTTP GET Request to get a diagram image.
+<blockquote>
+http://sfenreader.appspot.com/sfen?sfen=<i>sfen_string</i>&lm=<i>last_move_square_num</i>&sname=<i>name_of_sente</i>&gname=<i>name_of_gote</i>&title=<i>title</i>&piece=<i>kanji_or_alphabet_or_international</i>&turn=<i>on_or_off</i>
+</blockquote>
+This WebAPI returns a png image indicates by <i>sfen_string</i><br>
+<i>sfen_string</i> must be URIencoded, because it includes spaces.<br>
+<i>sfen_string</i> is the required parameter.<br>
+<p>
+Parameter lm emphasis a square of <i>last_move_square_num</i>.
+Generally , this parameter uses for the last move.<br>
+<i>lm</i> is not the required parameter.<br>
+<p>
+<i>sname</i> is the black name (Sente Name), and <i>gname</i> is the white name (Gote Name).These parameters must be URIencoded on UTF-8.<br> 
+These parameters are not the requred parameters. You can only show the black name, or only show the white name.<br>
+<p>
+<i>title</i> is the title of a shogi diagram. This shows upon the shogi board image.<br>
+This must be URIencoded on UTF-8 same as <i>sname</i> and <i>gname</i>.
+[Example: (First game of 52nd Oui-sen) or (Last move ▲68 - K)]<br>
+<p>
+<i>piece</i> indicates a kind of piece. "kanji" indicates Japanese kanji pieces, "alphabet" indicates alphabet one character pieces, "international" indicates international pieces (by <a href="http://meikoma.com/intpiece.html">HIDETCHI</a>).
+<p>
+<i>turn</i> is a flag either emphasis or not which to move to black mark or white mark.<br>You specify &amp;turn=on or &amp;turn=off.<br>
+If you omit this parameter, default value is on.<br>
+If SFEN has no information which to move, image doesn't include that information.
+<!--
+<p>
+arrowは矢印の描画を行います。矢印の開始位置と終了位置をカンマ区切りで指定します。<br>
+先手の持駒から線を引く場合は00、後手の持駒から線を引く場合は01を指定します。<br>
+例: (77,76 ７七 から ７六に線を引く)
+例: (01,41 後手の持ち駒から41に線を引く)
+-->
+<hr>
+<h2 id="example_title">Example</h2>
+<button id="example_button">▼Show example</button><span id="example_button_to_show" class="none">▼Show example</span><span id="example_button_to_hide" class="none">▲Hide example</span>
+<div id="example" class="none">
+<h3>Initial Position(kanji)</h3>
+<img src="about:_blank" id="initial_board_img"><span id="initial_board_img_url" style="display:none;">../sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL</span>
+<h4>img tag</h4>
+<textarea style="width:500px;height:100px;">
+&lt;img src="http://sfenreader.appspot.com/sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL"&gt;
+</textarea>
+<!--
+<hr>
+<h3>Initial position (International pieces)</h3>
+<img src="about:_blank" id="initial_board_img"><span id="initial_board_img_url" style="display:none;">../sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL&piece=international</span>
+<h4>img tag</h4>
+<textarea style="width:500px;height:100px;">
+&lt;img src="http://sfenreader.appspot.com/sfen?sfen=lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL&amp;piece=international"&gt;
+</textarea>
+-->
+<hr>
+<h3><a href="http://www.youtube.com/watch?v=s5JF89Ayzyg#t=7m05s">Legendary ▲G - 52</a>(international pieces)</h3>
+<img id="endgame_board_img" src="about:_blank"><br><span id="endgame_board_img_url" class="none">../sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20w%20BGSLPnp%2061&lm=52&sname=Yoshiharu%20Habu&gname=Hifumi%20Katou&title=The%2038th%20NHK%20Cup%20tournament&piece=international</span>
+<h4>img tag</h4>
+<textarea style="width:600px;height:150px;">
+&lt;img src="http://sfenreader.appspot.com/sfen?sfen=ln1g5%2F1r2S1k2%2Fp2pppn2%2F2ps2p2%2F1p7%2F2P6%2FPPSPPPPLP%2F2G2K1pr%2FLN4G1b%20w%20BGSLPnp%2061&lm=52&Yoshiharu%20Habu&gname=Hifumi%20Katou&title=The%2038th%20NHK%20Cup%20tournament&amp;international"&gt;
+</textarea>
+<hr>
+<h3>Mate Problems(Shogi Zukou No.1)</h3>
+<img id="tsume_board_img" src="about:_blank"><span id="tsume_board_img_url" class="none">../sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p</span><br>
+<h4>img tag</h4>
+<textarea style="width:500px;height:100px;">
+&lt;img src="http://sfenreader.appspot.com/sfen?sfen=1pG1B4%2FGs%2BP6%2FpP7%2Fn1ls5%2F3k5%2FnL4%2Br1b%2F1%2Bp1p%2BR4%2F1S7%2F2N6%20b%20SPgnl11p%20"&gt;
+</textarea>
+<br>
+<button id="example_button_under">▲Hide Examples</button>
+</div> <!-- example -->
+<hr>
+<h2>Links</h2>
+<ul>
+<li> <a href="http://www.geocities.jp/shogidokoro/usi.html">SFEN draft</a>
+<li> <a href="https://github.com/fantakeshi/sfenreader_gae">Source (github)</a> Apache2.0 License
+<li> <a href="http://fantakeshi.blog50.fc2.com/">Creator's blog (Japanese)</a>
+</ul>
+<hr>
+<h2>Contacts</h2>
+If you think this program generates wrong shogi diagrams, please mention to <a href="http://twitter.com/fantakeshi">@fantakeshi</a> with URL or SFEN string. Please tell me your computer's OS and browser environment. That is helpful information.<br>
+<hr>
+<h2>Acknowledgement</h2>
+<p>
+<ul>
+<li><a href="http://twitter.com/issei_y">@issei_y</a> / Shogi Engine "ponanza" and Twitter bot <a href="http://twitter.com/ponanza_shogi">@ponanza_shogi</a> creator. (Japanese) <br>
+<li><a href="http://twitter.com/ginsho">@ginsho</a> / Google Chrome Extension <a href="https://chrome.google.com/webstore/detail/jelboncgkpobgplihidgchijjfkkkfjd">SFEN Reader</a>'s creator.
+<li><a href="http://iizukak.com/?p=856">iizukak</a> / Wrote the blog entry (Japanese) to composite characters (including non-ascii one) on Google App Engine. (Using <a href="http://code.google.com/intl/ja/apis/chart/image/docs/gallery/dynamic_icons.html">Google Chart Tools</a>) <br>
+<li><a href="http://twitter.com/hidetchi">@HIDETCHI</a> / 81dojo administrator, internationalized pieces creator.
+<li>Everyone who uses this service or/and introduces here on your web page.
+</ul>
+<hr>
+<h2>History</h2>
+<ul>
+<li> 2011/09/04 English page is published.
+</ul>
+<hr>
+<img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif" alt="Powered by Google App Engine" />
+</div> <!-- description -->
+</body>
+</html>
