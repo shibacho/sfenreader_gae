@@ -91,7 +91,7 @@ Language:<select id="langselect"><option value="ja" selected>日本語</option><
 SFEN文字列は<a href="http://kyokumen.jp/positions/search">局面ペディア検索</a>等でお使いください。<br>
 <hr>
 <p>
-<strong>Kifu for Windows の盤面</strong><br>
+<strong>Kifu for Windows の盤面を入力</strong><br>
 <textarea id="board" style="width:260px; height:230px; font-family:'ＭＳ ゴシック', 'MS Gothic', 'Osaka－等幅', Osaka-mono, monospace; font-size:14px; color:#999;">
 後手の持駒：なし
   ９ ８ ７ ６ ５ ４ ３ ２ １
@@ -114,26 +114,27 @@ SFEN文字列は<a href="http://kyokumen.jp/positions/search">局面ペディア
 タイトル: <input type="text" id="shogi_title" style="width: 300px;" /> (※省略可 全角20文字以下)<br>
 <!-- 手数: <input type="text" id="shogi_title" style="width: 100px;" /> (※省略可)<br> -->
 強調表示: <input type="text" id="last_move" style="width:30px;"/> のマス (半角2文字 例:76 84 ※省略可)<br>
-<span id="turn_span">手番: <input type="radio" name="turn" value="b" checked>先手番</input> <input type="radio" name="turn" value="w">後手番</input></span> <input type="checkbox" id="turn_check" value="off"/>表示しない (注:<strong>ponanza先生に聞く時は適切に設定してください。</strong>)<br>
+<span id="turn_span">手番: <input type="radio" name="turn" value="b" checked>先手番</input> <input type="radio" name="turn" value="w">後手番</input></span> <input type="checkbox" id="turn_check" value="off"/>表示しない<br>
 駒の種類: <input type="radio" name="piece" value="kanji" checked />漢字一字駒 <input type="radio" name="piece" value="alphabet"/>英語一字駒(β) <input type="radio" name="piece" value="international"/>国際駒 <br>
 
 <button id="board_convert">変換する</button><span id="board_converted_text" class="none">変換完了</span>
 <div id="board_result" class="none">
-URL :<input type="text" id="long_url" style="width:400px;"/> <button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
+URL :<input type="text" id="long_url" style="width:400px;" onclick="this.focus(); this.select();"/> <button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
 短縮URL:<input type="text" id="short_url" /><br>
 -->
-SFEN:<input type="text" id="sfen" style="width:400px;"/> <button id="ponanza_analysis">ponanza先生に聞く</button>(要:Twitterアカウント)<br><br>
+SFEN:<input type="text" id="sfen" style="width:400px;" onclick="this.focus(); this.select();"/> <button id="move_to_sfen">画像URLに移動</button> <br>
 ブログに貼り付ける:<br>
-<textarea id="blog_code" style="width:500px;height:100px;"></textarea>
+<textarea id="blog_code" style="width:500px;height:100px;" onclick="this.focus(); this.select();"></textarea>
+<hr>
 <h3>プレビュー</h3>
-
-<h4>表示サイズの設定</h4>
+表示サイズの設定</h4>
 幅: <input type="text" id="sfen_img_width" /> 高さ: <input type="text" id="sfen_img_height" /> <input type="checkbox" id="keep_sfen_img_aspect" checked/> アスペクト比を保つ<br>
 <img src="about:_blank" id="sfen_preview">
 </div>
 <hr>
-<h2>使い方(開発者向け)</h2>
+<h2>APIを直接叩く使い方(開発者向け)</h2>
+<div id="developer_guide" class="none">
 <blockquote>
 http://sfenreader.appspot.com/sfen?sfen=<i>sfen_string</i>&lm=<i>last_move_square_num</i>&sname=<i>name_of_sente</i>&gname=<i>name_of_gote</i>&title=<i>title</i>&piece=<i>kanji_or_alphabet_or_international</i>&turn=<i>on_or_off</i>
 </blockquote>
@@ -168,6 +169,9 @@ arrowは矢印の描画を行います。矢印の開始位置と終了位置を
 例: (77,76 ７七 から ７六に線を引く)
 例: (01,41 後手の持ち駒から41に線を引く)
 -->
+</div> <!-- developer_guide -->
+<button id="developer_guide_button">▼見る</button>
+<span id="developer_guide_show" class="none">▼見る</span><span id="developer_guide_hide" class="none">▲隠す</span>
 <hr>
 <h2 id="example_title">例</h2>
 <button id="example_button">▼例を見る</button><span id="example_button_to_show" class="none">▼例を見る</span><span id="example_button_to_hide" class="none">▲例を隠す</span>
@@ -214,7 +218,7 @@ arrowは矢印の描画を行います。矢印の開始位置と終了位置を
 <h2>要望、注意点等</h2>
 正常に局面が生成されないと思う方はURLかsfenの文字列を<a href="http://www.twitter.com/#!/fantakeshi">@fantakeshi</a>宛に報告頂ければ幸いです。合わせてOSとブラウザ環境も教えて頂けると助かります。<br>
 <hr>
-<h2>Google App Engineの制約により出来ないこと</h2>
+<!-- <h2>Google App Engineの制約により出来ないこと</h2>
 <p>
 図面の任意のマスに矢印を引くこと(90度単位でしか画像を回転させられないため）<br>
 いい画像変換のWebAPIをご存知の方は<a href="http://www.twitter.com/#!/fantakeshi">@fantakeshi</a>までご連絡ください。<br>
@@ -222,7 +226,7 @@ arrowは矢印の描画を行います。矢印の開始位置と終了位置を
 <p>
 <a href="http://www.picnik.com">picnik</a>はもしかしたら出来るかもしれませんが詳しく調べていません。
 </p>
-<hr>
+<hr> -->
 <h2>謝辞</h2>
 <p>
 ponanza作者(兼bot作者)の<a href="http://twitter.com/#!/issei_y">@issei_y</a>さんと<a href="http://twitter.com/#!/ginsho">@ginshoさん</a>のやりとりがなければこのWebサービスの構想は産まれませんでした。ありがとうございます。<br>

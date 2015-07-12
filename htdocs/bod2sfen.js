@@ -33,7 +33,7 @@ function is_MSIE() {
 
 
 if (typeof window.console != 'object') { // IE対策
-    window.console = { log:function(){}      
+    window.console = { log:function(){}
     };
 }
 
@@ -54,11 +54,24 @@ $(document).ready(function(){
         ChangeExampleStatus();
     });
 
-    $('#ponanza_analysis').click(function (e) {
-        var text = '@ponanza_shogi ';
-        text += encodeURIComponent($('#sfen').val());
-        window.open('https://twitter.com/share?url=&text=' + text, '_blank', 'width=700,height=300');
+    $('#developer_guide_button').click(function (e){
+      console.log('#developer_guide_button clicked');
+      if ($('#developer_guide').css('display') == 'none') {
+        $('#developer_guide').show('slow');
+        $('#developer_guide_button').html(
+          $('#developer_guide_hide').text());
+      } else {
+        $('#developer_guide').hide('slow');
+        $('#developer_guide_button').html(
+          $('#developer_guide_show').text());
+      }
     });
+
+    // $('#ponanza_analysis').click(function (e) {
+    //     var text = '@ponanza_shogi ';
+    //     text += encodeURIComponent($('#sfen').val());
+    //     window.open('https://twitter.com/share?url=&text=' + text, '_blank', 'width=700,height=300');
+    // });
 
     $('#tweet').click(function(e) {
         var sente_name = $('#sente_name').val();
@@ -70,7 +83,7 @@ $(document).ready(function(){
         }
 
         text += shogi_title;
-        
+
         if (sente_name == '' && gote_name == '' && shogi_title == '') {
             text = $('#board_default_name').text();
         }
@@ -78,6 +91,10 @@ $(document).ready(function(){
         var url = encodeURIComponent(URL);
         text = encodeURIComponent(text);
         window.open('https://twitter.com/share?url=' + url + '&text=' + text, '_blank', 'width=700,height=300');
+    });
+
+    $('#move_to_sfen').click(function(e) {
+      window.open($('#long_url').val());
     });
 
     $('#turn_check').change(function() {
@@ -95,7 +112,7 @@ $(document).ready(function(){
                 $(this).css('disabled', '');
             });
         }
-        
+
     });
 
     $('#sfen_img_width').change(function () {
@@ -115,7 +132,7 @@ $(document).ready(function(){
         }
     });
 
-    /// 
+    ///
     $('#board').change(function(e) {
         ChangePlayerNames($('#board').val());
         if ($('#board_result').css('display') != 'none') {
@@ -147,7 +164,7 @@ function ChangeExampleStatus() {
         if ($('#endgame_board_img')[0].src == BLANK) {
             $('#endgame_board_img')[0].src = $('#endgame_board_img_url').text();
         }
-        
+
         if ($('#tsume_board_img')[0].src == BLANK) {
             $('#tsume_board_img')[0].src = $('#tsume_board_img_url').text();
         }
@@ -155,18 +172,20 @@ function ChangeExampleStatus() {
         if (typeof $('#tsume_board_img_alphabet')[0] != 'undefined' && $('#tsume_board_img_alphabet')[0].src == BLANK) {
             $('#tsume_board_img_alphabet')[0].src = $('#tsume_board_img_alphabet_url').text();
         }
-        
+
         $('#example').show('slow');
-        $('#example_button')[0].innerHTML = $('#example_button_to_hide').text();
+        $('#example_button').html(
+          ('#example_button_to_hide').text());
     } else {
         $('#example').hide('slow');
-        $('#example_button')[0].innerHTML = $('#example_button_to_show').text();
+        $('#example_button').html(
+          $('#example_button_to_show').text());
     }
 }
 
 function GetSfenPiece(str) {
-    var piece_ja2sfen = { '・':''  , '歩':'p' , '香':'l' , '桂':'n' , 
-                          '銀':'s' , '金':'g' , '角':'b' , '飛':'r' , 
+    var piece_ja2sfen = { '・':''  , '歩':'p' , '香':'l' , '桂':'n' ,
+                          '銀':'s' , '金':'g' , '角':'b' , '飛':'r' ,
                           '玉':'k' , 'と':'+p', '杏':'+l', '圭':'+n',
                           '全':'+s', '馬':'+b', '龍':'+r', "竜":'+r'};
     return piece_ja2sfen[str];
@@ -188,7 +207,7 @@ function Bod2Sfen(bod)
     var lines = bod.split(/\r|\n|\r\n/);
     var row_counter = 1;
     var move_count = 0;
-    
+
     for (var i = 0;i < lines.length; i++) {
         var line = lines[i];
         console.log('line:' + line + ' :length:' + line.length);
@@ -246,7 +265,7 @@ function Bod2Sfen(bod)
         } else if (line.match(/^手数＝(\d+)/)) {
             move_count = RegExp.$1;
         }
-        
+
         /// 最後の列にはスラッシュを入れない
         if (added_row && row_counter <= 9) {
             sfen_board += '/';
@@ -256,14 +275,14 @@ function Bod2Sfen(bod)
     var sfen = '';
     sfen += sfen_board + ' ';
     sfen += $('input[name=turn]:checked').val() + ' ';
-    
-    if (sfen_black_hand == '' && sfen_white_hand == '') { 
+
+    if (sfen_black_hand == '' && sfen_white_hand == '') {
         /// どちらも持ち駒がない場合
         sfen += '- ';
     } else {
         sfen += sfen_black_hand + sfen_white_hand + ' ';
     }
-    
+
     if (move_count == 0) { /// 手数の情報がない場合は0とみなす
         sfen += '0';
     } else {
@@ -319,7 +338,7 @@ function UpdateImgUrl(priority) {
 }
 
 /// 持ち駒をSFEN文字列に変える
-function Handpiece2Sfen(str) 
+function Handpiece2Sfen(str)
 {
     var sfen_hand = '';
     console.log('Handpiece2sfen() called:' + str);
@@ -388,7 +407,7 @@ function UpdateUrl() {
 }
 
 var SFEN_IMAGE = undefined;
-function BoardConvert(e) 
+function BoardConvert(e)
 {
     console.log('BoardConvert() Called:');
     UpdateUrl();
