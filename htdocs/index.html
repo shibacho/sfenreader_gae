@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta content="クラウド将棋盤ジェネレーターは将棋局面図を作成するWebサービスです。" name="description" />
-<meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/> 
+<meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/>
 <title>クラウド将棋局面図ジェネレーター</title>
-<script type="text/javascript" src="./jquery-1.6.2.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script type="text/javascript" src="./bod2sfen.js"></script>
 <script type="text/javascript" src="./google_analytics.js" async></script>
-<script type="text/javascript" src="https://apis.google.com/js/plusone.js"> 
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js">
  {lang: 'ja'}
 </script>
 <script type="text/javascript">
@@ -21,10 +21,10 @@ $(document).ready(function() {
 <link rel="stylesheet" type="text/css" href="./common.css" />
 </head>
 <body>
-<div style="float:left">
+<div style="float:left;">
 <h1>クラウド将棋局面図ジェネレーター</h1>
 </div>
-<div style="float:right">
+<div style="float:right;">
 <table>
 <td>
 Language:<select id="langselect"><option value="ja" selected>日本語</option><option value="en">English</option></select>
@@ -44,12 +44,12 @@ Language:<select id="langselect"><option value="ja" selected>日本語</option><
 -->
 <td>
 <!-- Google Plus one Button -->
-<g:plusone size="medium"></g:plusone> 
+<g:plusone size="medium"></g:plusone>
 </td>
 </table>
 </div>
 <div id="abstract" style="margin-left:auto; margin-right:auto;">
-<div style="float:left; width:85%;"> 
+<div style="float:left; width:85%;">
 <h2>概要</h2>
 <p>
 <strong>クラウド将棋局面図ジェネレーター</strong>(旧称:将棋局面図WebAPI)はWeb上だけで完結する将棋盤局面図の画像作成ツールです。<br>
@@ -122,7 +122,7 @@ Twitterにログインした状態で「ponanza先生に聞く」ボタンを押
 <div id="board_result" class="none">
 URL :<input type="text" id="long_url" style="width:400px;"/> <button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
-短縮URL:<input type="text" id="short_url" /><br> 
+短縮URL:<input type="text" id="short_url" /><br>
 -->
 SFEN:<input type="text" id="sfen" style="width:400px;"/> <button id="ponanza_analysis">ponanza先生に聞く</button>(要:Twitterアカウント)<br><br>
 ブログに貼り付ける:<br>
