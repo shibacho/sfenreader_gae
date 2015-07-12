@@ -23,3 +23,10 @@ http://sfenreader.appspot.com/
 1. Deploy する
 
 1. myexample.appspot.com にアクセスして表示されればOK
+
+## License
+
+このソフトウェアはApache 2.0ライセンスで配布されます。以下を参照してください。
+http://www.apache.org/licenses/LICENSE-2.0.
+
+Copyright (c) 2011-2015 fantakeshi
