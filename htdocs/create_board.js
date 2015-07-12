@@ -19,7 +19,7 @@ $(document).ready(function(){
     var piece_images = new PieceImages();
     var number_images = new NumberImages();
     var $board = $('#board');
-    var board_canvas = new BoardCanvas($board[0], shogi_board, 
+    var board_canvas = new BoardCanvas($board[0], shogi_board,
                                        piece_images, number_images);
     if (!$board || !$board[0].getContext) {
         return;
@@ -51,7 +51,7 @@ $(document).ready(function(){
         var black_name = board_canvas.getBlackName();
         var white_name = board_canvas.getWhiteName();
         var title = board_canvas.getTitle();
-        
+
         var sfen_encode = encodeURIComponent(sfen);
         var url = 'http://' + location.host + '/sfen?sfen=' + sfen_encode;
 
@@ -91,7 +91,7 @@ $(document).ready(function(){
     var rot_ctx = rot_canvas.getContext('2d');
     rot_ctx.save();
 
-    console.log('width:' + board_canvas.CANVAS_WIDTH + 
+    console.log('width:' + board_canvas.CANVAS_WIDTH +
                 ' height:' + board_canvas.CANVAS_HEIGHT);
 
     $board[0].width = board_canvas.CANVAS_WIDTH;
@@ -126,11 +126,11 @@ $(document).ready(function(){
         board_canvas.onBoardChange();
     });
 
-    $('#ponanza_analysis').click(function (e) {
-        var text = '@ponanza_shogi ';
-        text += encodeURIComponent($('#sfen').val());
-        window.open('https://twitter.com/share?url=&text=' + text, '_blank', 'width=700,height=300');
-    });
+    // $('#ponanza_analysis').click(function (e) {
+    //     var text = '@ponanza_shogi ';
+    //     text += encodeURIComponent($('#sfen').val());
+    //     window.open('https://twitter.com/share?url=&text=' + text, '_blank', 'width=700,height=300');
+    // });
 
     $('#tweet').click(function(e) {
         var url = $('#long_url').val();
@@ -143,7 +143,7 @@ $(document).ready(function(){
         }
 
         text += shogi_title;
-        
+
         if (sente_name == '' && gote_name == '' && shogi_title == '') {
             text = $('#board_default_name').text();
         }
@@ -153,15 +153,14 @@ $(document).ready(function(){
         window.open('https://twitter.com/share?url=' + url + '&text=' + text, '_blank', 'width=700,height=300');
     });
 
-
     shogi_board.initEvenGame();
     board_canvas.onBoardChange();
-    
-    /// 全ての読み込みが完了した後に描画する
+
+    /// Draw board image after all image have loaded
     number_images.initImages();
-    piece_images.initImages(function () { 
+    piece_images.initImages(function () {
         board_canvas.drawAll();
-	$('#indicator').css('display', 'none');
+        $('#indicator').css('display', 'none');
     });
 });
 
@@ -182,5 +181,5 @@ function SetBoardString(shogi_board) {
 
 
     $('#board_text').val(board_string);
-    
+
 }
