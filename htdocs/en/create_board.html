@@ -39,13 +39,12 @@ Language:<select id="langselect"><option value="ja">日本語</option><option va
 <div style="text-align:center;"><img src="../static_img/indicator.gif" id="indicator"></div>
 <canvas id="board" width="400" height="420"></canvas><br>
 <canvas id="rot_canvas" style="display:none;"></canvas><br>
-URL :<input type="text" id="long_url" style="width:400px;"/> <br>
+URL :<input type="text" id="long_url" style="width:400px;" onclick="this.focus(); this.select();"/> <br>
 <button id="tweet">Tweet Diagram</button>(Required Twitter Account) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">Diagram</span>
 <!--
 Shorten URL:<input type="text" id="short_url" /><br>
 -->
-SFEN:<input type="text" id="sfen" style="width:400px;"/> <br>
-<button id="search_kyokumenpedia">Search</button> Move to Kyokumenpedia (Japanese)
+SFEN:<input type="text" id="sfen" style="width:400px;" onclick="this.focus(); this.select();"/> <br>
 </div> <!-- left_canvas -->
 <div id="right_control" class="right">
 <p>
@@ -61,12 +60,12 @@ Last Move: <input type="text" id="last_move" style="width:30px;"/> Square (Examp
 -->
 <strong class="underline">Paste on your blog:</strong><br>
 Paste the tag below on your blog contents.<br>
-<textarea id="blog_code" style="width:500px;height:100px;"></textarea>
+<textarea id="blog_code" style="width:500px;height:100px;" onclick="this.focus(); this.select();"></textarea>
 </p>
 <p>
 <strong class="underline">Paste on BBS:</strong><br>
 Display a text diagram format same as Kifu for Windows.<br>
-<textarea id="board_text" style="width:260px;height:230px; font-family:'ＭＳ ゴシック', 'MS Gothic', 'Osaka－等幅', Osaka-mono, monospace; font-size:14px;"></textarea>
+<textarea id="board_text" style="width:260px;height:230px; font-family:'ＭＳ ゴシック', 'MS Gothic', 'Osaka－等幅', Osaka-mono, monospace; font-size:14px;" onclick="this.focus(); this.select();"></textarea>
 </div> <!-- right control -->
 </div> <!-- container -->
 <!--
@@ -85,7 +84,7 @@ Double Click: Change a piece type (Black piece -> Black promoted piece -> white 
 IE9, Firefox(6,7), Google Chrome, Opera11, Safar5.1, (iPhone Safari) or higher<br>
 Your OS doesn't care.(maybe)<br>
 <hr>
-<h2>Known problems</h2>
+<h2>Known problem(s)</h2>
 Can't make a handicapped game diagram.
 <hr>
 <h2>Feedback and bug report</h2>
@@ -98,7 +97,8 @@ Please, mention to <a href="http://twitter.com/fantakeshi">@fantakeshi</a> on Tw
 -->
 <h2>History</h2>
 <ul>
-<li> 2011/09/04 English page is opened.
+<li> 2015/07/12 Put language selector and some function updated.
+<li> 2011/09/04 English page is opened
 </ul>
 <hr>
 <div style="align:center;"><a href="./index.html">Back</a></div>

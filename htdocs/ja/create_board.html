@@ -30,14 +30,6 @@ $(document).ready(function() {
 <link rel="stylesheet" type="text/css" href="../common.css" />
 </head>
 <body>
-<!-- <div id="header">
-<div style="float:left;">
-<h1>局面図をWebで作成</h1>
-</div>
-<div style="float:right;">
-Language:<select id="langselect"><option value="ja" selected>日本語</option><option value="en">English</option></select>
-</div>
-</div> -->
 <div id="container" class="container">
 <h1>局面図をWebで作成</h1>
 <div class="right">
@@ -47,13 +39,14 @@ Language:<select id="langselect"><option value="ja" selected>日本語</option><
 <div style="text-align:center;"><img src="../static_img/indicator.gif" id="indicator"></div>
 <canvas id="board" width="400" height="420"></canvas><br>
 <canvas id="rot_canvas" style="display:none;"></canvas><br>
-URL :<input type="text" id="long_url" style="width:400px;"/> <br>
+URL :<input type="text" id="long_url" style="width:400px;" onclick="this.focus(); this.select();"/> <br>
 <button id="tweet">ツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
 短縮URL:<input type="text" id="short_url" /><br>
 -->
-SFEN:<input type="text" id="sfen" style="width:400px;"/> <br>
-<button id="search_kyokumenpedia">検索する</button> (局面ペディアに移動します)
+SFEN:<input type="text" id="sfen" name="sfen" style="width:400px;" onclick="this.focus(); this.select();"/> <br>
+<a href="http://kyokumen.jp/positions/search">局面ペディア検索</a>等に使えます
+</form>
 </div> <!-- left_canvas -->
 <div id="right_control" class="right">
 <p>
@@ -69,12 +62,12 @@ SFEN:<input type="text" id="sfen" style="width:400px;"/> <br>
 -->
 <strong class="underline">ブログに貼り付けるコード:</strong><br>
 以下のタグをブログの本文内に貼り付けます。<br>
-<textarea id="blog_code" style="width:500px;height:100px;"></textarea>
+<textarea id="blog_code" style="width:500px;height:100px;" onclick="this.focus(); this.select();"></textarea>
 </p>
 <p>
 <strong class="underline">掲示板に貼り付ける:</strong><br>
 Kifu for Windows で出力される局面図と同じフォーマットが表示されます。<br>
-<textarea id="board_text" style="width:260px;height:230px; font-family:'ＭＳ ゴシック', 'MS Gothic', 'Osaka－等幅', Osaka-mono, monospace; font-size:14px;"></textarea>
+<textarea id="board_text" style="width:260px;height:230px; font-family:'ＭＳ ゴシック', 'MS Gothic', 'Osaka－等幅', Osaka-mono, monospace; font-size:14px;" onclick="this.focus(); this.select();"></textarea>
 </div> <!-- right control -->
 </div> <!-- container -->
 <!--
@@ -95,9 +88,8 @@ IE9、Firefox(6、7)、Google Chrome、Opera11、Safar5.1、(iPhone Safari) で�
 <hr>
 <h2>既知の問題点</h2>
 駒落ちの局面図には対応しておりません（駒箱という概念がないため）<br>
-対応しているブラウザに制限があります。<br>
-現状IE8以前とFirefox5以前では動きません。<br>
-IE8については<a href="http://sfenreader.appspot.com/">Kifu for Windowsを使って局面図を作成する</a>という代替手段があるので対応は遅れる（もしくはしない）と思います。<br>
+対応しているブラウザに制限があります。主にGoogle Chromeで動作確認しています。<br>
+他のブラウザについては連絡いただければ対応できるかもしれません。<br>
 <hr>
 <h2>既知の問題点以外のフィードバックやバグ報告</h2>
 <a href="http://twitter.com/fantakeshi">@fantakeshi</a>までお願いします。
@@ -107,7 +99,7 @@ IE8については<a href="http://sfenreader.appspot.com/">Kifu for Windowsを�
 - 作者のブログでどうぞ（予定）
 <hr>
 -->
-<h2>改善予定</h2>
+<!-- <h2>改善予定</h2>
 優先順位順ですが手順前後の可能性もあります。<br>
 <ul>
 <li>「初期局面に戻す」「詰将棋用配置」のショートカットボタンの設置
@@ -115,12 +107,11 @@ IE8については<a href="http://sfenreader.appspot.com/">Kifu for Windowsを�
 <li>駒を移動した時の音の追加
 <li>リアルタイムプレビュー & 幅調整機能
 <li>ダブルクリック時に余計な範囲選択が起こることを防ぐ(Safari、Chromeの問題)
-<li>スマートフォン版の製作
-<li><s>IE8に対応(これは難しいかも…)</s>
 </ul>
-<hr>
+<hr> -->
 <!-- <h2>更新履歴</h2>
 <ul>
+<li>2015/07/12 ponanza先生に聞くを削除、対局者名プレビューをきちんと出来るように、更新履歴をコメントアウトする等
 <li>2011/09/11 getImageDataに<a href="http://fantakeshi.blog50.fc2.com/blog-entry-53.html">クロスドメインの問題がある</a>(＝汎用的棋譜ビューワーとして使いづらい)ため、drawImageを使った方法に修正
 <li><s>2011/08/26 Firefox7でも動くように内部的に大幅改修(drawImageではなくgetImageDataを使うようにした)</s>
 <li>2011/08/09 掲示板貼り付けフォーマットに先手、後手を含めるようにした。
