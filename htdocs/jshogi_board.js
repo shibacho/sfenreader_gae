@@ -14,7 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var PATH = 'http://' + location.host + '/';
+var PATH = 'http://' + location.host + Pathname(location.pathname) + '/';
+var IMAGEPATH = PATH + '../static_img/';
+
+function Pathname(path) {
+  console.log('Pathname() path:' + path);
+  var index = path.lastIndexOf('/');
+  if (index === -1) {
+    return path;
+  }
+  return path.substring(0, index);
+}
 
 String.prototype.toArray = function() {
     var array = new Array;
@@ -25,8 +35,8 @@ String.prototype.toArray = function() {
 };
 
 if (typeof window.console != 'object') { // for IE
-    window.console = { 
-        log:function(){}      
+    window.console = {
+        log:function(){}
     };
 }
 
@@ -38,12 +48,12 @@ if (!this['ShogiBoard']) {
         }
 
         this.piece_kind = { ' * ':0,
-                            'FU':1 , 'KY':2 , 'KE':3 , 'GI':4 , 
-                            'KI':5 , 'KA':6 , 'HI':7 , 'OU':8 , 
-                            'TO':9 , 'NY':10, 'NK':11, 'NG':12, 
+                            'FU':1 , 'KY':2 , 'KE':3 , 'GI':4 ,
+                            'KI':5 , 'KA':6 , 'HI':7 , 'OU':8 ,
+                            'TO':9 , 'NY':10, 'NK':11, 'NG':12,
                             'NA':13, 'UM':14, 'RY':15 };
-        this.piece_name = [ ' * ', 'FU', 'KY', 'KE', 'GI', 
-                            'KI', 'KA', 'HI', 'OU', 'TO', 
+        this.piece_name = [ ' * ', 'FU', 'KY', 'KE', 'GI',
+                            'KI', 'KA', 'HI', 'OU', 'TO',
                             'NY', 'NK', 'NG', 'NA', 'UM', 'RY'];
         this.sfen_dict = { 'FU':'p' , 'KY':'l' , 'KE':'n' , 'GI':'s' ,
                            'KI':'g' , 'KA':'b' , 'HI':'r' , 'OU':'k' ,
@@ -74,7 +84,7 @@ if (!this['ShogiBoard']) {
         }
 
     };
-    
+
     ShogiBoard.prototype = {
         EMPTY:0,
         BLACK:1,
@@ -85,19 +95,19 @@ if (!this['ShogiBoard']) {
         PROMOTE_THRESHOLD:9, PROMOTE_PLUS:8,
         initEvenGame : function() {
             console.log('ShogiBoard.initEvenGame(): Called.');
-            this.board_status[11] = this.board_status[91] = 
+            this.board_status[11] = this.board_status[91] =
                     this.piece_kind['KY'] | this.WHITE_BIT;
-            this.board_status[21] = this.board_status[81] = 
+            this.board_status[21] = this.board_status[81] =
                     this.piece_kind['KE'] | this.WHITE_BIT;
-            this.board_status[31] = this.board_status[71] = 
+            this.board_status[31] = this.board_status[71] =
                     this.piece_kind['GI'] | this.WHITE_BIT;
             this.board_status[41] = this.board_status[61] =
                     this.piece_kind['KI'] | this.WHITE_BIT;
             this.board_status[51] = this.piece_kind['OU'] | this.WHITE_BIT;
             this.board_status[22] = this.piece_kind['KA'] | this.WHITE_BIT;
             this.board_status[82] = this.piece_kind['HI'] | this.WHITE_BIT;
-            this.board_status[13] = 
-                    this.board_status[23] = this.board_status[33] = 
+            this.board_status[13] =
+                    this.board_status[23] = this.board_status[33] =
                     this.board_status[43] = this.board_status[53] =
                     this.board_status[63] = this.board_status[73] =
                     this.board_status[83] = this.board_status[93] =
@@ -157,7 +167,7 @@ if (!this['ShogiBoard']) {
             var pieces = new Array;
             for (var i = 0;i < 100;i++) {
                 if (this.board_status[i] != 0) {
-                    console.log('i:' + i + ' status:' + 
+                    console.log('i:' + i + ' status:' +
                                 this.board_status[i]);
                     pieces.push([i, this.getBoardStatus(i) ]);
                 }
@@ -223,11 +233,11 @@ if (!this['ShogiBoard']) {
 
                 this.board_status[begin] = 0;
             } else {
-                var end_piece_name = 
+                var end_piece_name =
                         this.getPieceNameFromStatus(this.board_status[end]);
                 console.log('end_status:' + this.board_status[end] +
                             ' end_piece_name:' + end_piece_name);
-                
+
                 var status_begin = this.board_status[begin];
                 var status_end = this.board_status[end];
 
@@ -238,9 +248,9 @@ if (!this['ShogiBoard']) {
                 var begin_turn = this.getBoardStatus(begin)[0];
                 var end_turn = this.getBoardStatus(end)[0];
 
-                if (end_piece != 0 && begin_turn != end_turn && 
+                if (end_piece != 0 && begin_turn != end_turn &&
                     end_piece_name != 'OU') {
-                    console.log('begin_turn:' + begin_turn + 
+                    console.log('begin_turn:' + begin_turn +
                                 ' end_turn:' + end_turn);
                     if (begin_turn != end_turn) {
                         this.addHandPiece(begin_turn, end_piece);
@@ -252,12 +262,12 @@ if (!this['ShogiBoard']) {
                     this.board_status[end] = status_begin;
                     this.board_status[begin] = status_end;
                 }
-                
+
             }
 
         },
         dropPieceFromStand: function (turn, piece_name, to_pos) {
-            console.log('dropPieceFromStand: turn:' + turn + 
+            console.log('dropPieceFromStand: turn:' + turn +
                         ' piece_name:' + piece_name +
                         ' to_pos:' + to_pos);
             var piece_kind = this.piece_kind[piece_name];
@@ -279,7 +289,7 @@ if (!this['ShogiBoard']) {
                 this.black_hand_pieces[piece_name]--;
                 this.white_hand_pieces[piece_name]++;
             }
-            
+
         },
         changePieceKind: function(pos) {
             if (pos <= 11 || pos >= 100) {
@@ -291,7 +301,7 @@ if (!this['ShogiBoard']) {
             if (this.board_status[pos] == 0) {
                 return;
             }
-            
+
             var temp = this.getBoardStatus(pos);
             var turn = temp[0];
             var status = this.board_status[pos];
@@ -299,7 +309,7 @@ if (!this['ShogiBoard']) {
                        ' status:' + status);
             if (turn == this.BLACK) {
                 if (status < this.PROMOTE_THRESHOLD) {
-                    if (status != this.piece_kind['KI'] && 
+                    if (status != this.piece_kind['KI'] &&
                         status != this.piece_kind['OU']) {
                         status += this.PROMOTE_PLUS;
                     } else {
@@ -312,7 +322,7 @@ if (!this['ShogiBoard']) {
                 this.setBoardStatus(pos, turn, status);
             } else if (turn == this.WHITE) {
                 if (status < (this.PROMOTE_THRESHOLD | this.WHITE_BIT)) {
-                    if ((status & (~this.WHITE_BIT)) != this.piece_kind['KI'] && 
+                    if ((status & (~this.WHITE_BIT)) != this.piece_kind['KI'] &&
                         (status & (~this.WHITE_BIT)) != this.piece_kind['OU']) {
                         status += this.PROMOTE_PLUS;
                     } else {
@@ -361,13 +371,13 @@ if (!this['ShogiBoard']) {
                 }
                 empty_num = 0;
             }
-            
+
             if (typeof turn == 'undefined' || turn == this.BLACK) {
                 sfen += ' b ';
             } else {
                 sfen += ' w ';
             }
-            
+
             var no_hand_piece = true;
             var black_hand_pieces = this.getHandPieces(this.BLACK);
             for (var piece in black_hand_pieces) {
@@ -472,7 +482,7 @@ if (!this['ShogiBoard']) {
 }
 
 if (!this['BoardCanvas']) {
-    var BoardCanvas = function(canvas, shogi_board, 
+    var BoardCanvas = function(canvas, shogi_board,
                                piece_images, number_images) {
         var self = this;
         this.canvas = canvas;
@@ -484,7 +494,7 @@ if (!this['BoardCanvas']) {
         this.number_images = number_images;
         this.click_status = { pos:undefined, piece:undefined }; /// Now Click Status
 
-        this.black_hand_pieces_y = {}; 
+        this.black_hand_pieces_y = {};
         this.white_hand_pieces_y = {};
 
         this.BOARD_X = 50; this.BOARD_Y = 5;
@@ -537,7 +547,7 @@ if (!this['BoardCanvas']) {
             } else if (pos_x > 9) {
                 pos = 1;
             }
-            
+
             var click_status = self.click_status.pos;
             console.log('click_status:' + click_status);
 
@@ -556,13 +566,13 @@ if (!this['BoardCanvas']) {
                         self.click_status.pos = pos;
                         console.log('pos:' + self.click_status.pos);
                     }
-                } else if (pos_x > 9) { 
+                } else if (pos_x > 9) {
                     /// Clicked White Piece Stand
                     /// Detect which hand piece is selected.
                     var selected_y = 0;
                     var selected_piece = undefined;
                     for (var piece in self.white_hand_pieces_y) {
-                        if (y > self.white_hand_pieces_y[piece] && 
+                        if (y > self.white_hand_pieces_y[piece] &&
                             y < (self.white_hand_pieces_y[piece] +
                                  self.PIECE_IMAGE_HEIGHT) ) {
                             selected_piece = piece;
@@ -577,9 +587,9 @@ if (!this['BoardCanvas']) {
                         self.click_status.pos = self.shogi_board.WHITE;
                         self.click_status.piece = selected_piece;
                     }
-                    
+
                     console.log('white piece stand clicked.');
-                    console.log('selected_y:' + selected_y + 
+                    console.log('selected_y:' + selected_y +
                                 ' seleceted_piece:' + selected_piece);
                 } else if (pos_x < 1) {
                    /// Clicked Black Piece Stand
@@ -588,7 +598,7 @@ if (!this['BoardCanvas']) {
                     var selected_piece = undefined;
                     for (var piece in self.black_hand_pieces_y) {
                         if (y > self.black_hand_pieces_y[piece] &&
-                            y < (self.black_hand_pieces_y[piece] + 
+                            y < (self.black_hand_pieces_y[piece] +
                                  self.PIECE_IMAGE_HEIGHT)) {
                             selected_piece = piece;
                             selected_y = self.black_hand_pieces_y[piece];
@@ -605,7 +615,7 @@ if (!this['BoardCanvas']) {
                     }
 
                     console.log('black piece stand clicked.');
-                    console.log('selected_y:' + selected_y + 
+                    console.log('selected_y:' + selected_y +
                                 ' seleceted_piece:' + selected_piece);
                 }
             } else if (click_status > 10 && click_status < 100) {
@@ -625,7 +635,7 @@ if (!this['BoardCanvas']) {
                     } else if (pos == 1 && click_status == self.shogi_board.BLACK) {
                         self.shogi_board.givePieceFromStand(self.shogi_board.BLACK, piece_name);
                     }
-                    
+
                     self.removeSquare();
                     self.drawAll();
 
@@ -667,7 +677,7 @@ if (!this['BoardCanvas']) {
             var ctx = self.canvas.getContext('2d');
             /// 黄色のマスを書く
             ctx.fillStyle = "rgb(255, 255, 192)";
-            
+
             var origin_x = self.BOARD_X + self.BOARD_WIDTH_PADDING;
             var origin_y = self.BOARD_Y + self.TITLE_HEIGHT + self.BOARD_HEIGHT_PADDING;
             console.log('fillRect:(' + (origin_x + (9 - pos_x) * self.SQUARE_MULTIPLE_X) + ',' + (origin_y + (pos_y - 1) * self.SQUARE_MULTIPLE_Y) + ',' +  self.SQUARE_MULTIPLE_X + ',' + self.SQUARE_MULTIPLE_Y + ')');
@@ -705,12 +715,12 @@ if (!this['BoardCanvas']) {
         };
 
         this.drawPieces = function() {
-            console.log('drawPieces width:' + self.canvas.width + 
+            console.log('drawPieces width:' + self.canvas.width +
                         ' height:' + self.canvas.height );
             var ctx = self.canvas.getContext('2d');
             var image;
             image = self.piece_images.getBoardImage();
-            console.log('x: ' + self.BOARD_X + 
+            console.log('x: ' + self.BOARD_X +
                         ' y:' + (self.BOARD_Y + self.TITLE_HEIGHT) + ' image:' + typeof image);
             ctx.drawImage(image, self.BOARD_X, self.BOARD_Y + self.TITLE_HEIGHT);
 
@@ -725,15 +735,15 @@ if (!this['BoardCanvas']) {
                 var pos = pieces[i][0];
                 var turn = pieces[i][1][0];
                 var piece = pieces[i][1][1];
-                console.log('pos:' + pos + 
-                            ' turn:' + turn + 
+                console.log('pos:' + pos +
+                            ' turn:' + turn +
                             ' piece:' + piece);
-                
-                var x = self.BOARD_X + self.SQUARE_ORIGIN_X + 
+
+                var x = self.BOARD_X + self.SQUARE_ORIGIN_X +
                         self.SQUARE_MULTIPLE_X * (9 - parseInt(pos / 10));
-                var y = self.BOARD_Y + self.TITLE_HEIGHT + self.SQUARE_ORIGIN_Y + 
+                var y = self.BOARD_Y + self.TITLE_HEIGHT + self.SQUARE_ORIGIN_Y +
                         self.SQUARE_MULTIPLE_Y * ((pos % 10) - 1);
-                
+
                 image = self.piece_images.getBoardImage();
 
                 if (turn == self.shogi_board.BLACK) {
@@ -758,7 +768,7 @@ if (!this['BoardCanvas']) {
                 var x = self.BLACK_X;
                 var piece_name = piece_order[i];
                 var piece_num = pieces[piece_name];
-                console.log('piece_name:' + piece_name + 
+                console.log('piece_name:' + piece_name +
                             ' piece_num:' + piece_num);
 
                 if (piece_num > 0) {
@@ -801,9 +811,9 @@ if (!this['BoardCanvas']) {
                 var x = self.WHITE_X;
                 var piece_name = piece_order[i];
                 var piece_num = pieces[piece_name];
-                console.log('piece_name:' + piece_name + 
+                console.log('piece_name:' + piece_name +
                             ' piece_num:' + piece_num);
-                
+
                 if (piece_num > 0) {
                     image = self.piece_images.getImage(piece_name);
                     if (first_draw == true) {
@@ -843,7 +853,7 @@ if (!this['BoardCanvas']) {
             ctx.drawImage(image, x, y);
 
             ctx.restore();
-            
+
         };
 
         this.convertPositionToBoard = function(x, y) {
@@ -874,7 +884,7 @@ if (!this['BoardCanvas']) {
             }
             console.log('pos_y:' + pos_y);
 
-            console.log('convertPositionToBoard:x' + x + ' y:' + y + 
+            console.log('convertPositionToBoard:x' + x + ' y:' + y +
                         ' pos_x:' + pos_x + ' pos_y:' + pos_y);
             return [pos_x, pos_y];
         };
@@ -884,26 +894,26 @@ if (!this['BoardCanvas']) {
             // Reference: http://docs.jquery.com/Tutorials:Mouse_Position
             // Reference: http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
             console.log('getPos() Called:');
-	    var pos_x = 0;
-	    var pos_y = 0;
+      	    var pos_x = 0;
+      	    var pos_y = 0;
 
             if (!evt) {
                 evt = windows.evt;
             }
 
-            if (evt.pageX || evt.pageY) { 
+            if (evt.pageX || evt.pageY) {
                 pos_x = evt.pageX;
                 pos_y = evt.pageY;
             }
-            else { 
-                pos_x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
-                pos_y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
-            } 
+            else {
+                pos_x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                pos_y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            }
 
             console.log('pos_x:' + pos_x + ' pos_y:' + pos_y);
 
             pos_x -= self.canvas.offsetLeft;
-            pos_y -= self.canvas.offsetTop;              
+            pos_y -= self.canvas.offsetTop;
 
             console.log('pos_x:' + pos_x + ' pos_y:' + pos_y);
 
@@ -928,10 +938,10 @@ if (!this['BoardCanvas']) {
             console.log('font:' + ctx.font + ' baseline:' + ctx.textBaseline );
 
             if (black_name != '') {
-                // 黒のマークを書く
+                // Draw black mark
                 var draw_black_name = black_name;
                 if (typeof black_name == 'undefined') {
-                    // 今保持されている先手名を書く(または消す)
+                    /// Draw (or erase) the current black name
                     draw_black_name = self.black_name;
                 } else {
                     /// for fillText
@@ -945,29 +955,30 @@ if (!this['BoardCanvas']) {
                 var black_name_width = ctx.measureText(draw_black_name);
                 var clear_black_name_width = ctx.measureText(self.black_name);
 
-                console.log('black_name_width:' + black_name_width.width + 
+                console.log('black_name_width:' + black_name_width.width +
                             ' HEIGHT:' + self.TITLE_MARK_HEIGHT);
                 console.log('clear_black_name_width:' + clear_black_name_width.width);
 
                 var black_image = self.piece_images.getBlackImage();
-                var black_title_x_left = self.CANVAS_WIDTH - (black_name_width.width + 
+                var black_title_x_left = self.CANVAS_WIDTH - (black_name_width.width +
                                                              self.TITLE_MARK_WIDTH +
-                                                             self.IMAGE_PADDING_X);
-                var clear_black_title_x_left = self.CANVAS_WIDTH - 
-                        (clear_black_name_width.width + 
-                         self.TITLE_MARK_WIDTH + 
+                                                             self.IMAGE_PADDING_X * 2);
+                var clear_black_title_x_left = self.CANVAS_WIDTH -
+                        (clear_black_name_width.width +
+                         self.TITLE_MARK_WIDTH +
                          self.IMAGE_PADDING_X);
 
-                var black_title_x = black_title_x_left + self.IMAGE_PADDING_X;
+                var black_title_x = black_title_x_left;
                 ctx.drawImage(black_image, black_title_x, self.PLAYER_Y,
                              self.TITLE_MARK_WIDTH, self.TITLE_MARK_HEIGHT);
-                black_title_x += self.TITLE_MARK_WIDTH;
-                ctx.fillText(draw_black_name, black_title_x, self.PLAYER_Y,
-                            self.NAME_IMAGE_WIDTH);
+                black_title_x += self.TITLE_MARK_WIDTH + self.IMAGE_PADDING_X;
+                console.log('fillText:' + draw_black_name + " x:" + black_title_x +
+                            ' y:' + self.PLAYER_Y + " WIDTH:" + self.NAME_IMAGE_WIDTH);
+                ctx.fillText(draw_black_name, black_title_x, self.PLAYER_Y);
                 self.black_name = draw_black_name;
             }
         };
-        
+
         this.drawWhiteName = function(white_name) {
             var ctx = self.canvas.getContext('2d');
             ctx.fillStyle = 'black';
@@ -977,7 +988,7 @@ if (!this['BoardCanvas']) {
             if (white_name != '') {
                 var draw_white_name;
                 if (typeof white_name == 'undefined') {
-                    // 今保持されている後手名を書く
+                    /// Draw (or erase) the current white name
                     draw_white_name = self.white_name;
                 } else {
                     /// for fillText
@@ -991,10 +1002,10 @@ if (!this['BoardCanvas']) {
                 var white_name_width  = ctx.measureText(draw_white_name);
                 var clear_white_name_width = ctx.measureText(self.white_name);
 
-                console.log('white_name_width:' + white_name_width.width + 
+                console.log('white_name_width:' + white_name_width.width +
                             ' HEIGHT:' + self.TITLE_MARK_HEIGHT);
 
-                // 白のマークを書く
+                // Draw white mark
                 var white_image = self.piece_images.getWhiteImage(Math.PI);
                 var white_title_x = self.WHITE_TITLE_MARK_X;
 
@@ -1004,7 +1015,7 @@ if (!this['BoardCanvas']) {
                 ctx.fillText(draw_white_name, white_title_x, self.PLAYER_Y);
 
                 self.white_name = draw_white_name;
-            } 
+            }
         };
 
         this.drawTitle = function(title) {
@@ -1017,7 +1028,7 @@ if (!this['BoardCanvas']) {
             ctx.clearRect(0, self.TITLE_Y, self.canvas.width, self.TITLE_HEIGHT);
 
             var title_name_width  = ctx.measureText(title);
-            console.log('title_name_width:' + title_name_width.width + 
+            console.log('title_name_width:' + title_name_width.width +
                         ' HEIGHT:' + self.TITLE_MARK_HEIGHT);
             console.log('draw_title');
 
@@ -1037,13 +1048,13 @@ if (!this['BoardCanvas']) {
                 ctx.fillText(draw_title, center_x, self.TITLE_Y);
 
                 self.title = draw_title;
-            } 
+            }
         };
 
         this.getTitle = function() {
             return self.title.replace(/\u0020/g, ' ');
         };
-        
+
         this.getBlackName = function() {
             return self.black_name.replace(/\u0020/g, ' ');
         };
@@ -1051,14 +1062,14 @@ if (!this['BoardCanvas']) {
         this.getWhiteName = function() {
             return self.white_name.replace(/\u0020/g, ' ');
         };
-        
+
         this.clearAll = function() {
             var ctx = self.canvas.getContext('2d');
-            ctx.clearRect(0, 0, 
-                          this.canvas.width, 
+            ctx.clearRect(0, 0,
+                          this.canvas.width,
                           this.canvas.height);
         };
-        
+
         this.drawHeader = function() {
             self.drawBlackName();
             self.drawWhiteName();
@@ -1071,7 +1082,7 @@ if (!this['BoardCanvas']) {
             self.drawWhiteName();
             self.drawTitle();
             if (typeof self.select_square_x != 'undefined') {
-                console.log('Square x:' + self.select_square_x + 
+                console.log('Square x:' + self.select_square_x +
                             ' y:' + self.select_square_y);
                 self.drawSquare(self.select_square_x, self.select_square_y);
             }
@@ -1105,7 +1116,7 @@ if (!this['PieceImages']) {
         ALL_IMAGE_NUM:17,
         initImages: function (on_complete_callback, kind) {
             this.callback = on_complete_callback;
-            this.board_url = PATH + 'static_img/board.png';
+            this.board_url = IMAGEPATH + 'board.png';
             var suffix = '';
 
             if (typeof kind != 'undefined' || kind != 'kanji') {
@@ -1115,58 +1126,58 @@ if (!this['PieceImages']) {
                 }
             }
 
-            this.black_url = PATH + 'static_img/black.png';
-            this.white_url = PATH + 'static_img/white.png';
-            this.piece_urls['FU'] = PATH + 'static_img/fu' + suffix + '.png';
-            this.piece_urls['KY'] = PATH + 'static_img/ky' + suffix + '.png';
-            this.piece_urls['KE'] = PATH + 'static_img/ke' + suffix + '.png';
-            this.piece_urls['GI'] = PATH + 'static_img/gi' + suffix + '.png';
-            this.piece_urls['KI'] = PATH + 'static_img/ki' + suffix + '.png';
-            this.piece_urls['HI'] = PATH + 'static_img/hi' + suffix + '.png';
-            this.piece_urls['KA'] = PATH + 'static_img/ka' + suffix + '.png';
-            this.piece_urls['OU'] = PATH + 'static_img/ou' + suffix + '.png';
-            this.piece_urls['TO'] = PATH + 'static_img/to' + suffix + '.png';
-            this.piece_urls['NY'] = PATH + 'static_img/ny' + suffix + '.png';
-            this.piece_urls['NK'] = PATH + 'static_img/nk' + suffix + '.png';
-            this.piece_urls['NG'] = PATH + 'static_img/ng' + suffix + '.png';
-            this.piece_urls['UM'] = PATH + 'static_img/um' + suffix + '.png';
-            this.piece_urls['RY'] = PATH + 'static_img/ry' + suffix + '.png';
-            
+            this.black_url = IMAGEPATH + 'black.png';
+            this.white_url = IMAGEPATH + 'white.png';
+            this.piece_urls['FU'] = IMAGEPATH + 'fu' + suffix + '.png';
+            this.piece_urls['KY'] = IMAGEPATH + 'ky' + suffix + '.png';
+            this.piece_urls['KE'] = IMAGEPATH + 'ke' + suffix + '.png';
+            this.piece_urls['GI'] = IMAGEPATH + 'gi' + suffix + '.png';
+            this.piece_urls['KI'] = IMAGEPATH + 'ki' + suffix + '.png';
+            this.piece_urls['HI'] = IMAGEPATH + 'hi' + suffix + '.png';
+            this.piece_urls['KA'] = IMAGEPATH + 'ka' + suffix + '.png';
+            this.piece_urls['OU'] = IMAGEPATH + 'ou' + suffix + '.png';
+            this.piece_urls['TO'] = IMAGEPATH + 'to' + suffix + '.png';
+            this.piece_urls['NY'] = IMAGEPATH + 'ny' + suffix + '.png';
+            this.piece_urls['NK'] = IMAGEPATH + 'nk' + suffix + '.png';
+            this.piece_urls['NG'] = IMAGEPATH + 'ng' + suffix + '.png';
+            this.piece_urls['UM'] = IMAGEPATH + 'um' + suffix + '.png';
+            this.piece_urls['RY'] = IMAGEPATH + 'ry' + suffix + '.png';
 
-            this.board_image = 
+
+            this.board_image =
                     this.loadFromFile(this.board_url);
-            this.black_image = 
+            this.black_image =
                     this.loadFromFile(this.black_url);
-            this.white_image = 
+            this.white_image =
                     this.loadFromFile(this.white_url);
-            
-            this.piece_images['FU'] = 
+
+            this.piece_images['FU'] =
                     this.loadFromFile(this.piece_urls['FU']);
-            this.piece_images['KY'] = 
+            this.piece_images['KY'] =
                     this.loadFromFile(this.piece_urls['KY']);
-            this.piece_images['KE'] = 
+            this.piece_images['KE'] =
                     this.loadFromFile(this.piece_urls['KE']);
-            this.piece_images['GI'] = 
+            this.piece_images['GI'] =
                     this.loadFromFile(this.piece_urls['GI']);
-            this.piece_images['KI'] = 
+            this.piece_images['KI'] =
                     this.loadFromFile(this.piece_urls['KI']);
-            this.piece_images['HI'] = 
+            this.piece_images['HI'] =
                     this.loadFromFile(this.piece_urls['HI']);
-            this.piece_images['KA'] = 
+            this.piece_images['KA'] =
                     this.loadFromFile(this.piece_urls['KA']);
-            this.piece_images['OU'] = 
+            this.piece_images['OU'] =
                     this.loadFromFile(this.piece_urls['OU']);
-            this.piece_images['TO'] = 
+            this.piece_images['TO'] =
                     this.loadFromFile(this.piece_urls['TO']);
-            this.piece_images['NY'] = 
+            this.piece_images['NY'] =
                     this.loadFromFile(this.piece_urls['NY']);
-            this.piece_images['NK'] = 
+            this.piece_images['NK'] =
                     this.loadFromFile(this.piece_urls['NK']);
-            this.piece_images['NG'] = 
+            this.piece_images['NG'] =
                     this.loadFromFile(this.piece_urls['NG']);
-            this.piece_images['UM'] = 
+            this.piece_images['UM'] =
                     this.loadFromFile(this.piece_urls['UM']);
-            this.piece_images['RY'] = 
+            this.piece_images['RY'] =
                     this.loadFromFile(this.piece_urls['RY']);
         },
         onLoad: function() {
@@ -1232,7 +1243,7 @@ if (!this['NumberImages']) {
             this.callback = on_complete_callback;
 
             for (var i = 0;i < 10; i++) {
-                this.num_image[i] = this.loadFromFile(PATH + 'static_img/' + 
+                this.num_image[i] = this.loadFromFile(IMAGEPATH + '' +
                                                       i + '.png');
             }
         },
