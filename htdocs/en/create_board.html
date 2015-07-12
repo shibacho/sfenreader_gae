@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<meta content="クラウド将棋盤ジェネレーターは将棋局面図を作成するWebサービスです。" name="description" />
-<meta content="将棋 局面図 画像 ブログ 貼付け shogi" name="keywords"/>
-<title>Create Shogi Diagram on the Web.</title>
+<meta content="A cloud shogi diagram generator is a service that create shogi board image on web." name="description" />
+<meta content="shogi kyokumen diagram image blog embed" name="keywords"/>
+<title>Create Shogi Diagram on the Web</title>
 <!--
 <script type="text/javascript">
 var user_agent = window.navigator.userAgent.toLowerCase();
@@ -13,28 +13,39 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
 }
 -->
 </script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="../flashcanvas.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../jshogi_board.js?2011082607"></script>
+<script type="text/javascript" src="../jshogi_board.js?2015071201"></script>
 <script type="text/javascript" src="../create_board.js?2011082602"></script>
 <script type="text/javascript" src="../google_analytics.js" async></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#langselect').change(function(){
+    location.href = 'http://' + location.host + '/' + $('#langselect').val() + '/create_board.html';
+});
+});
+</script>
 <link rel="stylesheet" type="text/css" href="../common.css" />
 </head>
 <body>
 <div id="container" class="container">
-<h1>Create Shogi Diagram on the Web.</h1>
+<h1>Create Shogi Diagram on the Web</h1>
+<div class="right">
+Language:<select id="langselect"><option value="ja">日本語</option><option value="en" selected>English</option></select>
+</div>
 <div id="left_canvas" class="left">
 <div style="text-align:center;"><img src="../static_img/indicator.gif" id="indicator"></div>
 <canvas id="board" width="400" height="420"></canvas><br>
+<canvas id="rot_canvas" style="display:none;"></canvas><br>
 URL :<input type="text" id="long_url" style="width:400px;"/> <br>
 <button id="tweet">Tweet Diagram</button>(Required Twitter Account) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">Diagram</span>
 <!--
-短縮URL:<input type="text" id="short_url" /><br>
+Shorten URL:<input type="text" id="short_url" /><br>
 -->
 SFEN:<input type="text" id="sfen" style="width:400px;"/> <br>
-<button id="search_kyokumenpedia">Search</button>Move to Kyokumenpedia (Japanese)
+<button id="search_kyokumenpedia">Search</button> Move to Kyokumenpedia (Japanese)
 </div> <!-- left_canvas -->
 <div id="right_control" class="right">
 <p>
@@ -71,12 +82,11 @@ Click: Select/move a piece. If the destination square already exists any piece, 
 Double Click: Change a piece type (Black piece -> Black promoted piece -> white piece ->white promoted piece)<br>
 <hr>
 <h2>System environment (Browser)</h2>
-IE9,Firefox(6,7),Google Chrome,Opera11,Safar5.1,(iPhone Safari)<br>
+IE9, Firefox(6,7), Google Chrome, Opera11, Safar5.1, (iPhone Safari) or higher<br>
 Your OS doesn't care.(maybe)<br>
 <hr>
 <h2>Known problems</h2>
-Doesn't work on previous browser on IE8, and Firefox5.<br>
-Can't make Handicapped game diagram.
+Can't make a handicapped game diagram.
 <hr>
 <h2>Feedback and bug report</h2>
 Please, mention to <a href="http://twitter.com/fantakeshi">@fantakeshi</a> on Twitter with your environment.
@@ -88,7 +98,7 @@ Please, mention to <a href="http://twitter.com/fantakeshi">@fantakeshi</a> on Tw
 -->
 <h2>History</h2>
 <ul>
-<li> 2011/09/04 English page is published.
+<li> 2011/09/04 English page is opened.
 </ul>
 <hr>
 <div style="align:center;"><a href="./index.html">Back</a></div>

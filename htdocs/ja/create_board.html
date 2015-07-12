@@ -13,29 +13,47 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
 }
 -->
 </script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <!--[if lt IE 9]>
 <script type="text/javascript" src="flashcanvas.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../jshogi_board.js?2011082607"></script>
+<script type="text/javascript" src="../jshogi_board.js?2015071201"></script>
 <script type="text/javascript" src="../create_board.js?2011082602"></script>
 <script type="text/javascript" src="../google_analytics.js" async></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#langselect').change(function(){
+    location.href = 'http://' + location.host + '/' + $('#langselect').val() + '/create_board.html';
+});
+});
+</script>
 <link rel="stylesheet" type="text/css" href="../common.css" />
 </head>
 <body>
+<!-- <div id="header">
+<div style="float:left;">
+<h1>局面図をWebで作成</h1>
+</div>
+<div style="float:right;">
+Language:<select id="langselect"><option value="ja" selected>日本語</option><option value="en">English</option></select>
+</div>
+</div> -->
 <div id="container" class="container">
 <h1>局面図をWebで作成</h1>
+<div class="right">
+Language:<select id="langselect"><option value="ja" selected>日本語</option><option value="en">English</option></select>
+</div>
 <div id="left_canvas" class="left">
 <div style="text-align:center;"><img src="../static_img/indicator.gif" id="indicator"></div>
 <canvas id="board" width="400" height="420"></canvas><br>
 <canvas id="rot_canvas" style="display:none;"></canvas><br>
 URL :<input type="text" id="long_url" style="width:400px;"/> <br>
-<button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
+<button id="tweet">ツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
 短縮URL:<input type="text" id="short_url" /><br>
 -->
 SFEN:<input type="text" id="sfen" style="width:400px;"/> <br>
-<button id="search_kyokumenpedia">局面ペディアで検索する</button>(局面ペディアに移動します)
+<button id="search_kyokumenpedia">検索する</button> (局面ペディアに移動します)
 </div> <!-- left_canvas -->
 <div id="right_control" class="right">
 <p>
@@ -92,24 +110,23 @@ IE8については<a href="http://sfenreader.appspot.com/">Kifu for Windowsを�
 <h2>改善予定</h2>
 優先順位順ですが手順前後の可能性もあります。<br>
 <ul>
+<li>「初期局面に戻す」「詰将棋用配置」のショートカットボタンの設置
 <li>駒箱の概念の追加(駒落ち対応)
 <li>駒を移動した時の音の追加
 <li>リアルタイムプレビュー & 幅調整機能
-<li>英語化 (ponanza先生機能は英語化にあたっては外す予定)
-<li>「初期局面に戻す」「詰将棋用配置」のショートカットボタンの設置
 <li>ダブルクリック時に余計な範囲選択が起こることを防ぐ(Safari、Chromeの問題)
 <li>スマートフォン版の製作
-<li>IE8に対応(これは難しいかも…)
+<li><s>IE8に対応(これは難しいかも…)</s>
 </ul>
 <hr>
-<h2>更新履歴</h2>
+<!-- <h2>更新履歴</h2>
 <ul>
 <li>2011/09/11 getImageDataに<a href="http://fantakeshi.blog50.fc2.com/blog-entry-53.html">クロスドメインの問題がある</a>(＝汎用的棋譜ビューワーとして使いづらい)ため、drawImageを使った方法に修正
 <li><s>2011/08/26 Firefox7でも動くように内部的に大幅改修(drawImageではなくgetImageDataを使うようにした)</s>
 <li>2011/08/09 掲示板貼り付けフォーマットに先手、後手を含めるようにした。
 <li>2011/08/09 Firefox6、64bit版ブラウザに対応
 </ul>
-<hr>
+<hr> -->
 <div style="align:center;"><a href="../index.html">戻る</a></div>
 </div>
 </body>
