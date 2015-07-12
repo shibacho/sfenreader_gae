@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta content=" is the web service that you can crate a shogi diagram image on the web." name="description" />
-<meta content="Shogi, Diagram, image, blog, paste" name="keywords"/> 
+<meta content="Shogi, Diagram, image, blog, paste" name="keywords"/>
 <title>Cloud Shogi Diagram Generator</title>
 <script type="text/javascript" src="../jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="../bod2sfen.js"></script>
 <script type="text/javascript" src="../google_analytics.js" async></script>
-<script type="text/javascript" src="https://apis.google.com/js/plusone.js"> 
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js">
  {lang: 'en'}
 </script>
 <script type="text/javascript">
@@ -21,10 +21,10 @@ $(document).ready(function() {
 <link rel="stylesheet" type="text/css" href="../common.css" />
 </head>
 <body>
-<div style="float:left">
+<div style="float:left;">
 <h1>Cloud Shogi Diagram Generator</h1>
 </div>
-<div style="float:right">
+<div style="float:right;">
 <table>
 <td>
 Language:<select id="langselect"><option value="ja">日本語</option><option value="en" selected>English</option></select>
@@ -35,12 +35,12 @@ Language:<select id="langselect"><option value="ja">日本語</option><option va
 </td>
 <td>
 <!-- Google Plus one Button -->
-<g:plusone size="medium"></g:plusone> 
+<g:plusone size="medium"></g:plusone>
 </td>
 </table>
 </div>
 <div id="abstract" style="margin-left:auto; margin-right:auto;">
-<div style="float:left; width:85%;"> 
+<div style="float:left; width:85%;">
 <h2>Abstract</h2>
 <p>
 <strong>Cloud Shogi Diagram Generator</strong> is the web service that you can create a shogi diagram image.<br>
@@ -94,14 +94,14 @@ White Name: <input type="text" id="gote_name" style="width: 100px;" /> (*not req
 Title: <input type="text" id="shogi_title" style="width: 300px;" /> (*not required)<br>
 <!-- at move: <input type="text" id="shogi_title" style="width: 100px;" /> (※省略可)<br> -->
 Last Move: <input type="text" id="last_move" style="width:30px;"/> Square (Example:76 84 * not required)<br>
-<span id="turn_span">Which to move: <input type="radio" name="turn" value="b" checked>Black</input> <input type="radio" name="turn" value="w">White</input></span> <input type="checkbox" id="turn_check" value="off"/>Do not display<br> 
+<span id="turn_span">Which to move: <input type="radio" name="turn" value="b" checked>Black</input> <input type="radio" name="turn" value="w">White</input></span> <input type="checkbox" id="turn_check" value="off"/>Do not display<br>
 Piece Kind: <input type="radio" name="piece" value="kanji" checked />Kanji <input type="radio" name="piece" value="alphabet"/>Alphabet(beta) <input type="radio" name="piece" value="international"/>International <br>
 
 <button id="board_convert">Convert</button><span id="board_converted_text" class="none">Complete</span>
 <div id="board_result" class="none">
 URL :<input type="text" id="long_url" style="width:400px;"/> <button id="tweet">Tweets Diagram</button>(Required Twitter Account) <br> <span id="versus_string" class="none">vs </span> <span id="board_default_name" class="none">Diagram</span>
 <!--
-短縮URL:<input type="text" id="short_url" /><br> 
+短縮URL:<input type="text" id="short_url" /><br>
 -->
 <!--
 SFEN:<input type="text" id="sfen" style="width:400px;"/> <button id="ponanza_analysis">ponanza先生に聞く</button>(要:Twitterアカウント)<br><br>
@@ -128,7 +128,7 @@ Parameter lm emphasis a square of <i>last_move_square_num</i>.
 Generally , this parameter uses for the last move.<br>
 <i>lm</i> is not the required parameter.<br>
 <p>
-<i>sname</i> is the black name (Sente Name), and <i>gname</i> is the white name (Gote Name).These parameters must be URIencoded on UTF-8.<br> 
+<i>sname</i> is the black name (Sente Name), and <i>gname</i> is the white name (Gote Name).These parameters must be URIencoded on UTF-8.<br>
 These parameters are not the requred parameters. You can only show the black name, or only show the white name.<br>
 <p>
 <i>title</i> is the title of a shogi diagram. This shows upon the shogi board image.<br>
