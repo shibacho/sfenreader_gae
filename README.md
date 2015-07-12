@@ -1,5 +1,7 @@
 # SFEN Reader for Google APP Engine.
 
+[Japanese](README.ja.md)
+
 This is an image generator from a url including SFEN string on Google App Engine.
 
 Now (03/20/2015), this program works at ( http://sfenreader.appspot.com/ ).
