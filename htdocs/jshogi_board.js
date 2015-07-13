@@ -518,7 +518,7 @@ if (!this['BoardCanvas']) {
     this.onMouseMove = function(evt) {
       return '';
     };
-    this.onClick = function(evt) {
+    this.onLeftClick = function(evt) {
       var temp;
       var ctx = self.canvas.getContext('2d');
       console.log('self:' + typeof self);
@@ -696,7 +696,7 @@ if (!this['BoardCanvas']) {
       self.select_square_y = undefined;
     };
 
-    this.onDoubleClick = function(evt) {
+    this.onRightClick = function(evt) {
       var temp  = this.getPos(evt);
       var x = temp[0];
       var y = temp[1];

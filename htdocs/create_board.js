@@ -25,18 +25,30 @@ $(document).ready(function(){
     return;
   }
 
-  $board.mousemove(function (evt) {
+  document.oncontextmenu = function() {
+    return false;
+  }
+  $('#board').mousemove(function (evt) {
     return board_canvas.onMouseMove(evt, board_canvas);
   });
-  $board.mouseover(function (evt) {
+  $('#board').mouseover(function (evt) {
     return board_canvas.onMouseOver(evt, board_canvas);
   });
-  $board.click(function (evt) {
-    return board_canvas.onClick(evt, board_canvas);
+  $('#board').mousedown(function (evt) {
+    console.log('mousedown.');
+    if (evt.which == 1) { // Left Click
+      console.log('Left clicked.');
+      return board_canvas.onLeftClick(evt, board_canvas);
+    } else if (evt.which == 3) { // Right Click
+      console.log('Right clicked.');
+      return board_canvas.onRightClick(evt, board_canvas);
+    }
+    return false;
   });
-  $board.dblclick(function (evt) {
+  $('#board').dblclick(function (evt) {
     evt.preventDefault();
-    return board_canvas.onDoubleClick(evt, board_canvas);
+    return false;
+    // return board_canvas.onDoubleClick(evt, board_canvas);
   });
 
   board_canvas.onBoardChange = function() {
