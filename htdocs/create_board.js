@@ -35,20 +35,12 @@ $(document).ready(function(){
     return board_canvas.onMouseOver(evt, board_canvas);
   });
   $('#board').mousedown(function (evt) {
-    console.log('mousedown.');
     if (evt.which == 1) { // Left Click
-      console.log('Left clicked.');
       return board_canvas.onLeftClick(evt, board_canvas);
     } else if (evt.which == 3) { // Right Click
-      console.log('Right clicked.');
       return board_canvas.onRightClick(evt, board_canvas);
     }
     return false;
-  });
-  $('#board').dblclick(function (evt) {
-    evt.preventDefault();
-    return false;
-    // return board_canvas.onDoubleClick(evt, board_canvas);
   });
 
   board_canvas.onBoardChange = function() {
