@@ -22,13 +22,13 @@ from google.appengine.api.images import Image
 from google.appengine.api import images
 
 import urllib
-import urllib2
 import logging
 import re
 
 from sfenlib import u2utf8
 
 class TwiimgHandler(webapp.RequestHandler):
+    DEFAULT_TITLE = u'局面図'
     def get(self):
         url  = self.request.url
         m = re.search('(.+)\/(.+)', url)
@@ -42,7 +42,7 @@ class TwiimgHandler(webapp.RequestHandler):
 
         black_name = u2utf8(urllib.unquote(self.request.get('sname')))
         white_name = u2utf8(urllib.unquote(self.request.get('gname')))
-        title = u2utf8(urllib.unquote(self.request.get('title', u'局面図')))
+        title = u2utf8(urllib.unquote(self.request.get('title', self.DEFAULT_TITLE)))
 
         height = 421
         # If board has no name, the image height is smaller.
@@ -50,10 +50,14 @@ class TwiimgHandler(webapp.RequestHandler):
             height = 400
 
         self.response.out.write('<html>\n<head>')
-        self.response.out.write('<meta name="twitter:card" content="photo" />')
-        self.response.out.write('<meta name="twitter:site" content="Cloud Shogi Diagram Generator" />\n'.format(title))
+        self.response.out.write('<meta name="twitter:card" content="photo" />\n')
+        self.response.out.write('<meta name="twitter:site" content="@fantakeshi" />\n'.format(title))
         self.response.out.write('<meta name="twitter:title" content="{}" />\n'.format(title))
-        self.response.out.write('<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name))
+        if black_name != '' and white_name != '':
+            self.response.out.write('<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name))
+        else:
+            self.response.out.write('<meta name="twitter:description" content="{}" />\n'.format(title))
+            
         self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
         self.response.out.write('<meta name="twitter:width" content="400" />\n')
         self.response.out.write('<meta name="twitter:height" content="{}" />\n'.format(height))
