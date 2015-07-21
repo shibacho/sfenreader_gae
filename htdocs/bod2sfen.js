@@ -38,6 +38,7 @@ if (typeof window.console != 'object') { // IE対策
 }
 
 var URL = '';
+var TWITTER_URL = '';
 var SHORT_URL = '';
 var IMG_URL = '';
 var SFEN = '';
@@ -46,6 +47,7 @@ var BLANK = 'about:_blank';
 
 $(document).ready(function(){
     $('#board_convert').click(BoardConvert);
+    
     $('#example_button').click(function(e) {
         ChangeExampleStatus();
     });
@@ -55,7 +57,6 @@ $(document).ready(function(){
     });
 
     $('#developer_guide_button').click(function (e){
-      console.log('#developer_guide_button clicked');
       if ($('#developer_guide').css('display') == 'none') {
         $('#developer_guide').show('slow');
         $('#developer_guide_button').html(
@@ -88,7 +89,7 @@ $(document).ready(function(){
             text = $('#board_default_name').text();
         }
 
-        var url = encodeURIComponent(URL);
+        var url = encodeURIComponent(TWITTER_URL);
         text = encodeURIComponent(text);
         window.open('https://twitter.com/share?url=' + url + '&text=' + text, '_blank', 'width=700,height=300');
     });
@@ -380,30 +381,35 @@ function UpdateUrl() {
     console.log("sfen:" + SFEN);
 
     var sfen_encode = encodeURIComponent(SFEN);
-    URL = "http://" + location.host + "/sfen?sfen=" + sfen_encode;
+
+    var query = "sfen=";
+    query += sfen_encode;
     console.log('last_move: ' + $('#last_move').val());
     if ( $('#last_move').val() != '') {
-        URL += '&lm=' + $('#last_move').val();
+        query += '&lm=' + $('#last_move').val();
     }
 
     if ( $('#sente_name').val() != '') {
-        URL += '&sname=' + encodeURIComponent($('#sente_name').val());
+        query += '&sname=' + encodeURIComponent($('#sente_name').val());
     }
 
     if ( $('#gote_name').val() != '') {
-        URL += '&gname=' + encodeURIComponent($('#gote_name').val());
+        query += '&gname=' + encodeURIComponent($('#gote_name').val());
     }
 
     if ( $('#shogi_title').val() != '') {
-        URL += '&title=' + encodeURIComponent($('#shogi_title').val());
+        query += '&title=' + encodeURIComponent($('#shogi_title').val());
     }
 
     console.log('turn_checked:' + $('#turn_check').attr('checked'));
 
     if ( $('#turn_check').attr('checked') == 'checked') {
-        URL += '&turn=off';
+        query += '&turn=off';
     }
-    URL += '&piece=' + $('input[name=piece]:checked').val() ;
+    query += '&piece=' + $('input[name=piece]:checked').val() ;
+    
+    URL = "http://" + location.host + "/sfen?" + query;
+    TWITTER_URL = "http://" + location.host + "/twiimg?" + query; 
 }
 
 var SFEN_IMAGE = undefined;
@@ -413,6 +419,7 @@ function BoardConvert(e)
     UpdateUrl();
 
     $('#long_url').val(URL);
+    $('#twiimg_url').html(TWITTER_URL);
     $('#sfen').val(SFEN);
 
     /// Image オブジェクトを作りなおさないと

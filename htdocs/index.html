@@ -119,7 +119,10 @@ SFEN文字列は<a href="http://kyokumen.jp/positions/search">局面ペディア
 
 <button id="board_convert">変換する</button><span id="board_converted_text" class="none">変換完了</span>
 <div id="board_result" class="none">
-URL :<input type="text" id="long_url" style="width:400px;" onclick="this.focus(); this.select();"/> <button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
+URL :<input type="text" id="long_url" style="width:400px;" onclick="this.focus(); this.select();"/> <button id="tweet">局面図をツイートする</button>(要:Twitterアカウント) <br> 
+<span id="versus_string" class="none">対</span> 
+<span id="board_default_name" class="none">局面図</span>
+<span id="twiimg_url" class="none"></span>
 <!--
 短縮URL:<input type="text" id="short_url" /><br>
 -->
@@ -240,6 +243,7 @@ Google App Engine 上で文字を画像に合成する方法を書いてくだ�
 <hr>
 <h2>更新履歴</h2>
 <ul>
+<li> 2015/07/21 ツイートした時Twitterでインライン変換されるようにした
 <li> 2015/07/13 ponanza局面評価機能を削除
 <li> 2011/09/22 Kifu for Windowsからの変換時に成銀が金と表示されるバグを修正
 <li> 2011/09/04 国際駒を新デザインにリニューアル(Thanks VERY much to <a href="http://hidetchi.blog68.fc2.com/">HIDETCHI</a>)

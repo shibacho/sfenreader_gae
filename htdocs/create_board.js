@@ -57,32 +57,35 @@ $(document).ready(function(){
     var title = board_canvas.getTitle();
 
     var sfen_encode = encodeURIComponent(sfen);
-    var url = 'http://' + location.host + '/sfen?sfen=' + sfen_encode;
+    var query = 'sfen=' + sfen_encode;
 
     var lm = $('#last_move').val();
     if (lm != '') {
-        url += '&lm=' + lm;
+        query += '&lm=' + lm;
     }
 
     if (typeof black_name != 'undefined' && black_name != '') {
-        url += '&sname=' + encodeURIComponent(black_name);
+        query += '&sname=' + encodeURIComponent(black_name);
     }
 
     if (typeof white_name != 'undefined' && white_name != '') {
-        url += '&gname=' + encodeURIComponent(white_name);
+        query += '&gname=' + encodeURIComponent(white_name);
     }
 
     if (typeof title != 'undefined' && title != '') {
-        url += '&title=' + encodeURIComponent(title);
+        query += '&title=' + encodeURIComponent(title);
     }
 
     if ( $('#turn_check').attr('checked') == 'checked') {
-        url += '&turn=off';
+        query += '&turn=off';
     }
+    var url = 'http://' + location.host + '/sfen?' + query;
+    var twiimg_url = 'http://' + location.host + '/twiimg?' + query;
 
     var img_url = 'img src="' + url + '"';
 
     $('#long_url').val(url);
+    $('#twiimg_url').html(twiimg_url);
     $('#sfen').val(sfen);
 
     img_url = '<' + img_url + '>';
@@ -137,7 +140,8 @@ $(document).ready(function(){
   // });
 
   $('#tweet').click(function(evt) {
-    var url = $('#long_url').val();
+    // var url = $('#long_url').val();
+    var url = $('#twiimg_url').html();
     var sente_name = $('#sente_name').val();
     var gote_name = $('#gote_name').val();
     var shogi_title = $('#shogi_title').val();
