@@ -20,6 +20,9 @@ handlers:
 - url: /sfen
   script: sfen.py
 
+- url: /twiimg
+  script: twiimg.py
+
 - url: /.*
   script: not_found.py
 
