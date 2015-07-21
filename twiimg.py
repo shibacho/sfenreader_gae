@@ -49,19 +49,18 @@ class TwiimgHandler(webapp.RequestHandler):
         if black_name == '' and white_name == '' and self.request.get('title') == '':
             height = 400
 
-        self.response.out.write('<html>\n<head>')
+        self.response.out.write('<html>\n<head>\n')
         self.response.out.write('<meta name="twitter:card" content="photo" />\n')
-        self.response.out.write('<meta name="twitter:id" content="@fantakeshi" />\n'.format(title))
-        self.response.out.write('<meta name="twitter:creator:id" content="@fantakeshi" />\n'.format(title))
-        self.response.out.write('<meta name="twitter:title" content="{}" />\n'.format(title))
+        self.response.out.write('<meta name="twitter:site:id" content="@fantakeshi" />\n'.format(title))
+        self.response.out.write('<meta property="og:title" content="{}" />\n'.format(title))
         if black_name != '' and white_name != '':
             self.response.out.write('<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name))
         else:
             self.response.out.write('<meta name="twitter:description" content="{}" />\n'.format(title))
             
-        self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
-        self.response.out.write('<meta name="twitter:image:width" content="400" />\n')
-        self.response.out.write('<meta name="twitter:image:height" content="{}" />\n'.format(height))
+        self.response.out.write('<meta property="og:image" content="{}" />\n'.format(sfenurl))
+        self.response.out.write('<meta property="og:image:width" content="400" />\n')
+        self.response.out.write('<meta property="og:image:height" content="{}" />\n'.format(height))
         self.response.out.write('<meta name="twitter:url" content="{}" />\n'.format(sfenurl))
         self.response.out.write('</head>\n<body>\n')
         self.response.out.write('<img src="{}" />\n'.format(sfenurl))
