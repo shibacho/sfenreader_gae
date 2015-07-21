@@ -44,12 +44,19 @@ class TwiimgHandler(webapp.RequestHandler):
         white_name = u2utf8(urllib.unquote(self.request.get('gname')))
         title = u2utf8(urllib.unquote(self.request.get('title', u'局面図')))
 
+        height = 421
+        # If board has no name, the image height is smaller.
+        if black_name == '' and white_name == '' and self.request.get('title') == '':
+            height = 400
+
         self.response.out.write('<html>\n<head>')
         self.response.out.write('<meta name="twitter:card" content="photo" />')
         self.response.out.write('<meta name="twitter:site" content="Cloud Shogi Diagram Generator" />\n'.format(title))
         self.response.out.write('<meta name="twitter:title" content="{}" />\n'.format(title))
         self.response.out.write('<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name))
         self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
+        self.response.out.write('<meta name="twitter:width" content="400" />\n')
+        self.response.out.write('<meta name="twitter:height" content="{}" />\n'.format(height))
         self.response.out.write('<meta name="twitter:url" content="{}" />\n'.format(sfenurl))
         self.response.out.write('</head>\n<body>\n')
         self.response.out.write('<img src="{}" />\n'.format(sfenurl))
