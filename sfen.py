@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*- 
+# -*- coding:utf-8 -*-
 #
 # sfen.py Copyright 2011 fantakeshi.
 #
@@ -27,9 +27,7 @@ import os
 import re
 import math
 
-ENCODE = 'UTF-8'
-def u2utf8(s):
-    return s.encode(ENCODE)
+from sfenlib import u2utf8
 
 class BadSfenStringException(Exception):
     def __init__(self, value):
@@ -141,7 +139,7 @@ class SfenHandler(webapp.RequestHandler):
         ### 覚えていることがまれによくある
         if self.piece_img != {}:
             return
-        
+
         logging.info('Loading Kanji Piece Image...')
 
         f = open("img/fu.png", "rb")
@@ -151,7 +149,7 @@ class SfenHandler(webapp.RequestHandler):
         f = open("img/ky.png", "rb")
         ky_img = f.read()
         f.close()
-        
+
         f = open("img/ke.png", "rb")
         ke_img = f.read()
         f.close()
@@ -229,7 +227,7 @@ class SfenHandler(webapp.RequestHandler):
         f = open("img/ky_alphabet.png", "rb")
         ky_img = f.read()
         f.close()
-        
+
         f = open("img/ke_alphabet.png", "rb")
         ke_img = f.read()
         f.close()
@@ -293,7 +291,7 @@ class SfenHandler(webapp.RequestHandler):
         self.piece_alphabet_img['+r'] = (ry_img, images.rotate(ry_img, 180))
         self.piece_alphabet_img['+b'] = (um_img, images.rotate(um_img, 180))
         self.piece_alphabet_img['+g'] = (ki_img, images.rotate(ki_img, 180))
-    
+
     def piece_international_img_init(self):
         if self.piece_international_img != {}:
             return
@@ -307,7 +305,7 @@ class SfenHandler(webapp.RequestHandler):
         f = open("img/ky_international.png", "rb")
         ky_img = f.read()
         f.close()
-        
+
         f = open("img/ke_international.png", "rb")
         ke_img = f.read()
         f.close()
@@ -371,7 +369,7 @@ class SfenHandler(webapp.RequestHandler):
         self.piece_international_img['+r'] = (ry_img, images.rotate(ry_img, 180))
         self.piece_international_img['+b'] = (um_img, images.rotate(um_img, 180))
         self.piece_international_img['+g'] = (ki_img, images.rotate(ki_img, 180))
-    
+
 
     def board_img_init(self):
         if self.board_img == '':
@@ -386,7 +384,7 @@ class SfenHandler(webapp.RequestHandler):
             f = open("img/board_alphabet.png", "rb")
             self.board_alphabet_img = f.read()
             f.close()
-            
+
     def mark_img_init(self):
         if self.black_img == ():
             logging.info('Loading Black Image...')
@@ -408,7 +406,7 @@ class SfenHandler(webapp.RequestHandler):
             logging.info('Loading ' + str(num) + '.png ...')
             f = open("img/" + str(num) + ".png", "rb")
             num_img = f.read()
-            self.number_img[str(num)] = (num_img, 
+            self.number_img[str(num)] = (num_img,
                                          images.rotate(num_img, 180))
             f.close()
 
@@ -450,26 +448,26 @@ class SfenHandler(webapp.RequestHandler):
 
     def draw_turn_mark(self, img_list, x, y):
         self.last_move_img_init()
-        image = images.resize(self.last_move_img, 
-                              self.BLACK_MARK_WIDTH + 10, 
+        image = images.resize(self.last_move_img,
+                              self.BLACK_MARK_WIDTH + 10,
                               self.BLACK_MARK_HEIGHT + 10)
 
         img_list.append( (image, x - 5, y - 5, 1.0, images.TOP_LEFT) )
         return self.composite(img_list)
 
     def sort_hand_array(self, hand_dict):
-        ''' 
-        Sort hand dict to 
+        '''
+        Sort hand dict to
         rook -> bishop -> gold -> silver -> knight -> lance -> pawn.
         飛 -> 角 -> 金 -> 銀 -> 桂 -> 香 -> 歩 の順番にarrayに入れる
         '''
         result = []
         if hand_dict.has_key('r'):
             result.append( ('r', hand_dict['r']) )
-            
+
         if hand_dict.has_key('b'):
             result.append( ('b', hand_dict['b']) )
-        
+
         if hand_dict.has_key('g'):
             result.append( ('g', hand_dict['g']) )
 
@@ -478,7 +476,7 @@ class SfenHandler(webapp.RequestHandler):
 
         if hand_dict.has_key('n'):
             result.append( ('n', hand_dict['n']) )
-        
+
         if hand_dict.has_key('l'):
             result.append( ('l', hand_dict['l']) )
 
@@ -523,7 +521,7 @@ class SfenHandler(webapp.RequestHandler):
             chars = list(a_row)
             row_counter = 9
             row_str = str(row_counter)
-            
+
             promote_flag = False
             for a_char in chars:
                 if a_char.isdigit():
@@ -579,18 +577,18 @@ class SfenHandler(webapp.RequestHandler):
             one_digit_x = x ### 1ケタ目
 
         for hand_tuple in hand_tuples:
-            img_list.append((self.draw_piece_img[hand_tuple[0]][turn], 
+            img_list.append((self.draw_piece_img[hand_tuple[0]][turn],
                              x, y, 1.0, images.TOP_LEFT))
 
-            logging.debug('Drawing:' + str(hand_tuple[0]) + 
+            logging.debug('Drawing:' + str(hand_tuple[0]) +
                           ' num:' + str(hand_tuple[1]) +
                           ' y:' + str(y) + ' turn:' + str(turn))
 
             ### 持ち駒が複数ある時は数字の描画をする
-            if hand_tuple[1] > 1: 
+            if hand_tuple[1] > 1:
                 num = hand_tuple[1]
 
-                ### 数字を描画する前 
+                ### 数字を描画する前
                 if turn == self.BLACK:
                     y += (self.PIECE_IMAGE_HEIGHT + self.IMAGE_PADDING_Y)
                 else:
@@ -602,7 +600,7 @@ class SfenHandler(webapp.RequestHandler):
                     if self.number_img.has_key(hand_str) == False:
                         self.number_img_init(hand_str)
 
-                    img_list.append((self.number_img[hand_str][turn], 
+                    img_list.append((self.number_img[hand_str][turn],
                                      two_digit_x , y, 1.0, images.TOP_LEFT))
                     num %= 10 ### 1ケタ目にする
 
@@ -610,7 +608,7 @@ class SfenHandler(webapp.RequestHandler):
                 if self.number_img.has_key(hand_str) == False:
                     self.number_img_init(hand_str)
 
-                img_list.append((self.number_img[hand_str][turn], 
+                img_list.append((self.number_img[hand_str][turn],
                                  one_digit_x, y, 1.0, images.TOP_LEFT))
 
                 ### 数字を描画し終わった後
@@ -631,17 +629,17 @@ class SfenHandler(webapp.RequestHandler):
         (img, img_list) = self.composite(img_list)
 
         return (img, img_list)
-    
+
     def create_arrow_img(self, img_list, arrow_str, board_y):
         '''
         Create arrow image and add img_list.
 
         img_list: Original img_list
         arrow_str: String given arrow argument (e.g: 77,76 11,12|12,13)
-        board_y: board_y 
+        board_y: board_y
         return value:(Image, Image List)
 
-        This method cannot be run, 
+        This method cannot be run,
         because I don't know image rotating WebAPI for any degree.
 
         矢印の回転画像を合成し追加する
@@ -666,7 +664,7 @@ class SfenHandler(webapp.RequestHandler):
 #            end_y = 0
 
 #        return self.composite(img_list)
-            
+
 
 
     ### 一旦描画して描画済みの(img, img_list)のtupleを返す
@@ -674,8 +672,8 @@ class SfenHandler(webapp.RequestHandler):
         if len(img_list) == 1:
             return (img_list[0][0], img_list)
 
-        img = images.composite(img_list, self.IMAGE_WIDTH, 
-                               self.IMAGE_HEIGHT + self.max_title_height, 
+        img = images.composite(img_list, self.IMAGE_WIDTH,
+                               self.IMAGE_HEIGHT + self.max_title_height,
                                color = 0xFFFFFFFF)
 
         img_list = [(img, 0, 0, 1.0, images.TOP_LEFT)]
@@ -767,7 +765,7 @@ class SfenHandler(webapp.RequestHandler):
 
             if white_name_img_obj is not None and white_name_img_obj.height > self.max_title_height:
                 self.max_title_height = white_name_img_obj.height
-                
+
             if title_img_obj is not None and title_img_obj.height > self.max_title_height:
                 self.max_title_height = title_img_obj.height
 
@@ -777,25 +775,25 @@ class SfenHandler(webapp.RequestHandler):
 
             ### 先手のマークを書く位置を画像の右端から求める
             if black_name_img is not None:
-                logging.info('Drawing Black Name:' + u2utf8(black_name) + 
-                             ' width:' + str(black_name_img_obj.width) + 
+                logging.info('Drawing Black Name:' + u2utf8(black_name) +
+                             ' width:' + str(black_name_img_obj.width) +
                              ' height:' + str(black_name_img_obj.height))
 
                 black_title_x_left = self.IMAGE_WIDTH - (black_name_img_obj.width +
-                                                         self.BLACK_MARK_SMALL_WIDTH + 
+                                                         self.BLACK_MARK_SMALL_WIDTH +
                                                          self.IMAGE_PADDING_X)
 
                 black_title_x = black_title_x_left
-                img_list.append( (self.black_img[2], black_title_x, 
+                img_list.append( (self.black_img[2], black_title_x,
                                   self.TITLE_Y, 1.0, images.TOP_LEFT) )
-                
+
                 black_title_x += self.BLACK_MARK_SMALL_WIDTH + self.IMAGE_PADDING_X
                 img_list.append( (black_name_img, black_title_x,
                                   self.TITLE_Y, 1.0, images.TOP_LEFT) )
 
             ### 後手のマークと名前を描画する
             if white_name_img is not None:
-                logging.info('Drawing White Name:' + u2utf8(white_name) + 
+                logging.info('Drawing White Name:' + u2utf8(white_name) +
                              ' width:' + str(white_name_img_obj.width) +
                              ' height:' + str(white_name_img_obj.height) )
                 white_title_x = self.WHITE_TITLE_MARK_X
@@ -805,11 +803,11 @@ class SfenHandler(webapp.RequestHandler):
                 white_title_x += self.WHITE_MARK_SMALL_WIDTH + self.IMAGE_PADDING_X
                 img_list.append( (white_name_img, white_title_x,
                                   self.TITLE_Y, 1.0, images.TOP_LEFT) )
-                white_title_x_right = (white_title_x + 
-                                       white_name_img_obj.width + 
+                white_title_x_right = (white_title_x +
+                                       white_name_img_obj.width +
                                        self.IMAGE_PADDING_X)
 
-            
+
             ### 中央タイトルの描画
             if title_img is not None:
                 center = self.IMAGE_WIDTH / 2
@@ -844,17 +842,17 @@ class SfenHandler(webapp.RequestHandler):
                 self.last_move_img_init()
                 col = int(m.group(1))
                 row = int(m.group(2))
-                lm_x = (self.SQUARE_ORIGIN_X - 1 + self.BOARD_X + 
+                lm_x = (self.SQUARE_ORIGIN_X - 1 + self.BOARD_X +
                         self.SQUARE_MULTIPLE_X * (9 - int(col)) )
-                lm_y = (self.SQUARE_ORIGIN_Y - 1 + self.BOARD_Y + 
-                        self.title_height + 
+                lm_y = (self.SQUARE_ORIGIN_Y - 1 + self.BOARD_Y +
+                        self.title_height +
                         self.SQUARE_MULTIPLE_Y * (int(row) - 1) )
                 img_list.append((self.last_move_img, lm_x, lm_y, 0.5, images.TOP_LEFT))
 
         ### 盤の描画
         ### 最終着手マスより後に書くのは盤上の星が上に来て欲しいため
-        img_list.append( (self.draw_board_img, self.BOARD_X, 
-                          self.BOARD_Y + self.title_height, 
+        img_list.append( (self.draw_board_img, self.BOARD_X,
+                          self.BOARD_Y + self.title_height,
                           1.0, images.TOP_LEFT) )
 
         ### 盤上の駒の描画
@@ -872,8 +870,8 @@ class SfenHandler(webapp.RequestHandler):
             ### 駒を書く場所を決める
             x = self.BOARD_X + self.SQUARE_ORIGIN_X + self.SQUARE_MULTIPLE_X * (9 - int(col))
             y = self.BOARD_Y + self.SQUARE_ORIGIN_Y + self.title_height + self.SQUARE_MULTIPLE_Y * (int(row) - 1)
-            logging.debug("x:" + str(x) + " y:" + str(y) + 
-                         " pos:" + pos + " piece:" + piece_lower + 
+            logging.debug("x:" + str(x) + " y:" + str(y) +
+                         " pos:" + pos + " piece:" + piece_lower +
                          " turn:" + str(turn))
             img_list.append((self.draw_piece_img[piece_lower][turn],
                              x, y, 1.0, images.TOP_LEFT))
@@ -886,24 +884,24 @@ class SfenHandler(webapp.RequestHandler):
 
         ### 手番を書く
         if turn_str == 'on':
-            logging.info('draw_turn:' + turn_sfen + 
+            logging.info('draw_turn:' + turn_sfen +
                          ' title_height:' + str(self.title_height))
             if turn_sfen == 'b':
                 (img, img_list) = self.draw_turn_mark(img_list, self.BLACK_MARK_X,
-                                                      self.BLACK_MARK_Y + 
+                                                      self.BLACK_MARK_Y +
                                                       self.title_height)
             elif turn_sfen == 'w':
                 (img, img_list) = self.draw_turn_mark(img_list, self.WHITE_MARK_X,
-                                                      self.WHITE_MARK_Y + 
+                                                      self.WHITE_MARK_Y +
                                                       self.title_height)
 
         ### 先手のマークを表示する
-        img_list.append( (self.black_img[0], self.BLACK_MARK_X, 
-                          self.BLACK_MARK_Y + self.title_height, 
+        img_list.append( (self.black_img[0], self.BLACK_MARK_X,
+                          self.BLACK_MARK_Y + self.title_height,
                           1.0, images.TOP_LEFT) )
 
         ### 後手のマークを表示する
-        img_list.append( (self.white_img[1], self.WHITE_MARK_X, 
+        img_list.append( (self.white_img[1], self.WHITE_MARK_X,
                           self.WHITE_MARK_Y + self.title_height,
                           1.0, images.TOP_LEFT) )
         (img, img_list) = self.composite(img_list)
@@ -913,13 +911,13 @@ class SfenHandler(webapp.RequestHandler):
         pos_x = self.WHITE_MARK_X
         pos_y = self.WHITE_MARK_Y + self.title_height - (self.PIECE_IMAGE_HEIGHT + self.IMAGE_PADDING_Y)
 
-        (img, img_list) = self.draw_hand_pieces(img, white_hand_array, 
+        (img, img_list) = self.draw_hand_pieces(img, white_hand_array,
                                                 pos_x, pos_y, self.WHITE)
 
         ### 先手の手持ちの駒を描画
         pos_x = self.BLACK_MARK_X
         pos_y = self.BLACK_MARK_Y + self.title_height + (self.BLACK_MARK_HEIGHT + self.IMAGE_PADDING_Y)
-        (img, img_list) = self.draw_hand_pieces(img, black_hand_array, 
+        (img, img_list) = self.draw_hand_pieces(img, black_hand_array,
                                                 pos_x, pos_y, self.BLACK)
 
         ### 矢印を書く(予定)
@@ -934,7 +932,7 @@ class SfenHandler(webapp.RequestHandler):
 def main():
     application = webapp.WSGIApplication([('/sfen', SfenHandler)],
                                          debug=True)
-    
+
     util.run_wsgi_app(application)
 
 
