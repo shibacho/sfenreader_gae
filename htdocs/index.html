@@ -165,6 +165,12 @@ turn は先手番、後手番のマークを強調して手番を表示するか
 &amp;turn=on または &amp;turn=off で指定します。<br>
 省略するとonと同じ動作になります。<br>
 SFENに手番の情報が含まれていない場合は手番の強調を行いません。<br>
+<p>
+Twitterで呟いてインライン展開させたい場合は<i>/sfen</i> の代わりに<i>/twiimg</i> を指定します。以下のようなURLになります。<br>
+<blockquote>
+http://sfenreader.appspot.com/twiimg?sfen=<i>sfen_string</i>&lm=<i>last_move_square_num</i>&sname=<i>name_of_sente</i>&gname=<i>name_of_gote</i>&title=<i>title</i>&piece=<i>kanji_or_alphabet_or_international</i>&turn=<i>on_or_off</i>
+</blockquote>
+上のURLにアクセスするとTwitterカード向けにメタタグが埋め込まれたHTMLページが取得できます。<br>
 <!--
 <p>
 arrowは矢印の描画を行います。矢印の開始位置と終了位置をカンマ区切りで指定します。<br>

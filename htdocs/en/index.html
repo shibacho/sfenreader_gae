@@ -123,7 +123,7 @@ This WebAPI returns a png image indicates by <i>sfen_string</i><br>
 <i>sfen_string</i> must be URIencoded, because it includes spaces.<br>
 <i>sfen_string</i> is the required parameter.<br>
 <p>
-Parameter lm emphasis a square of <i>last_move_square_num</i>.
+Parameter <i>lm</i> emphasis a square of <i>last_move_square_num</i>.
 Generally , this parameter uses for the last move.<br>
 <i>lm</i> is not the required parameter.<br>
 <p>
@@ -139,6 +139,12 @@ This must be URIencoded on UTF-8 same as <i>sname</i> and <i>gname</i>.
 <i>turn</i> is a flag either emphasis or not which to move to black mark or white mark.<br>You specify &amp;turn=on or &amp;turn=off.<br>
 If you omit this parameter, default value is on.<br>
 If SFEN has no information which to move, image doesn't include that information.
+<p>
+When you want to use this API for a twitter bot, you specify <i>/twiimg</i> instead of <i>/sfen</i>. Like this. <br>
+<blockquote>
+http://sfenreader.appspot.com/twiimg?sfen=<i>sfen_string</i>&lm=<i>last_move_square_num</i>&sname=<i>name_of_sente</i>&gname=<i>name_of_gote</i>&title=<i>title</i>&piece=<i>kanji_or_alphabet_or_international</i>&turn=<i>on_or_off</i>
+</blockquote>
+When you access the URL, you can get a html page which is embedded twitter card tags.<br>
 <!--
 <p>
 arrowは矢印の描画を行います。矢印の開始位置と終了位置をカンマ区切りで指定します。<br>
