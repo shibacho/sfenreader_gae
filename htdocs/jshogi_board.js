@@ -34,6 +34,39 @@ String.prototype.toArray = function() {
   return array;
 };
 
+/**
+ * Check SFEN string
+ * 
+ * @param {string} sfen - The string of SFEN.
+ * @return {boolena} sfen is true or false.
+ */
+function IsValidSfen(sfen) {
+  var sfen_array = sfen.split(' ');
+  if (sfen_array.length === 4) {
+    return false;
+  }
+  // Check if turn is valid
+  if (sfen_array.length > 1 && sfen_array[1] !== 'b' && sfen_array[1] !== 'w') {
+    return false;
+  }
+  var sfen_board = sfen_array[0];
+  var sfen_hand  = sfen_array[2];
+
+  // Check if the SFEN string of board status have exact 9 columns.
+  if (sfen_board.split('/').length !== 9) {
+    return false;
+  }
+
+  // Check if the SFEN string of the hand have only valid shogi pieces.
+  if (!sfen_board.match(/[krbgsnlp\/]+/i)) {
+    return false;
+  };
+  if (!sfen_hand.match(/[krbgsnlp\-]+/i)) {
+    return false;   
+  }
+  return true;
+}
+
 if (typeof window.console != 'object') { // for IE
   window.console = {
     log:function(){}
@@ -161,6 +194,12 @@ if (!this['ShogiBoard']) {
       } else {
         this.board_status[pos] = (piece | this.WHITE_BIT);
       }
+    },
+    setBoardStatusBySfen: function(sfen) {
+      if (!IsValidSfen(sfen)) {
+        return false;
+      }
+      return true;
     },
     getAllPieces: function() {
       var pieces = new Array;
