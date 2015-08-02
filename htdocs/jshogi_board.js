@@ -28,7 +28,7 @@ function Pathname(path) {
 
 String.prototype.toArray = function() {
   var array = new Array;
-  for (var i=0 ; i < this.length; i++) {
+  for (var i = 0 ; i < this.length; i++) {
     array.push(this.charAt(i));
   }
   return array;
