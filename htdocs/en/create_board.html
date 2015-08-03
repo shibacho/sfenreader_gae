@@ -14,9 +14,6 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
 -->
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<!--[if lt IE 9]>
-<script type="text/javascript" src="../flashcanvas.js"></script>
-<![endif]-->
 <script type="text/javascript" src="../jshogi_board.js?2015071201"></script>
 <script type="text/javascript" src="../create_board.js?2011082602"></script>
 <script type="text/javascript" src="../google_analytics.js" async></script>
@@ -38,10 +35,29 @@ Language:<select id="langselect"><option value="ja">日本語</option><option va
 <div id="left_canvas" class="left">
 <div style="text-align:center;"><img src="../static_img/indicator.gif" id="indicator"></div>
 <canvas id="board" width="400" height="420"></canvas><br>
-<canvas id="rot_canvas" style="display:none;"></canvas><br>
-URL :<input type="text" id="long_url" style="width:400px;" onclick="this.focus(); this.select();"/> <br>
-<span id="twiimg_url" class="none"></span>
-<button id="tweet">Tweet Diagram</button>(Required Twitter Account) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">Diagram</span>
+<canvas id="rot_canvas" style="display:none;"></canvas>
+Initialize to handicapped games (or mate problem):
+<table>
+<tr>
+<td><button id="init_board">Normal</button></td>
+<td><button id="init_drop_kyo">Lance</button></td>
+<td><button id="init_drop_kaku">Bishop</button></td>
+<td><button id="init_drop_hisha">Rook</button></td>
+<td><button id="init_drop_hikyou">Lance and Rook</button></td>
+</tr>
+<tr>
+<td><button id="init_drop_nimai">Two pieces</button></td>
+<td><button id="init_drop_yonmai">Four pieces</button></td>
+<td><button id="init_drop_rokumai">Six pieces</button></td>
+<td><button id="init_mate_problem">Mate problem</button></td>
+<td><button id="init_by_sfen">Input SFEN</button></td>
+<span id="init_by_sfen_string" class="none">Input SFEN String</span>
+<span id="init_by_sfen_error_msg" class="none">The inputted SFEN string is invalid syntax.</span>
+</tr>
+</table>
+<br>
+URL :<input type="text" id="long_url" style="width:320px;" onclick="this.focus(); this.select();"/> <span id="twiimg_url" class="none"></span>
+<button id="tweet">Tweet</button> <span id="versus_string" class="none">vs</span> <span id="board_default_name" class="none">Diagram</span><br>
 <!--
 Shorten URL:<input type="text" id="short_url" /><br>
 -->

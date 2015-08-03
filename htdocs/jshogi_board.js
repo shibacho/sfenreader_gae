@@ -162,43 +162,6 @@ if (!this['ShogiBoard']) {
      */
     initEvenGame : function() {
       this.setBoardStatusBySfen('lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
-      // console.log('ShogiBoard.initEvenGame(): Called.');
-      // this.board_status[11] = this.board_status[91] =
-      //         this.piece_kind['KY'] | this.WHITE_BIT;
-      // this.board_status[21] = this.board_status[81] =
-      //         this.piece_kind['KE'] | this.WHITE_BIT;
-      // this.board_status[31] = this.board_status[71] =
-      //         this.piece_kind['GI'] | this.WHITE_BIT;
-      // this.board_status[41] = this.board_status[61] =
-      //         this.piece_kind['KI'] | this.WHITE_BIT;
-      // this.board_status[51] = this.piece_kind['OU'] | this.WHITE_BIT;
-      // this.board_status[22] = this.piece_kind['KA'] | this.WHITE_BIT;
-      // this.board_status[82] = this.piece_kind['HI'] | this.WHITE_BIT;
-      // this.board_status[13] =
-      //         this.board_status[23] = this.board_status[33] =
-      //         this.board_status[43] = this.board_status[53] =
-      //         this.board_status[63] = this.board_status[73] =
-      //         this.board_status[83] = this.board_status[93] =
-      //         this.piece_kind['FU'] | this.WHITE_BIT;
-
-      // this.board_status[19] = this.board_status[99] =
-      //         this.piece_kind['KY'];
-      // this.board_status[29] = this.board_status[89] =
-      //         this.piece_kind['KE'];
-      // this.board_status[39] = this.board_status[79] =
-      //         this.piece_kind['GI'];
-      // this.board_status[49] = this.board_status[69] =
-      //         this.piece_kind['KI'];
-      // this.board_status[88] = this.piece_kind['KA'];
-      // this.board_status[28] = this.piece_kind['HI'];
-      // this.board_status[59] = this.piece_kind['OU'];
-
-      // this.board_status[17] =
-      //         this.board_status[27] = this.board_status[37] =
-      //         this.board_status[47] = this.board_status[57] =
-      //         this.board_status[67] = this.board_status[77] =
-      //         this.board_status[87] = this.board_status[97] =
-      //         this.piece_kind['FU'];
     },
     getPieceNameFromStatus: function(status) {
       status &= (~this.WHITE_BIT);

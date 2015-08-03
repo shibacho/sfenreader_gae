@@ -14,11 +14,8 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
 -->
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<!--[if lt IE 9]>
-<script type="text/javascript" src="flashcanvas.js"></script>
-<![endif]-->
-<script type="text/javascript" src="../jshogi_board.js?2015071201"></script>
-<script type="text/javascript" src="../create_board.js?2011082602"></script>
+<script type="text/javascript" src="../jshogi_board.js?2015080201"></script>
+<script type="text/javascript" src="../create_board.js?2015080201"></script>
 <script type="text/javascript" src="../google_analytics.js" async></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -38,15 +35,34 @@ Language:<select id="langselect"><option value="ja" selected>日本語</option><
 <div id="left_canvas" class="left">
 <div style="text-align:center;"><img src="../static_img/indicator.gif" id="indicator"></div>
 <canvas id="board" width="400" height="420"></canvas><br>
-<canvas id="rot_canvas" style="display:none;"></canvas><br>
-URL :<input type="text" id="long_url" style="width:400px;" onclick="this.focus(); this.select();"/> <br>
-<span id="twiimg_url" class="none"></span>
-<button id="tweet">ツイートする</button>(要:Twitterアカウント) <br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
+<canvas id="rot_canvas" style="display:none;"></canvas>
+初期化: 
+<table>
+<tr>
+<td><button id="init_board">平手</button></td>
+<td><button id="init_drop_kyo">香落ち</button></td>
+<td><button id="init_drop_kaku">角落ち</button></td>
+<td><button id="init_drop_hisha">飛車落ち</button></td>
+<td><button id="init_drop_hikyou">飛香落ち</button></td>
+</tr>
+<tr>
+<td><button id="init_drop_nimai">二枚落ち</button></td>
+<td><button id="init_drop_yonmai">四枚落ち</button></td>
+<td><button id="init_drop_rokumai">六枚落ち</button></td>
+<td><button id="init_mate_problem">詰将棋用</button></td>
+<td><button id="init_by_sfen">任意のSFEN</button></td>
+<span id="init_by_sfen_string" class="none">SFEN文字列を入力してください</span>
+<span id="init_by_sfen_error_msg" class="none">SFEN文字列の文法が違います</span>
+</tr>
+</table>
+<br>
+URL :<input type="text" id="long_url" style="width:320px;" onclick="this.focus(); this.select();"/> <span id="twiimg_url" class="none"></span>
+<button id="tweet">ツイートする</button><br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
 短縮URL:<input type="text" id="short_url" /><br>
 -->
 SFEN:<input type="text" id="sfen" name="sfen" style="width:400px;" onclick="this.focus(); this.select();"/> <br>
-<a href="http://kyokumen.jp/positions/search">局面ペディア検索</a>等に使えます
+<div style="float:right;"><a href="http://kyokumen.jp/positions/search">局面ペディア検索</a>等に使えます</div>
 </form>
 </div> <!-- left_canvas -->
 <div id="right_control" class="right">
@@ -88,8 +104,8 @@ IE9、Firefox(6、7)、Google Chrome、Opera11、Safar5.1、(iPhone Safari) で�
 動作OSは選ばないはずです。<br>
 <hr>
 <h2>既知の問題点</h2>
-駒落ちの局面図には対応しておりません（駒箱という概念がないため）<br>
 対応しているブラウザに制限があります。主にGoogle Chromeで動作確認しています。<br>
+Canvasを使っているので古いブラウザ(特にIE8以前)はあまり対応できないと思います。<br>
 他のブラウザについては連絡いただければ対応できるかもしれません。<br>
 <hr>
 <h2>既知の問題点以外のフィードバックやバグ報告</h2>
