@@ -41,29 +41,57 @@ String.prototype.toArray = function() {
  * @return {boolena} sfen is true or false.
  */
 function IsValidSfen(sfen) {
+  console.log('IsValidSfen(' + sfen + ') is called.');
   var sfen_array = sfen.split(' ');
-  if (sfen_array.length === 4) {
+  if (sfen_array.length !== 4) {
+    console.debug('Length of SFEN string token is invalid. Must be 4, this is ' + sfen_array.length + '.');
     return false;
   }
   // Check if turn is valid
   if (sfen_array.length > 1 && sfen_array[1] !== 'b' && sfen_array[1] !== 'w') {
+    console.debug('A turn is invalid. (Must be \'b\' or \'w\')')
     return false;
   }
   var sfen_board = sfen_array[0];
   var sfen_hand  = sfen_array[2];
 
+  var sfen_rows = sfen_board.split('/');
   // Check if the SFEN string of board status have exact 9 columns.
-  if (sfen_board.split('/').length !== 9) {
+  if (sfen_rows.length !== 9) {
+    console.debug('Number of shogi board row is invalid. (' + sfen_board.split('/').length + ')');
     return false;
+  }
+
+  // Each row must be less or equal from 9.
+  for (var i = 0, n = sfen_rows.length; i < n; i++) {
+    var sfen_row = sfen_rows[i];
+    var count = 0; // square count
+    var num_regexp = /[1-9]/;
+    for (var index = 0, index_max = sfen_row.length; index < index_max; index++) {
+      var c = sfen_row.charAt(index);
+      if (c.match(num_regexp)) {
+        count += parseInt(c);
+      } else {
+        count++;
+      }
+    }
+
+    if (count > 9) {
+      console.debug('Too much pieces in one row. (' + sfen_row + ')');
+      return false;
+    }
   }
 
   // Check if the SFEN string of the hand have only valid shogi pieces.
   if (!sfen_board.match(/[krbgsnlp\/]+/i)) {
+    console.debug('Board piece character(s) is invalid.');
     return false;
   };
   if (!sfen_hand.match(/[krbgsnlp\-]+/i)) {
+    console.debug('Hand piece character(s) is invalid.');
     return false;   
   }
+  console.log('Valid.');
   return true;
 }
 
@@ -92,6 +120,10 @@ if (!this['ShogiBoard']) {
                        'KI':'g' , 'KA':'b' , 'HI':'r' , 'OU':'k' ,
                        'TO':'+p', 'NY':'+l', 'NK':'+n', 'NG':'+s',
                        'NA':'+g', 'UM':'+b', 'RY':'+r' };
+    this.sfen_dict_rev = { 'p':'FU',  'l':'KY',  'n':'KE',  's':'GI',
+                           'g':'KI',  'b':'KA',  'r':'HI',  'k':'OU',
+                          '+p':'TO', '+l':'NY', '+n':'NK', '+s':'NG',
+                          '+g':'NA', '+b':'UM', '+r':'RY' };
     this.piece_kanji_dict = { 'FU':'歩', 'KY':'香' , 'KE':'桂' , 'GI':'銀',
                               'KI':'金', 'KA':'角' , 'HI':'飛' , 'OU':'玉',
                               'TO':'と', 'NY':'杏' , 'NK':'圭' , 'NG':'全',
@@ -111,7 +143,7 @@ if (!this['ShogiBoard']) {
     this.black_hand_pieces = {};
     this.white_hand_pieces = {};
 
-    for (var i = 0;i < this.hand_piece_order.length; i++) {
+    for (var i = 0; i < this.hand_piece_order.length; i++) {
         this.black_hand_pieces[this.hand_piece_order[i]] = 0;
         this.white_hand_pieces[this.hand_piece_order[i]] = 0;
     }
@@ -125,44 +157,48 @@ if (!this['ShogiBoard']) {
     FU:1, KY:2 , KE:3 , GI:4 , KI:5 , KA:6 , HI:7 , OU:8,
     TO:9, NY:10, NK:11, NG:12, NA:13, UM:14, RY:15,
     PROMOTE_THRESHOLD:9, PROMOTE_PLUS:8,
+    /**
+     * Initialize board status to beginning
+     */
     initEvenGame : function() {
-      console.log('ShogiBoard.initEvenGame(): Called.');
-      this.board_status[11] = this.board_status[91] =
-              this.piece_kind['KY'] | this.WHITE_BIT;
-      this.board_status[21] = this.board_status[81] =
-              this.piece_kind['KE'] | this.WHITE_BIT;
-      this.board_status[31] = this.board_status[71] =
-              this.piece_kind['GI'] | this.WHITE_BIT;
-      this.board_status[41] = this.board_status[61] =
-              this.piece_kind['KI'] | this.WHITE_BIT;
-      this.board_status[51] = this.piece_kind['OU'] | this.WHITE_BIT;
-      this.board_status[22] = this.piece_kind['KA'] | this.WHITE_BIT;
-      this.board_status[82] = this.piece_kind['HI'] | this.WHITE_BIT;
-      this.board_status[13] =
-              this.board_status[23] = this.board_status[33] =
-              this.board_status[43] = this.board_status[53] =
-              this.board_status[63] = this.board_status[73] =
-              this.board_status[83] = this.board_status[93] =
-              this.piece_kind['FU'] | this.WHITE_BIT;
+      this.setBoardStatusBySfen('lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+      // console.log('ShogiBoard.initEvenGame(): Called.');
+      // this.board_status[11] = this.board_status[91] =
+      //         this.piece_kind['KY'] | this.WHITE_BIT;
+      // this.board_status[21] = this.board_status[81] =
+      //         this.piece_kind['KE'] | this.WHITE_BIT;
+      // this.board_status[31] = this.board_status[71] =
+      //         this.piece_kind['GI'] | this.WHITE_BIT;
+      // this.board_status[41] = this.board_status[61] =
+      //         this.piece_kind['KI'] | this.WHITE_BIT;
+      // this.board_status[51] = this.piece_kind['OU'] | this.WHITE_BIT;
+      // this.board_status[22] = this.piece_kind['KA'] | this.WHITE_BIT;
+      // this.board_status[82] = this.piece_kind['HI'] | this.WHITE_BIT;
+      // this.board_status[13] =
+      //         this.board_status[23] = this.board_status[33] =
+      //         this.board_status[43] = this.board_status[53] =
+      //         this.board_status[63] = this.board_status[73] =
+      //         this.board_status[83] = this.board_status[93] =
+      //         this.piece_kind['FU'] | this.WHITE_BIT;
 
-      this.board_status[19] = this.board_status[99] =
-              this.piece_kind['KY'];
-      this.board_status[29] = this.board_status[89] =
-              this.piece_kind['KE'];
-      this.board_status[39] = this.board_status[79] =
-              this.piece_kind['GI'];
-      this.board_status[49] = this.board_status[69] =
-              this.piece_kind['KI'];
-      this.board_status[88] = this.piece_kind['KA'];
-      this.board_status[28] = this.piece_kind['HI'];
-      this.board_status[59] = this.piece_kind['OU'];
+      // this.board_status[19] = this.board_status[99] =
+      //         this.piece_kind['KY'];
+      // this.board_status[29] = this.board_status[89] =
+      //         this.piece_kind['KE'];
+      // this.board_status[39] = this.board_status[79] =
+      //         this.piece_kind['GI'];
+      // this.board_status[49] = this.board_status[69] =
+      //         this.piece_kind['KI'];
+      // this.board_status[88] = this.piece_kind['KA'];
+      // this.board_status[28] = this.piece_kind['HI'];
+      // this.board_status[59] = this.piece_kind['OU'];
 
-      this.board_status[17] =
-              this.board_status[27] = this.board_status[37] =
-              this.board_status[47] = this.board_status[57] =
-              this.board_status[67] = this.board_status[77] =
-              this.board_status[87] = this.board_status[97] =
-              this.piece_kind['FU'];
+      // this.board_status[17] =
+      //         this.board_status[27] = this.board_status[37] =
+      //         this.board_status[47] = this.board_status[57] =
+      //         this.board_status[67] = this.board_status[77] =
+      //         this.board_status[87] = this.board_status[97] =
+      //         this.piece_kind['FU'];
     },
     getPieceNameFromStatus: function(status) {
       status &= (~this.WHITE_BIT);
@@ -195,10 +231,107 @@ if (!this['ShogiBoard']) {
         this.board_status[pos] = (piece | this.WHITE_BIT);
       }
     },
+    setBoardStatusByString: function(pos, turn, piece_name) {
+      var piece = this.piece_kind[piece_name];
+      if (piece === undefined) {
+        return false;
+      }
+      this.setBoardStatus(pos, turn, piece);
+      return true;
+    },
+    /**
+     * Set shogi board status by the SFEN string
+     * 
+     * @this {ShogiBoard}
+     * @param {string} sfen - SFEN string
+     * @return {boolean} To set board status is successful or not.
+     */
     setBoardStatusBySfen: function(sfen) {
+      console.info('Called setBoardStatusBySfen(' + sfen + ')');
       if (!IsValidSfen(sfen)) {
         return false;
       }
+      var sfen_array = sfen.split(' ');
+      var sfen_board = sfen_array[0];
+      var sfen_hand  = sfen_array[2];
+      
+      // Update board status
+      var sfen_row = sfen_board.split('/');
+      var num_regexp = /[1-9]/;
+      for (var row = 0, row_max = sfen_row.length; row < row_max; row++) {
+        console.log('row:' + String(row));
+        var board_row = sfen_row[row];
+        console.log('board_row:' + board_row + ' row:' + row);
+        for (var i = 0, n = board_row.length, col = 1; i < n; i++, col++) {
+          var c = board_row.charAt(i);
+          var pos = 10 * (10 - col) + (row + 1);
+          if (c.match(num_regexp)) { // number (clear square)
+            var num = parseInt(c);
+            for (var j = 0; j < num; j++) {
+              console.debug('board_status:[' + pos + '] = 0');
+              this.board_status[pos] = 0;
+              pos -= 10;
+            }
+            col += num - 1;
+            continue;
+          } else if (c === '+') { // promoted piece
+            c += board_row.charAt(i + 1);
+            i++;
+            console.log('c:' + c + ' is the promoted piece.')
+          }
+          var piece_name = this.sfen_dict_rev[c.toLowerCase()];
+          var turn = this.BLACK;
+          if (c === c.toLowerCase()) {
+            turn = this.WHITE;
+          }
+          console.debug('piece_name:' + piece_name + ' c:' + c + ' board_status:[' + pos + '] = ' + piece_name);
+          this.setBoardStatusByString(pos, turn, piece_name);
+        }
+      }
+      
+      // Update hand pieces
+      this.clearHandPiece(this.BLACK);
+      this.clearHandPiece(this.WHITE);
+      var prev_sfen = '';
+      for (var i = 0, n = sfen_hand.length; i < n; i++) {
+        var sfen = sfen_hand.charAt(i);
+        if (sfen === '-') {
+          break;
+        }
+        
+        if (sfen.match(num_regexp)) { // number
+          var num = sfen;
+          if (i !== n - 1 && sfen_hand.charAt(i + 1).match(num_regexp)) {
+            num += sfen_hand.charAt(i + 1);
+            i++;
+          }
+          num = parseInt(num);
+          num--;
+          var piece_name = this.sfen_dict_rev[prev_sfen.toLowerCase()]
+          var piece_kind = this.piece_kind[piece_name];
+          console.debug('previous sfen:' + prev_sfen + ' piece_name:' + piece_name + ' piece_kind:' + piece_kind + ' num:' + num);
+          while(num--) {
+            if (prev_sfen === prev_sfen.toLowerCase()) { // turn black
+              this.addHandPiece(this.BLACK, piece_kind);
+            } else if (prev_sfen === prev_sfen.toUpperCase()) { // turn white
+              this.addHandPiece(this.WHITE, piece_kind);
+            } 
+          }
+        } else {
+          var piece_name = this.sfen_dict_rev[sfen.toLowerCase()]
+          var piece_kind = this.piece_kind[piece_name];
+          console.debug('sfen:' + sfen + ' piece_name:' + piece_name);
+          if (sfen === sfen.toLowerCase()) { // turn black
+            this.addHandPiece(this.BLACK, piece_kind);
+          } else if (sfen === sfen.toUpperCase()) { // turn white
+            this.addHandPiece(this.WHITE, piece_kind);
+          } else {
+            console.error('setBoardStatusBySfen(): In setting hand, unknown piece \"' + piece_name + '\"');
+          }
+          prev_sfen = sfen;
+        }          
+      }
+      
       return true;
     },
     getAllPieces: function() {
@@ -222,7 +355,7 @@ if (!this['ShogiBoard']) {
       }
     },
     addHandPiece: function (turn, piece) {
-      var hand_piece_array = undefined;
+      var hand_piece_array = [];
       piece &= ~this.WHITE_BIT;
       if (piece >= this.PROMOTE_THRESHOLD) {
         piece -= this.PROMOTE_PLUS;
@@ -233,7 +366,6 @@ if (!this['ShogiBoard']) {
       } else if (turn == this.WHITE) {
         hand_piece_array = this.white_hand_pieces;
       }
-
       var piece_name = this.getPieceNameFromStatus(piece);
       var piece_num = hand_piece_array[piece_name];
       if (typeof piece_num == 'undefined') {
@@ -245,6 +377,24 @@ if (!this['ShogiBoard']) {
       console.log('turn:' + (turn == this.BLACK ? 'BLACK' : 'WHITE'));
       hand_piece_array[piece_name] = piece_num;
       console.log('piece_name:' + piece_name + ':' + piece_num);
+    },
+    /**
+     * Clear hand pieces
+     * @param {enum} turn - this.BLACK or this.WHITE
+     */
+    clearHandPiece: function (turn) {
+      console.log('clearHandPiece(' + turn + ')');
+      var hand_piece_array = [];
+      if (turn === this.BLACK) {
+        hand_piece_array = this.black_hand_pieces;
+      } else if (turn === this.WHITE) {
+        hand_piece_array = this.white_hand_pieces;
+      }
+      for (var key in hand_piece_array) {
+        if (hand_piece_array[key]) {
+          hand_piece_array[key] = 0;
+        } 
+      }
     },
     swapBoardPieces: function (begin, end) {
       console.log('swapBoardPieces:' + begin + ' -> ' + end);
@@ -425,6 +575,7 @@ if (!this['ShogiBoard']) {
           if (num > 1) {
             sfen += String(num);
           }
+          console.info('piece:' + piece + ' sfen_name:' + sfen_name)
           sfen += sfen_name.toUpperCase();
         }
       }
@@ -519,6 +670,15 @@ if (!this['ShogiBoard']) {
 }
 
 if (!this['BoardCanvas']) {
+  /**
+   * Canvas Element which expresses Shogi board.
+   * 
+   * @constructor
+   * @param {DOM} canvas - DOM of html canvas
+   * @param {ShogiBoard} shogi_board - the ShogiBoard instance which manages board status
+   * @param {PieceImages} piece_images - Images of shogi pieces
+   * @param {NumberImages} number_images - Images of numbers 
+   */
   var BoardCanvas = function(canvas, shogi_board,
                              piece_images, number_images) {
     var self = this;
@@ -1124,11 +1284,14 @@ if (!this['BoardCanvas']) {
         self.drawSquare(self.select_square_x, self.select_square_y);
       }
       self.drawPieces();
-
       self.onBoardChange();
     };
-
+    
+    /**
+     * Event handler which called when board status is changed
+     */    
     this.onBoardChange = function() {
+      // Override here
     };
   };
 }
