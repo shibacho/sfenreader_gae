@@ -18,10 +18,10 @@ $(document).ready(function(){
   var shogi_board = new ShogiBoard();
   var piece_images = new PieceImages();
   var number_images = new NumberImages();
-  var $board = $('#board');
-  var board_canvas = new BoardCanvas($board[0], shogi_board,
+  // var $board = $('#board');
+  var board_canvas = new BoardCanvas($('#board')[0], shogi_board,
                                      piece_images, number_images);
-  if (!$board || !$board[0].getContext) {
+  if (!$('#board') || !$('#board')[0].getContext) {
     return;
   }
 
@@ -101,8 +101,8 @@ $(document).ready(function(){
   console.log('width:' + board_canvas.CANVAS_WIDTH +
               ' height:' + board_canvas.CANVAS_HEIGHT);
 
-  $board[0].width = board_canvas.CANVAS_WIDTH;
-  $board[0].height = board_canvas.CANVAS_HEIGHT;
+  $('#board')[0].width = board_canvas.CANVAS_WIDTH;
+  $('#board')[0].height = board_canvas.CANVAS_HEIGHT;
 
   $('#sente_name').change(function(evt) {
     board_canvas.drawBlackName($('#sente_name').val());
@@ -160,6 +160,65 @@ $(document).ready(function(){
     text = encodeURIComponent(text);
     window.open('https://twitter.com/share?url=' + url + '&text=' + text, '_blank', 'width=700,height=300');
   });
+  
+  $('#init_board').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    board_canvas.drawAll();
+  });
+  
+  $('#init_drop_kyo').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('1nsgkgsn1/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    board_canvas.drawAll();
+  });
+
+  $('#init_drop_kaku').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('lnsgkgsnl/1r7/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    board_canvas.drawAll();
+  });
+  
+  $('#init_drop_hisha').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('lnsgkgsnl/7b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    board_canvas.drawAll();
+  });
+  
+  $('#init_drop_hikyou').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('lnsgkgsn1/7b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    board_canvas.drawAll();
+  });
+  
+  $('#init_drop_nimai').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('lnsgkgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    board_canvas.drawAll();
+  });
+  
+  $('#init_drop_yonmai').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('1nsgkgsn1/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    board_canvas.drawAll();
+  });
+  
+  $('#init_drop_rokumai').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('2sgkgs2/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    board_canvas.drawAll();
+  });
+  
+  $('#init_mate_problem').click(function(evt) {
+    shogi_board.setBoardStatusBySfen('8k/9/9/9/9/9/9/9/9 b R2B2G4S4N4L4P18 1');
+    board_canvas.drawAll();
+  });
+  
+  $('#init_by_sfen').click(function(evt) {
+    var sfen = 
+      window.prompt($('#init_by_sfen_string').html(),
+      'lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
+    if (sfen !== null) {
+      if (shogi_board.setBoardStatusBySfen(sfen) === true) {
+        board_canvas.drawAll();
+      } else { // Maybe SFEN string syntax error
+        window.alert($('#init_by_sfen_error_msg').html())
+      }
+    }
+  });
+  
 
   shogi_board.initEvenGame();
   board_canvas.onBoardChange();
