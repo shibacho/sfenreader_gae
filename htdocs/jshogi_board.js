@@ -38,7 +38,7 @@ String.prototype.toArray = function() {
  * Check SFEN string
  * 
  * @param {string} sfen - The string of SFEN.
- * @return {boolena} sfen is true or false.
+ * @return {boolean} sfen is true or false.
  */
 function IsValidSfen(sfen) {
   console.log('IsValidSfen(' + sfen + ') is called.');
@@ -102,12 +102,16 @@ if (typeof window.console != 'object') { // for IE
 }
 
 if (!this['ShogiBoard']) {
+  /** 
+   * Represents shogi board status
+   * @constructor
+   */
   var ShogiBoard = function() {
     this.board_status = new Array;
     for (var i = 0;i < 100;i++) {
         this.board_status[i] = 0;
     }
-
+    
     this.piece_kind = { ' * ':0,
                         'FU':1 , 'KY':2 , 'KE':3 , 'GI':4 ,
                         'KI':5 , 'KA':6 , 'HI':7 , 'OU':8 ,
@@ -150,23 +154,37 @@ if (!this['ShogiBoard']) {
   };
 
   ShogiBoard.prototype = {
-    EMPTY:0,
-    BLACK:1,
-    WHITE:2,
+    /** For empty square */ EMPTY:0,
+    /** Sente */ BLACK:1,
+    /** Gote  */ WHITE:2,
     WHITE_BIT:0x10,
     FU:1, KY:2 , KE:3 , GI:4 , KI:5 , KA:6 , HI:7 , OU:8,
     TO:9, NY:10, NK:11, NG:12, NA:13, UM:14, RY:15,
     PROMOTE_THRESHOLD:9, PROMOTE_PLUS:8,
     /**
      * Initialize board status to beginning
+     * 
+     * @this {ShogiBoard}
      */
     initEvenGame : function() {
       this.setBoardStatusBySfen('lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
     },
+    /**
+     * Get piece name from status number
+     * 
+     * @this {ShogiBoard}
+     * @param {number} status - number of representing piece number
+     */
     getPieceNameFromStatus: function(status) {
       status &= (~this.WHITE_BIT);
       return this.piece_name[status];
     },
+    /**
+     * Get board status of specific position
+     * 
+     * @this {ShogiBoard}
+     * @param {number} pos - The specified position of shogi board 
+     */
     getBoardStatus: function(pos) {
       var status = this.board_status[pos];
       if (status == 0) {
@@ -178,15 +196,29 @@ if (!this['ShogiBoard']) {
         return [this.BLACK, this.getPieceNameFromStatus(status)];
       }
     },
+    /**
+     * Get Piece turn of specific position
+     * 
+     * @this {ShogiBoard}
+     * @param {number} pos - The specified position of shogi board
+     */
     getSquarePieceTurn: function(pos) {
       if (this.board_status[pos] == 0){
-        return turn.EMPTY;
+        return this.EMPTY;
       } else if (this.board_status[pos] & this.WHITE_BIT) {
-        return turn.WHITE;
+        return this.WHITE;
       } else {
-        return turn.BLACK;
+        return this.BLACK;
       }
     },
+    /**
+     * Set board status of specific position
+     * 
+     * @this {ShogiBoard}
+     * @param {number} pos - The specified position of shogi board
+     * @param {enum} turn - piece turn (this.BLACK or this.WHITE)
+     * @param {number} piece - kind of piece (Refer to this.piece_kind)
+     */
     setBoardStatus: function(pos, turn, piece) {
       if (turn == this.BLACK) {
         this.board_status[pos] = piece;
@@ -194,6 +226,14 @@ if (!this['ShogiBoard']) {
         this.board_status[pos] = (piece | this.WHITE_BIT);
       }
     },
+    /**
+     * Set board status of specific position (use piece name)
+     * 
+     * @this {ShogiBoard}
+     * @param {number} pos - The specified position of shogi board
+     * @param {enum} turn - piece turn (this.BLACK or this.WHITE)
+     * @param {string} piece_name - name of piece (Refer to this.piece_name)
+     */
     setBoardStatusByString: function(pos, turn, piece_name) {
       var piece = this.piece_kind[piece_name];
       if (piece === undefined) {
@@ -297,6 +337,12 @@ if (!this['ShogiBoard']) {
       
       return true;
     },
+    /**
+     * Get all pieces on shogi board (except pieces of both hands)
+     * 
+     * @this {ShogiBoard}
+     * @return {array} [[position, kind of pieces]... ]
+     */
     getAllPieces: function() {
       var pieces = new Array;
       for (var i = 0;i < 100;i++) {
@@ -308,6 +354,12 @@ if (!this['ShogiBoard']) {
       }
       return pieces;
     },
+    /**
+     * Get hand pieces
+     * 
+     * @this {ShogiBoard}
+     * @param {enum} turn - this.BLACK or this.WHITE
+     */
     getHandPieces: function(turn) {
       if (turn == this.BLACK) {
         return this.black_hand_pieces;
@@ -317,6 +369,13 @@ if (!this['ShogiBoard']) {
         return undefined;
       }
     },
+    /**
+     * Add pieces to hand
+     * 
+     * @this {ShogiBoard}
+     * @param {enum} turn - turn where want to add (this.BLACK or this.WHITE)
+     * @param {piece} piece - piece what add to turn's hand
+     */
     addHandPiece: function (turn, piece) {
       var hand_piece_array = [];
       piece &= ~this.WHITE_BIT;
@@ -343,6 +402,8 @@ if (!this['ShogiBoard']) {
     },
     /**
      * Clear hand pieces
+     * 
+     * @this {ShogiBoard}
      * @param {enum} turn - this.BLACK or this.WHITE
      */
     clearHandPiece: function (turn) {
@@ -359,6 +420,13 @@ if (!this['ShogiBoard']) {
         } 
       }
     },
+    /**
+     * Swap board pieces `begin` and `end` (maybe hand)
+     * 
+     * @this {ShogiBoard}
+     * @param {number} begin - Swap position from
+     * @param {number} end - Swap possition to (0 is black's hand, 1 is white's hand)
+     */
     swapBoardPieces: function (begin, end) {
       console.log('swapBoardPieces:' + begin + ' -> ' + end);
       console.log('begin_status:' + this.board_status[begin]);
@@ -414,12 +482,20 @@ if (!this['ShogiBoard']) {
           this.board_status[begin] = status_end;
         }
       }
-
     },
+    /**
+     * Move piece from stand (hand) to board
+     * 
+     * @this {ShogiBoard}
+     * @param {enum} turn - this.BLACK or this.WHITE
+     * @param {string} piece_name - name of piece (refer to this.piece_name)
+     * @param {number} to_pos - position where put piece
+     */
     dropPieceFromStand: function (turn, piece_name, to_pos) {
       console.log('dropPieceFromStand: turn:' + turn +
                   ' piece_name:' + piece_name +
                   ' to_pos:' + to_pos);
+      /// TODO:error handling (example: turn doesn't have piece of `piece_name`)
       var piece_kind = this.piece_kind[piece_name];
       if (turn == this.WHITE) {
         this.white_hand_pieces[piece_name]--;
@@ -429,9 +505,16 @@ if (!this['ShogiBoard']) {
         this.board_status[to_pos] = piece_kind;
       }
     },
+    /**
+     * Move one piece one turn's hand to another's
+     * 
+     * @this {ShogiBoard}
+     * @param {enum} from_turn - turn which move from (this.BLACK or this.WHITE)
+     * @param {string} piece_name - piece name of moving (refer to this.piece_name)
+     */
     givePieceFromStand: function(from_turn, piece_name) {
       console.log('givePieceFromStand(' + from_turn + ',' + piece_name + ')');
-      var piece_kind = this.piece_kind[piece_name];
+      /// TODO:error handling (example: turn doesn't have piece of `piece_name`)
       if (from_turn == this.WHITE) {
         this.white_hand_pieces[piece_name]--;
         this.black_hand_pieces[piece_name]++;
@@ -439,8 +522,14 @@ if (!this['ShogiBoard']) {
         this.black_hand_pieces[piece_name]--;
         this.white_hand_pieces[piece_name]++;
       }
-
     },
+    /**
+     * Change piece kind 
+     * order (Black's -> Black's promoted -> White's -> White's promoted) circulation
+     * 
+     * @this {ShogiBoard}
+     * @param {number} pos - position of shogi board
+     */
     changePieceKind: function(pos) {
       if (pos <= 11 || pos >= 100) {
         return;
@@ -489,6 +578,13 @@ if (!this['ShogiBoard']) {
       console.log('Change After: pos:' + pos + ' turn:' + turn +
                  ' status:' + status);
     },
+    /**
+     * Get SFEN string that represents shogi board
+     * 
+     * @this {ShogiBoard}
+     * @param {enum} turn - next to move piece 
+     * @return {string} SFEN string
+     */
     getSFENString: function(turn) {
       var sfen = '';
       for (var row = 1; row <= 9; row++) {
@@ -564,6 +660,9 @@ if (!this['ShogiBoard']) {
       sfen += '1';
       return sfen;
     },
+    /**
+     * Get BOD string (in UTF-8) that represents shogi board
+     */
     getBoardString: function() {
       var str = '';
       var white_hand_pieces = this.getHandPieces(this.WHITE);
@@ -603,6 +702,12 @@ if (!this['ShogiBoard']) {
       str += this.getHandString(black_hand_pieces);
       return str;
     },
+    /**
+     * Get string that represents one's hand (for BOD string)
+     * 
+     * @this {ShogiBoard}
+     * @param {array} array of hand pieces
+     */
     getHandString: function(hand_pieces) {
       var str = '';
       var hand_piece_added = false;
@@ -680,6 +785,9 @@ if (!this['BoardCanvas']) {
     this.onMouseMove = function(evt) {
       return '';
     };
+    /**
+     * Event Handler when mouse left button is clicked
+     */
     this.onLeftClick = function(evt) {
       var temp;
       var ctx = self.canvas.getContext('2d');
@@ -698,7 +806,6 @@ if (!this['BoardCanvas']) {
 
       /// クリックした場所が範囲外だった場合は何もしない
       /// pos_x が -1の時は後手の駒台、10の時は先手の駒台とみなす
-      /// TODO:pos_y が9以上の場合、駒箱とみなす
       if (pos_y < 1 || pos_y > 9) {
         return;
       }
@@ -823,6 +930,13 @@ if (!this['BoardCanvas']) {
 
     this.select_square_x = undefined;
     this.select_square_y = undefined;
+    /**
+     * Draw yellow square which left position is x, top position is y
+     * 
+     * @this {BoardCanvas}
+     * @param {number} x - square's left side
+     * @param {number} y - square's top side
+     */
     this.drawSquare = function(x, y) {
       console.log('drawSquare: x:' + x + ' y:' + y);
       var ctx = this.canvas.getContext('2d');
@@ -832,10 +946,17 @@ if (!this['BoardCanvas']) {
       this.select_square_x = x;
       this.select_square_y = y;
     };
+    /**
+     * Draw yellow square on shogi board square
+     * 
+     * @this {BoardCanvas}
+     * @param {number} pos_x - position x (shogi board number)
+     * @param {number} pos_y - position y (shogi board number)
+     */
     this.drawSquareOnBoard = function (pos_x, pos_y) {
       console.log('drawSquareOnBoard: ' + pos_x + '' + pos_y);
       var ctx = self.canvas.getContext('2d');
-      /// 黄色のマスを書く
+      /// draw yellow square
       ctx.fillStyle = "rgb(255, 255, 192)";
 
       var origin_x = self.BOARD_X + self.BOARD_WIDTH_PADDING;
@@ -853,11 +974,17 @@ if (!this['BoardCanvas']) {
       self.select_square_y = y;
     };
 
+    /**
+     * Remove yellow square on shogi board
+     */
     this.removeSquare = function() {
       self.select_square_x = undefined;
       self.select_square_y = undefined;
     };
 
+    /**
+     * Event handler when mouse right button is clicked
+     */
     this.onRightClick = function(evt) {
       var temp  = this.getPos(evt);
       var x = temp[0];
@@ -874,12 +1001,14 @@ if (!this['BoardCanvas']) {
       self.drawAll();
     };
 
+    /**
+     * Draw pieces by self.shogi_board's status
+     */
     this.drawPieces = function() {
       console.log('drawPieces width:' + self.canvas.width +
                   ' height:' + self.canvas.height );
       var ctx = self.canvas.getContext('2d');
-      var image;
-      image = self.piece_images.getBoardImage();
+      var image = self.piece_images.getBoardImage();
       console.log('x: ' + self.BOARD_X +
                   ' y:' + (self.BOARD_Y + self.TITLE_HEIGHT) + ' image:' + typeof image);
       ctx.drawImage(image, self.BOARD_X, self.BOARD_Y + self.TITLE_HEIGHT);
@@ -1004,6 +1133,13 @@ if (!this['BoardCanvas']) {
       }
     };
 
+    /**
+     * Draw 180 degree rotated image to (x, y)
+     * 
+     * @param {PieceImage, NumberImage} image - Image to draw
+     * @param {number} x - image's left
+     * @param {number} y - image's top
+     */
     this.drawRotateImage = function(image, x, y) {
       console.log('drawRotateImage(' + image + ',' + x + ',' + y + ')');
       var ctx = self.canvas.getContext('2d');
@@ -1013,9 +1149,15 @@ if (!this['BoardCanvas']) {
       ctx.drawImage(image, x, y);
 
       ctx.restore();
-
     };
-
+    
+    /**
+     * Convert (x, y) position to shogi board coordinate
+     * 
+     * @param {number} x
+     * @param {number} y
+     * @return {array} [corrdinate of shogi board x, coordinate of shogi board y]
+     */
     this.convertPositionToBoard = function(x, y) {
       console.log('convertPositionToBoard(' + x + ', ' + y + ') called:');
       var pos_x = x;
@@ -1048,7 +1190,13 @@ if (!this['BoardCanvas']) {
                   ' pos_x:' + pos_x + ' pos_y:' + pos_y);
       return [pos_x, pos_y];
     };
-
+    
+    /**
+     * Get clicked position from event object
+     * 
+     * @param {event} evt - event object when click event handler is called
+     * @return {array} [clicked position x, clicked position y]
+     */
     this.getPos = function(evt) {
       // Get Position of inside canvas
       // Reference: http://docs.jquery.com/Tutorials:Mouse_Position
@@ -1089,7 +1237,13 @@ if (!this['BoardCanvas']) {
     this.white_name = '';
     this.title = '';
 
+    /**
+     * Draw Black's name (with black mark)
+     * 
+     * @param {string} black_name - name of black
+     */
     this.drawBlackName = function(black_name) {
+      // TODO: when black_name is empty, erase the black mark
       var ctx = self.canvas.getContext('2d');
       ctx.fillStyle = 'black';
       ctx.font = '16px sans-serif';
@@ -1139,7 +1293,13 @@ if (!this['BoardCanvas']) {
       }
     };
 
+    /**
+     * Draw white's name (with white mark)
+     * 
+     * @param {string} white_name - name of white
+     */
     this.drawWhiteName = function(white_name) {
+      // TODO: when white_name is empty, erase the white mark
       var ctx = self.canvas.getContext('2d');
       ctx.fillStyle = 'black';
       ctx.font = '16px sans-serif';
@@ -1178,6 +1338,11 @@ if (!this['BoardCanvas']) {
       }
     };
 
+    /**
+     * Draw title of shogi board (defined by user)
+     * 
+     * @param {string} title - drawing string
+     */
     this.drawTitle = function(title) {
       var ctx = self.canvas.getContext('2d');
       ctx.fillStyle = 'black';
@@ -1201,7 +1366,7 @@ if (!this['BoardCanvas']) {
           draw_title = title.replace(/\s/g, '\u0020');
         }
 
-        // 書く文字の長さに応じて中央を求める
+        // Determine the center by the length of title
         var center = parseInt(self.CANVAS_WIDTH / 2);
         var title_width = ctx.measureText(draw_title);
         var center_x = center - parseInt(title_width.width / 2);
@@ -1211,18 +1376,30 @@ if (!this['BoardCanvas']) {
       }
     };
 
+    /**
+     * Get title of shogi board
+     */
     this.getTitle = function() {
       return self.title.replace(/\u0020/g, ' ');
     };
 
+    /**
+     * Get black's name
+     */
     this.getBlackName = function() {
       return self.black_name.replace(/\u0020/g, ' ');
     };
 
+    /**
+     * Get white's name
+     */
     this.getWhiteName = function() {
       return self.white_name.replace(/\u0020/g, ' ');
     };
 
+    /**
+     * Clear all region of canvas
+     */
     this.clearAll = function() {
       var ctx = self.canvas.getContext('2d');
       ctx.clearRect(0, 0,
@@ -1230,24 +1407,39 @@ if (!this['BoardCanvas']) {
                     this.canvas.height);
     };
 
+    /**
+     * Draw header strings 
+     */
     this.drawHeader = function() {
       self.drawBlackName();
       self.drawWhiteName();
       self.drawTitle();
     };
 
+    /**
+     * Draw all elements
+     */
     this.drawAll = function() {
       self.clearAll();
-      self.drawBlackName();
-      self.drawWhiteName();
-      self.drawTitle();
+      self.drawHeader();
       if (typeof self.select_square_x != 'undefined') {
         console.log('Square x:' + self.select_square_x +
                     ' y:' + self.select_square_y);
         self.drawSquare(self.select_square_x, self.select_square_y);
       }
       self.drawPieces();
+      // Call event handler when board status is changed
       self.onBoardChange();
+    };
+    
+    /**
+     * Change images (e.g. kanji piece to international piece)
+     * 
+     * @this {BoardCanvas}
+     * @param {PieceImages} piece_images - images of pieces
+     */
+    this.changeImages = function(piece_images) {
+      
     };
     
     /**
@@ -1277,6 +1469,13 @@ if (!this['PieceImages']) {
 
   PieceImages.prototype = {
     ALL_IMAGE_NUM:17,
+    /**
+     * Init images 
+     * 
+     * @this {PieceImages}
+     * @param {function} on_complete_callback - function when loading is completed
+     * @param {string} kind - 'kanji','alphabet' or 'international'
+     */
     initImages: function (on_complete_callback, kind) {
       this.callback = on_complete_callback;
       this.board_url = IMAGEPATH + 'board.png';
@@ -1343,6 +1542,9 @@ if (!this['PieceImages']) {
       this.piece_images['RY'] =
               this.loadFromFile(this.piece_urls['RY']);
     },
+    /**
+     * Callback function when image loading ends
+     */
     onLoad: function() {
       this.piece_images.num_loaded++;
       console.log('Loaded:' + this.piece_images.num_loaded);
@@ -1354,6 +1556,11 @@ if (!this['PieceImages']) {
         this.piece_images.num_loaded = 0;
       }
     },
+    /**
+     * Load image from specific url
+     * 
+     * @param {string} filename - URL of image
+     */
     loadFromFile : function (filename) {
       console.log('Load from File:' + filename);
       var image = new Image();
@@ -1362,6 +1569,11 @@ if (!this['PieceImages']) {
       image.src = filename;
       return image;
     },
+    /**
+     * Get piece image  
+     * 
+     * @param {string} name - name of piece
+     */
     getImage: function(name) {
       console.log('name:' + name);
       name = name.toUpperCase();
@@ -1392,6 +1604,10 @@ if (!this['PieceImages']) {
 }
 
 if (!this['NumberImages']) {
+  /**
+   * Images of numbers
+   * @constructor
+   */
   var NumberImages = function() {
     this.callback = undefined;
     this.num_loaded = 0;
@@ -1402,6 +1618,12 @@ if (!this['NumberImages']) {
 
   NumberImages.prototype = {
     ALL_IMAGE_NUM:10,
+    
+    /**
+     * Initialize images
+     * 
+     * @param {function} on_complete_callback - function when loading is completed
+     */
     initImages: function(on_complete_callback) {
       this.callback = on_complete_callback;
 
@@ -1410,6 +1632,9 @@ if (!this['NumberImages']) {
                                               i + '.png');
       }
     },
+    /**
+     * Callback function when image loading ends
+     */
     onLoad: function(filename) {
       this.number_images.num_loaded++;
       if (this.number_images.num_loaded == this.number_images.ALL_IMAGE_NUM) {
@@ -1420,6 +1645,11 @@ if (!this['NumberImages']) {
         this.number_images.is_loaded = false;
       }
     },
+    /**
+     * Load image from specific url
+     * 
+     * @param {string} filename - URL of image
+     */
     loadFromFile: function(filename) {
       console.log('Load from File:' + filename);
       var image = new Image();
@@ -1428,6 +1658,11 @@ if (!this['NumberImages']) {
       image.src = filename;
       return image;
     },
+    /**
+     * Get number image  
+     * 
+     * @param {string} name - name of number
+     */
     getImage: function (num) {
       return this.num_image[num];
     }
