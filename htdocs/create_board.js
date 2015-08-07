@@ -219,7 +219,8 @@ $(document).ready(function(){
     }
   });
   
-
+  console.log('shogi_board:' + shogi_board);
+  console.log('shogi_board.initEvenGame():' + shogi_board.initEvenGame);
   shogi_board.initEvenGame();
   board_canvas.onBoardChange();
 
