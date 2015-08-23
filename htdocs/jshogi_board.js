@@ -1305,14 +1305,13 @@ BoardCanvas.prototype.getPos = function(evt) {
  */
 BoardCanvas.prototype.drawBlackName = function(black_name) {
   // TODO: when black_name is empty, erase the black mark
+  console.debug('BoardCanvas.drawBlackName() called black_name:' + black_name);
   var ctx = this.canvas.getContext('2d');
   ctx.fillStyle = 'black';
   ctx.font = '16px sans-serif';
   ctx.textBaseline = 'top';
 
-  console.log('font:' + ctx.font + ' baseline:' + ctx.textBaseline );
-
-  if (black_name !== '') {
+  if (black_name !== '' && typeof black_name !== 'undefined') {
     // Draw black mark
     var draw_black_name = black_name;
     if (typeof black_name === 'undefined') {
@@ -1352,6 +1351,8 @@ BoardCanvas.prototype.drawBlackName = function(black_name) {
                 ' y:' + this.PLAYER_Y + " WIDTH:" + this.NAME_IMAGE_WIDTH);
     ctx.fillText(draw_black_name, black_title_x, this.PLAYER_Y);
     this.black_name = draw_black_name;
+  } else {
+    this.black_name = '';
   }
 };
 
@@ -1367,7 +1368,7 @@ BoardCanvas.prototype.drawWhiteName = function(white_name) {
   ctx.font = '16px sans-serif';
   ctx.textBaseline = 'top';
 
-  if (white_name !== '') {
+  if (white_name !== '' && typeof white_name !== 'undefined') {
     var draw_white_name;
     if (typeof white_name === 'undefined') {
       /// Draw (or erase) the current white name
@@ -1397,6 +1398,8 @@ BoardCanvas.prototype.drawWhiteName = function(white_name) {
     ctx.fillText(draw_white_name, white_title_x, this.PLAYER_Y);
 
     this.white_name = draw_white_name;
+  } else {
+    this.white_name = '';
   }
 };
 
