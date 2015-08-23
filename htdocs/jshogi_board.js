@@ -1304,7 +1304,6 @@ BoardCanvas.prototype.getPos = function(evt) {
  * @param {string} black_name - name of black
  */
 BoardCanvas.prototype.drawBlackName = function(black_name) {
-  // TODO: when black_name is empty, erase the black mark
   console.debug('BoardCanvas.drawBlackName() called black_name:' + black_name);
   var ctx = this.canvas.getContext('2d');
   ctx.fillStyle = 'black';
@@ -1362,7 +1361,6 @@ BoardCanvas.prototype.drawBlackName = function(black_name) {
  * @param {string} white_name - name of white
  */
 BoardCanvas.prototype.drawWhiteName = function(white_name) {
-  // TODO: when white_name is empty, erase the white mark
   var ctx = this.canvas.getContext('2d');
   ctx.fillStyle = 'black';
   ctx.font = '16px sans-serif';
