@@ -24,10 +24,23 @@ $(document).ready(function(){
   if (!$('#board') || !$('#board')[0].getContext) {
     return;
   }
-
+  
   document.oncontextmenu = function() {
     return false;
   }
+  
+  var setTurn = function() {
+    if ($('input[name=turn]').prop('disabled') === true) {
+      console.debug('No turn mark draw')
+      shogi_board.setBoardTurn(shogi_board.NOTURN); 
+    } else if ($('input[name=turn]:checked').val() === 'b') {
+      shogi_board.setBoardTurn(shogi_board.BLACK); 
+    } else if ($('input[name=turn]:checked').val() === 'w') {
+      shogi_board.setBoardTurn(shogi_board.WHITE); 
+    }
+  };
+  setTurn();
+
   $('#board').mousemove(function (evt) {
     return board_canvas.onMouseMove(evt, board_canvas);
   });
@@ -46,7 +59,7 @@ $(document).ready(function(){
   board_canvas.onBoardChange = function() {
     var sfen;
     console.log('turn value:' + $('input[name=turn]:checked').val());
-    if ($('input[name=turn]:checked').val() == 'b') {
+    if ($('input[name=turn]:checked').val() === 'b') {
         sfen = shogi_board.getSFENString(shogi_board.BLACK);
     } else {
         sfen = shogi_board.getSFENString(shogi_board.WHITE);
@@ -76,7 +89,7 @@ $(document).ready(function(){
         query += '&title=' + encodeURIComponent(title);
     }
 
-    if ( $('#turn_check').attr('checked') == 'checked') {
+    if ( $('#turn_check').prop('checked') == 'checked') {
         query += '&turn=off';
     }
     var url = 'http://' + location.host + '/sfen?' + query;
@@ -122,10 +135,20 @@ $(document).ready(function(){
   });
 
   $('input[name=turn]').change(function(evt) {
-    board_canvas.onBoardChange();
+    console.debug('changeTurn(): called val():' + $('input[name=turn]:checked').val());
+    setTurn();
+    board_canvas.drawAll();
+    board_canvas.onBoardChange();    
   });
 
   $('#turn_check').change(function(evt) {
+    if ($('#turn_check').prop('checked')) {
+      $('input[name=turn]').prop('disabled', true);
+    } else {
+      $('input[name=turn]').prop('disabled', false);
+    }
+    setTurn();
+    board_canvas.drawAll();
     board_canvas.onBoardChange();
   });
 
@@ -249,5 +272,4 @@ function SetBoardString(shogi_board) {
 
 
   $('#board_text').val(board_string);
-
 }

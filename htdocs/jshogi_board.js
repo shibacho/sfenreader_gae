@@ -145,10 +145,14 @@ function ShogiBoard() {
   }
   /** For empty square */ 
   this.EMPTY = 0;
+  /** No Turn */
+  this.NOTURN = 0;
   /** Sente */
   this.BLACK = 1;
   /** Gote  */ 
   this.WHITE = 2;
+  this.board_turn = this.NOTURN;
+
   this.WHITE_BIT = 0x10;
   
   /** piece enum */
@@ -176,7 +180,6 @@ function ShogiBoard() {
  * 
  * @this {ShogiBoard}
  */
-console.log('initEvenGame() define...')
 ShogiBoard.prototype.initEvenGame = function() {
   this.setBoardStatusBySfen('lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
 };
@@ -517,7 +520,7 @@ ShogiBoard.prototype.dropPieceFromStand = function(turn, piece_name, to_pos) {
   console.log('dropPieceFromStand: turn:' + turn +
               ' piece_name:' + piece_name +
               ' to_pos:' + to_pos);
-  /// FIXME:error handling (example: turn doesn't have piece of `piece_name`)
+  /// FIXME:error handling (example: if turn doesn't have piece of `piece_name`)
   var piece_kind = this.piece_kind[piece_name];
   if (turn === this.WHITE) {
     this.white_hand_pieces[piece_name]--;
@@ -761,7 +764,33 @@ ShogiBoard.prototype.getHandString = function(hand_pieces) {
   }
   return str;
 };
+
+/**
+ * Set board turn
+ * 
+ * @this {ShogiBoard}
+ * @param {enum} turn - turn of shogi board (NOTURN, BLACK or WHITE) 
+ */
+ShogiBoard.prototype.setBoardTurn = function(turn) {
+  if (turn !== this.NOTURN && turn !== this.BLACK && turn !== this.WHITE) {
+    console.debug('ShogiBoard.setBoardTurn(): Illegal param:' + turn);
+    return false;
+  }
+  this.board_turn = turn;
+  return true;
+};
+
+/**
+ * Get board turn
+ * 
+ * @this {ShogiBoard}
+ */
+ShogiBoard.prototype.getBoardTurn = function() {
+  return this.board_turn;
+}
+ 
 // ShogiBoard definition ends
+
 
 // BoardCanvas definition starts
 /**
@@ -775,7 +804,6 @@ ShogiBoard.prototype.getHandString = function(hand_pieces) {
  */
 function BoardCanvas(canvas, shogi_board,
                      piece_images, number_images) {
-  this.self = this;
   this.canvas = canvas;
   console.log('canvas textBaseline set:');
   var ctx = this.canvas.getContext('2d');
@@ -1000,7 +1028,7 @@ BoardCanvas.prototype.drawSquareOnBoard = function (pos_x, pos_y) {
   console.log('drawSquareOnBoard: ' + pos_x + '' + pos_y);
   var ctx = this.canvas.getContext('2d');
   /// draw yellow square
-  ctx.fillStyle = "rgb(255, 255, 192)";
+  ctx.fillStyle = 'rgb(255, 255, 192)';
 
   var origin_x = this.BOARD_X + this.BOARD_WIDTH_PADDING;
   var origin_y = this.BOARD_Y + this.TITLE_HEIGHT + this.BOARD_HEIGHT_PADDING;
@@ -1190,7 +1218,6 @@ BoardCanvas.prototype.drawRotateImage = function(image, x, y) {
   ctx.translate(x * 2 + image.width, y * 2 + image.height);
   ctx.rotate(Math.PI);
   ctx.drawImage(image, x, y);
-
   ctx.restore();
 };
   
@@ -1452,9 +1479,33 @@ BoardCanvas.prototype.drawHeader = function() {
 };
 
 /**
+ * Draw turn mark (yellow square)
+ */
+BoardCanvas.prototype.drawTurn = function() {
+  var ctx = this.canvas.getContext('2d');
+  ctx.fillStyle = 'rgb(255, 212, 0)';
+  ctx.globalAlpha = 0.5;
+  console.debug('BoardCanvas.drawTurn(): called turn:' + this.shogi_board.getBoardTurn());
+  if (this.shogi_board.getBoardTurn() === this.shogi_board.BLACK) {
+    console.debug('draw Black Turn Mark');
+    ctx.fillRect(this.BLACK_X - 5, this.BLACK_Y + this.TITLE_HEIGHT - 5, 
+                  this.BLACK_MARK_WIDTH, this.BLACK_MARK_HEIGHT);
+
+  } else if (this.shogi_board.getBoardTurn() === this.shogi_board.WHITE) {
+    console.debug('draw White Turn Mark');
+    ctx.fillRect(this.WHITE_X - 5, this.WHITE_Y + this.TITLE_HEIGHT - 5, 
+                  this.WHITE_MARK_WIDTH, this.WHITE_MARK_HEIGHT);
+  } else {
+    console.debug('No turn mark draw');
+  }
+  ctx.globalAlpha = 1;
+};
+
+/**
  * Draw all elements
  */
 BoardCanvas.prototype.drawAll = function() {
+  console.debug('BoardCanvas.drawAll(): called');
   this.clearAll();
   this.drawHeader();
   if (typeof this.select_square_x !== 'undefined') {
@@ -1463,6 +1514,7 @@ BoardCanvas.prototype.drawAll = function() {
     this.drawSquare(this.select_square_x, this.select_square_y);
   }
   this.drawPieces();
+  this.drawTurn();
   // Call event handler when board status is changed
   this.onBoardChange();
 };
