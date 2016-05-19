@@ -316,42 +316,35 @@ ShogiBoard.prototype.setBoardStatusBySfen = function(sfen) {
   this.clearHandPiece(this.BLACK);
   this.clearHandPiece(this.WHITE);
   var prev_sfen = '';
+  var piece_num = 1;
   for (var i = 0, n = sfen_hand.length; i < n; i++) {
     var sfen = sfen_hand.charAt(i);
     if (sfen === '-') {
       break;
     }
-    
     if (sfen.match(num_regexp)) { // number
-      var num = sfen;
+      piece_num = sfen;
       if (i !== n - 1 && sfen_hand.charAt(i + 1).match(num_regexp)) {
-        num += sfen_hand.charAt(i + 1);
+        piece_num += sfen_hand.charAt(i + 1);
         i++;
       }
-      num = parseInt(num);
-      num--;
-      var piece_name = this.sfen_dict_rev[prev_sfen.toLowerCase()]
-      var piece_kind = this.piece_kind[piece_name];
-      console.debug('previous sfen:' + prev_sfen + ' piece_name:' + piece_name + ' piece_kind:' + piece_kind + ' num:' + num);
-      while(num--) {
-        if (prev_sfen === prev_sfen.toLowerCase()) { // turn black
-          this.addHandPiece(this.BLACK, piece_kind);
-        } else if (prev_sfen === prev_sfen.toUpperCase()) { // turn white
-          this.addHandPiece(this.WHITE, piece_kind);
-        } 
-      }
+      piece_num = parseInt(piece_num);
     } else { // not number
       var piece_name = this.sfen_dict_rev[sfen.toLowerCase()]
       var piece_kind = this.piece_kind[piece_name];
-      console.debug('sfen:' + sfen + ' piece_name:' + piece_name);
-      if (sfen === sfen.toLowerCase()) { // turn black
-        this.addHandPiece(this.BLACK, piece_kind);
-      } else if (sfen === sfen.toUpperCase()) { // turn white
-        this.addHandPiece(this.WHITE, piece_kind);
+      if (sfen === sfen.toUpperCase()) { // turn black
+        while(piece_num--) {
+          this.addHandPiece(this.BLACK, piece_kind);
+        }
+      } else if (sfen === sfen.toLowerCase()) { // turn white
+        while(piece_num--) {
+          this.addHandPiece(this.WHITE, piece_kind);
+        }
       } else {
         console.error('setBoardStatusBySfen(): In setting hand, unknown piece \"' + piece_name + '\"');
       }
-      prev_sfen = sfen;
+      piece_num = 1;
+      // prev_sfen = sfen;
     } // end if number         
   } // end for sfen_hand
   return true;
@@ -610,7 +603,7 @@ ShogiBoard.prototype.changePieceKind = function(pos) {
  * Get SFEN string that represents shogi board
  * 
  * @this {ShogiBoard}
- * @param {enum} turn - next to move piece 
+ * @param {enum} turn - player to move piece 
  * @return {string} SFEN string
  */
 ShogiBoard.prototype.getSFENString = function(turn) {
@@ -682,6 +675,8 @@ ShogiBoard.prototype.getSFENString = function(turn) {
 
   if (no_hand_piece === true) {
     sfen += '- ';
+  } else {
+    sfen += ' ';
   }
 
   /// TODO:move number is now only 1.
