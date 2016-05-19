@@ -225,7 +225,7 @@ $(document).ready(function(){
   });
   
   $('#init_mate_problem').click(function(evt) {
-    shogi_board.setBoardStatusBySfen('8k/9/9/9/9/9/9/9/9 b R2B2G4S4N4L4P18 1');
+    shogi_board.setBoardStatusBySfen('8k/9/9/9/9/9/9/9/9 b 2r2b4g4s4n4l18p 1');
     board_canvas.drawAll();
   });
   
