@@ -63,7 +63,7 @@ function IsValidSfen(sfen) {
       var c = sfen_row.charAt(index);
       if (c.match(num_regexp)) {
         count += parseInt(c);
-      } else {
+      } else if (c !== '+') { // prefix of promotied piece 
         count++;
       }
     }
@@ -79,7 +79,7 @@ function IsValidSfen(sfen) {
     console.debug('Board piece character(s) is invalid.');
     return false;
   };
-  if (!sfen_hand.match(/[krbgsnlp\-]+/i)) {
+  if (!sfen_hand.match(/[1-9krbgsnlp\-]+/i)) {
     console.debug('Hand piece character(s) is invalid.');
     return false;   
   }
