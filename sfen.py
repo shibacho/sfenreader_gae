@@ -542,6 +542,7 @@ class SfenHandler(webapp.RequestHandler):
         if len(sfen_tokens) >= 3 and inhand != '-':
             hands = list(inhand)
             hand_num = 0
+            logging.warn('hand:{}'.format(hands))
             for a_hand in hands:
                 if a_hand.isdigit():
                     if hand_num != 0: ### 2ケタの場合
@@ -552,7 +553,7 @@ class SfenHandler(webapp.RequestHandler):
                     if hand_num == 0:
                         hand_num = 1
 
-                    logging.debug('black_hand:[' + str(a_hand) + '] = ' + str(hand_num))
+                    logging.warn('black_hand:[' + str(a_hand) + '] = ' + str(hand_num))
                     a_hand = a_hand.lower() ### For sort after
                     black_hand[a_hand] = hand_num
 
@@ -560,7 +561,7 @@ class SfenHandler(webapp.RequestHandler):
                 elif a_hand.islower():
                     if hand_num == 0:
                         hand_num = 1
-                    logging.debug('white_hand:[' + str(a_hand) + '] = ' + str(hand_num))
+                    logging.warn('white_hand:[' + str(a_hand) + '] = ' + str(hand_num))
                     white_hand[a_hand] = hand_num
                     hand_num = 0
 
@@ -580,9 +581,7 @@ class SfenHandler(webapp.RequestHandler):
             img_list.append((self.draw_piece_img[hand_tuple[0]][turn],
                              x, y, 1.0, images.TOP_LEFT))
 
-            logging.debug('Drawing:' + str(hand_tuple[0]) +
-                          ' num:' + str(hand_tuple[1]) +
-                          ' y:' + str(y) + ' turn:' + str(turn))
+            logging.warn('Drawing HandPiece:|{}| num:{} x:{} y:{} turn:{}'.format(hand_tuple[0], hand_tuple[1], x, y, turn))
 
             ### 持ち駒が複数ある時は数字の描画をする
             if hand_tuple[1] > 1:
@@ -600,6 +599,7 @@ class SfenHandler(webapp.RequestHandler):
                     if self.number_img.has_key(hand_str) == False:
                         self.number_img_init(hand_str)
 
+                    logging.warn('Drawing HandPiece\'s number|{}| x:{} y:{}'.format(hand_str, two_digit_x, y))
                     img_list.append((self.number_img[hand_str][turn],
                                      two_digit_x , y, 1.0, images.TOP_LEFT))
                     num %= 10 ### 1ケタ目にする
@@ -608,6 +608,7 @@ class SfenHandler(webapp.RequestHandler):
                 if self.number_img.has_key(hand_str) == False:
                     self.number_img_init(hand_str)
 
+                logging.warn('Drawing HandPiece\'s num:{} x:{} y:{}'.format(hand_str, one_digit_x, y))
                 img_list.append((self.number_img[hand_str][turn],
                                  one_digit_x, y, 1.0, images.TOP_LEFT))
 
@@ -671,10 +672,10 @@ class SfenHandler(webapp.RequestHandler):
     def composite(self, img_list):
         if len(img_list) == 1:
             return (img_list[0][0], img_list)
-
+            
         img = images.composite(img_list, self.IMAGE_WIDTH,
-                               self.IMAGE_HEIGHT + self.max_title_height,
-                               color = 0xFFFFFFFF)
+                                self.IMAGE_HEIGHT + self.max_title_height,
+                                color = 0xFFFFFFFF)
 
         img_list = [(img, 0, 0, 1.0, images.TOP_LEFT)]
         logging.debug("composite success:")
@@ -870,7 +871,7 @@ class SfenHandler(webapp.RequestHandler):
             ### 駒を書く場所を決める
             x = self.BOARD_X + self.SQUARE_ORIGIN_X + self.SQUARE_MULTIPLE_X * (9 - int(col))
             y = self.BOARD_Y + self.SQUARE_ORIGIN_Y + self.title_height + self.SQUARE_MULTIPLE_Y * (int(row) - 1)
-            logging.debug("x:" + str(x) + " y:" + str(y) +
+            logging.warn("x:" + str(x) + " y:" + str(y) +
                          " pos:" + pos + " piece:" + piece_lower +
                          " turn:" + str(turn))
             img_list.append((self.draw_piece_img[piece_lower][turn],
