@@ -178,7 +178,7 @@ $(document).ready(function(){
     if (sente_name == '' && gote_name == '' && shogi_title == '') {
         text = $('#board_default_name').text();
     }
-
+    
     url = encodeURIComponent(url);
     text = encodeURIComponent(text);
     window.open('https://twitter.com/share?url=' + url + '&text=' + text, '_blank', 'width=700,height=300');
@@ -240,6 +240,56 @@ $(document).ready(function(){
         window.alert($('#init_by_sfen_error_msg').html())
       }
     }
+  });
+
+  function flip_alphabet(str) {
+    var flipped = "";
+    for (var i = 0, n = str.length; i < n; i++) {
+      if (str[i] === str[i].toUpperCase()) {
+        flipped += str[i].toLowerCase();
+      } else if (str[i] === str[i].toLowerCase()) {
+        flipped += str[i].toUpperCase();
+      } else {
+        flipped += str[i];
+      }
+    }
+    console.log("flip_alphabet(" + str + ") -> " + flipped);
+    return flipped;
+  }
+  
+  $('#flip').click(function(evt) {
+    var sfen = $("#sfen").val();
+    var sfen_array = sfen.split(' ');
+    var sfen_board = sfen_array[0]; // pieces on the board
+    var sfen_hand  = sfen_array[2]; // hand pieces
+    
+    var sfen_rows = sfen_board.split('/');
+    if (sfen_rows.length != 9) {
+      console.log('SFEN on board string is wrong. SFEN:' + sfen);
+      return false;
+    }
+    
+    var new_sfen_board_array = new Array();
+    for (var i = 0, n = sfen_rows.length; i < n; i++) {
+      // Add board rows flipped order
+      // Reverse string of flipped order
+      var reversed_line = sfen_rows[n - i - 1].split("").reverse().join("");
+      new_sfen_board_array.push(flip_alphabet(reversed_line));
+    }
+    var new_sfen_array = new Array(4);
+    new_sfen_array[0] = new_sfen_board_array.join('/');
+    new_sfen_array[1] = sfen_array[1];
+    new_sfen_array[2] = flip_alphabet(sfen_array[2]);
+    new_sfen_array[3] = sfen_array[3];
+    
+    var new_sfen = new_sfen_array.join(' ');
+    
+    
+    console.log("sfen:" + sfen);
+    console.log("flipped_sfen:" + new_sfen);
+    shogi_board.setBoardStatusBySfen(new_sfen);
+    board_canvas.drawAll();
+    return true;
   });
   
   console.log('shogi_board:' + shogi_board);
