@@ -242,7 +242,7 @@ $(document).ready(function(){
     }
   });
 
-  function flip_alphabet(str) {
+  var flip_alphabet = function(str) {
     var flipped = "";
     for (var i = 0, n = str.length; i < n; i++) {
       if (str[i] === str[i].toUpperCase()) {
