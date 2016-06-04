@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-$(document).ready(function(){
+$(document).ready(function(){  
   var shogi_board = new ShogiBoard();
   var piece_images = new PieceImages();
   var number_images = new NumberImages();
@@ -24,6 +24,17 @@ $(document).ready(function(){
   if (!$('#board') || !$('#board')[0].getContext) {
     return;
   }
+  var read_parameter = function() {
+    var parameter = {};
+    var query = window.location.search.substring(1);
+    var params = query.split('&');
+    for (var i = 0, n = params.length; i < n; i++) {
+      var temp = params[i].split('=');
+      parameter[temp[0]] = decodeURIComponent(temp[1]);
+    }
+    return parameter;
+  }
+  var parameter = read_parameter();
   
   document.oncontextmenu = function() {
     return false;
@@ -300,6 +311,9 @@ $(document).ready(function(){
   /// Draw board image after all image have loaded
   number_images.initImages();
   piece_images.initImages(function () {
+    if (parameter.hasOwnProperty('sfen')) {
+      shogi_board.setBoardStatusBySfen(parameter['sfen']);
+    }
     board_canvas.drawAll();
     $('#indicator').css('display', 'none');
   });
