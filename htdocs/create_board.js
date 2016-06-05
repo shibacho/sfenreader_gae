@@ -189,6 +189,7 @@ $(document).ready(function(){
     if (sente_name == '' && gote_name == '' && shogi_title == '') {
         text = $('#board_default_name').text();
     }
+    text += ' #CShogiG'
     
     url = encodeURIComponent(url);
     text = encodeURIComponent(text);
