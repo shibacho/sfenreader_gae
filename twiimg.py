@@ -24,6 +24,7 @@ from google.appengine.api import images
 import urllib
 import logging
 import re
+from time import time
 
 from sfenlib import u2utf8
 
@@ -51,8 +52,10 @@ class TwiimgHandler(webapp.RequestHandler):
 
         self.response.out.write('<!DOCTYPE html>')
         self.response.out.write('<html>\n<head>\n')
+        self.response.out.write('<meta name="twitter:id" content="{}" />\n'.format(str(time())[:-3]))
         self.response.out.write('<meta name="twitter:card" content="summary_large_image" />\n')
-        self.response.out.write('<meta name="twitter:site" content="@shibacho" />\n'.format(title))
+        self.response.out.write('<meta name="twitter:site" content="@shibacho" />\n')
+        self.response.out.write('<meta name="twitter:description" content="@shibacho" />\n')
         self.response.out.write('<meta name="twitter:title" content="{}" />\n'.format(title))
         if black_name != '' and white_name != '':
             self.response.out.write('<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name))
@@ -60,6 +63,8 @@ class TwiimgHandler(webapp.RequestHandler):
             self.response.out.write('<meta name="twitter:description" content="{}" />\n'.format(title))
         
         self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
+        self.response.out.write('<meta name="twitter:image:width" content="400" />\n')
+        self.response.out.write('<meta name="twitter:image:height" content="421" />\n')
         self.response.out.write('<meta name="twitter:url" content="{}" />\n'.format(sfenurl))
         self.response.out.write('<meta charset="UTF-8" />\n')
         self.response.out.write('</head>\n<body>\n')
