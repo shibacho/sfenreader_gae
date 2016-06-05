@@ -22,4 +22,4 @@ Now (03/20/2015), this program works at ( http://sfenreader.appspot.com/ ).
 
 This software is under the Apache 2.0 License, see http://www.apache.org/licenses/LICENSE-2.0.
 
-Copyright (c) 2011-2015 fantakeshi
+Copyright (c) 2011-2016 shibacho
