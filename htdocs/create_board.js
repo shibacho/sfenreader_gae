@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 //
-// create_board.js Copyright 2011 fantakeshi.
+// create_board.js Copyright 2011-2016 shibacho
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

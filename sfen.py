@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 #
-# sfen.py Copyright 2011 fantakeshi.
+# sfen.py Copyright 2011-2016 shibacho
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
