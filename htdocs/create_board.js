@@ -52,6 +52,14 @@ $(document).ready(function(){
   };
   setTurn();
 
+  /// parameter: 
+  /// sfen: original sfen
+  /// move_count: update number of count
+  var setSfenMove = function(sfen, move_count) {
+    token = sfen.split(" ");
+    return token[0] + " " + token[1] + " " + token[2] + " " + move_count;
+  }
+
   $('#board').mousemove(function (evt) {
     return board_canvas.onMouseMove(evt, board_canvas);
   });
@@ -80,6 +88,12 @@ $(document).ready(function(){
     var white_name = board_canvas.getWhiteName();
     var title = board_canvas.getTitle();
 
+    var move_at_val = $('#move_at').val();
+    if (move_at_val != '') {
+      console.log('move_at_val:' + move_at_val);
+      sfen = setSfenMove(sfen, move_at_val);
+    }
+
     var sfen_encode = encodeURIComponent(sfen);
     var query = 'sfen=' + sfen_encode;
 
@@ -103,6 +117,11 @@ $(document).ready(function(){
     if ( $('#turn_check').prop('checked') == 'checked') {
         query += '&turn=off';
     }
+
+    if (move_at_val != '') {
+      query += '&ma=on';
+    }
+
     var url = 'http://' + location.host + '/sfen?' + query;
     var twiimg_url = 'http://' + location.host + '/twiimg?' + query;
 
@@ -164,6 +183,10 @@ $(document).ready(function(){
   });
 
   $('#last_move').change(function(evt) {
+    board_canvas.onBoardChange();
+  });
+
+  $('#move_at').change(function(evt) {
     board_canvas.onBoardChange();
   });
 
