@@ -687,7 +687,7 @@ class SfenHandler(webapp.RequestHandler):
         piece_kind = urllib.unquote(self.request.get('piece','kanji'))
         arrow_str = urllib.unquote(self.request.get('arrow'))
         turn_str = urllib.unquote(self.request.get('turn', 'on'))
-        move_title = urllib.unquote(self.request.get('mt', 'on'))
+        move_title = urllib.unquote(self.request.get('mt', 'off'))
 
         logging.info('sfen:' + sfen + ' last_move:' + last_move)
         if sfen == '':
