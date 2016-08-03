@@ -687,14 +687,14 @@ class SfenHandler(webapp.RequestHandler):
         piece_kind = urllib.unquote(self.request.get('piece','kanji'))
         arrow_str = urllib.unquote(self.request.get('arrow'))
         turn_str = urllib.unquote(self.request.get('turn', 'on'))
-        move_title = urllib.unquote(self.request.get('mt', 'off'))
+        move_at = urllib.unquote(self.request.get('ma', 'off'))
 
         logging.info('sfen:' + sfen + ' last_move:' + last_move)
         if sfen == '':
             self.response.out.write('Please, specify SFEN string.')
             return
 
-        ### If Move Count(mt) is on, draw nth move count.
+        ### If Move At(ma) is on, draw nth move count.
         if piece_kind == 'kanji':
             move_count_prefix = ''
             move_count_suffix = u' 手目'
@@ -724,7 +724,7 @@ class SfenHandler(webapp.RequestHandler):
             (white_name_img, white_name_img_obj) = self.get_string_img(white_name, font_size)
             (title_img, title_img_obj) = self.get_string_img(title, font_size)
 
-            if move_title == 'on' and move_count != '0':
+            if move_at == 'on' and move_count != '0':
                 move_count_str = move_count_prefix + move_count + move_count_suffix
                 (move_count_img, move_count_img_obj) = self.get_string_img(move_count_str, font_size)
 
@@ -821,7 +821,7 @@ class SfenHandler(webapp.RequestHandler):
                                   self.TITLE_Y + self.max_title_height + self.IMAGE_PADDING_Y,
                                   1.0, images.TOP_LEFT) )
 
-            if move_title == 'on' and move_count != '0':
+            if move_at == 'on' and move_count != '0':
                 center = self.IMAGE_WIDTH / 2
                 center_x = center - move_count_img_obj.width / 2
                 img_list.append( (move_count_img, center_x, self.TITLE_Y, 1.0, images.TOP_LEFT) )
