@@ -52,7 +52,6 @@ $(document).ready(function(){
   };
   setTurn();
 
-  /// parameter: 
   /// sfen: original sfen
   /// move_count: update number of count
   var setSfenMove = function(sfen, move_count) {
@@ -334,11 +333,30 @@ $(document).ready(function(){
 
   /// Draw board image after all image have loaded
   number_images.initImages();
+
+  // Set values by given parameters to url
   piece_images.initImages(function () {
     if (parameter.hasOwnProperty('sfen')) {
       shogi_board.setBoardStatusBySfen(parameter['sfen']);
     }
+
+    if (parameter.hasOwnProperty('sname')) {
+      $('#sente_name').val(decodeURIComponent(parameter['sname']));
+      board_canvas.drawBlackName($('#sente_name').val());
+    }
+
+    if (parameter.hasOwnProperty('gname')) {
+      $('#gote_name').val(decodeURIComponent(parameter['gname']));
+      board_canvas.drawWhiteName($('#gote_name').val());
+    }
+
+    if (parameter.hasOwnProperty('title')) {
+      $('#shogi_title').val(decodeURIComponent(parameter['title']));
+      board_canvas.drawTitle($('#shogi_title').val());
+    }
+
     board_canvas.drawAll();
+    SetBoardString(shogi_board);
     $('#indicator').css('display', 'none');
   });
 });
