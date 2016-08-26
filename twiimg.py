@@ -61,8 +61,8 @@ class TwiimgHandler(webapp.RequestHandler):
         self.response.out.write('<html>\n<head>\n')
         self.response.out.write('<meta name="twitter:id" content="{}" />\n'.format(str(time())[:-3]))
         self.response.out.write('<meta name="twitter:card" content="summary_large_image" />\n')
-        self.response.out.write('<meta name="twitter:site" content="@shibacho" />\n')
-        self.response.out.write('<meta name="twitter:description" content="@shibacho" />\n')
+        self.response.out.write('<meta name="twitter:site" content="@sfenreader_gae" />\n')
+        self.response.out.write('<meta name="twitter:description" content="@sfenreader_gae" />\n')
         self.response.out.write('<meta name="twitter:title" content="{}" />\n'.format(title))
         if black_name != '' and white_name != '':
             self.response.out.write('<meta name="twitter:description" content="{} vs {}" />\n'.format(black_name, white_name))
