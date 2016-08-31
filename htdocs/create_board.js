@@ -370,7 +370,25 @@ $(document).ready(function(){
     if (parameter.hasOwnProperty('sfen')) {
       shogi_board.setBoardStatusBySfen(parameter['sfen']);
     }
+
+    if (parameter.hasOwnProperty('sname')) {
+      $('#sente_name').val(decodeURIComponent(parameter['sname']));
+      board_canvas.drawBlackName($('#sente_name').val());
+    }
+
+    if (parameter.hasOwnProperty('gname')) {
+      $('#gote_name').val(decodeURIComponent(parameter['gname']));
+      board_canvas.drawWhiteName($('#gote_name').val());
+    }
+
+    if (parameter.hasOwnProperty('title')) {
+      $('#shogi_title').val(decodeURIComponent(parameter['title']));
+      board_canvas.drawTitle($('#shogi_title').val());
+    }
+
     board_canvas.drawAll();
+    setBoardString(shogi_board);
     $('#indicator').css('display', 'none');
+    board_canvas.drawAll();
   });
 });
