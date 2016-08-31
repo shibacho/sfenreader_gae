@@ -88,9 +88,6 @@ $(document).ready(function(){
     text = encodeURIComponent(text);
     $('#tweet').attr('href', 'https://twitter.com/intent/tweet?url=' + url + '&text=' + text + 
         '&hashtags=' + hashtags + '&via=' + via, '_blank');
-    window.open('https://twitter.com/intent/tweet?url=' + url + '&text=' + text + 
-        '&hashtags=' + hashtags + '&via=' + via, '_blank', 'width=700,height=300');
-    
     return true;
   };
 
@@ -185,11 +182,11 @@ $(document).ready(function(){
     $('#twiimg_url').html(twiimg_url);
     $('#sfen').val(sfen);
 
-    changeTweetUrl();
     img_url = '<' + img_url + '>';
     $('#blog_code').val(img_url);
 
     setBoardString(shogi_board);
+    changeTweetUrl();
   };
 
   var rot_canvas = $('#rot_canvas')[0];
@@ -386,7 +383,6 @@ $(document).ready(function(){
       board_canvas.drawTitle($('#shogi_title').val());
     }
 
-    board_canvas.drawAll();
     setBoardString(shogi_board);
     $('#indicator').css('display', 'none');
     board_canvas.drawAll();
