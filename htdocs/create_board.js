@@ -14,7 +14,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-$(document).ready(function(){  
+$(document).ready(function(){
+  var AUTHOR = 'sfenreader_gae';
+  var HASHTAG = 'CShogiG';  
   var shogi_board = new ShogiBoard();
   var piece_images = new PieceImages();
   var number_images = new NumberImages();
@@ -54,11 +56,63 @@ $(document).ready(function(){
 
   /// parameter: 
   /// sfen: original sfen
-  /// move_count: update number of count
+  /// move_count: update number of move count
+  /// return value:
+  ///   SFEN string of changed number of move count
   var setSfenMove = function(sfen, move_count) {
     token = sfen.split(" ");
     return token[0] + " " + token[1] + " " + token[2] + " " + move_count;
-  }
+  };
+
+  /// parameter: 
+  /// return value:
+  ///   boolean: Success or not to change tweet url
+  var changeTweetUrl = function() {
+    var url = $('#twiimg_url').html();
+    var sente_name = $('#sente_name').val();
+    var gote_name = $('#gote_name').val();
+    var shogi_title = $('#shogi_title').val();
+    var text = '';
+    var hashtags = HASHTAG;
+    var via = AUTHOR;
+    if (sente_name != '' && gote_name != '') {
+        text += sente_name + ' ' +  $('#versus_string').text() + ' ' + gote_name + ':';
+    }
+    text += shogi_title;
+
+    if (sente_name == '' && gote_name == '' && shogi_title == '') {
+        text = $('#board_default_name').text();
+    }
+    
+    url = encodeURIComponent(url);
+    text = encodeURIComponent(text);
+    $('#tweet').attr('href', 'https://twitter.com/intent/tweet?url=' + url + '&text=' + text + 
+        '&hashtags=' + hashtags + '&via=' + via, '_blank');
+    window.open('https://twitter.com/intent/tweet?url=' + url + '&text=' + text + 
+        '&hashtags=' + hashtags + '&via=' + via, '_blank', 'width=700,height=300');
+    
+    return true;
+  };
+
+  var setBoardString = function(shogi_board) {
+    var black_name = $('#sente_name').val();
+    var white_name = $('#gote_name').val();
+    var board_string = '';
+
+    if (white_name != '') {
+      board_string += '後手：' + white_name + '\n';
+    }
+
+    board_string += shogi_board.getBoardString();
+
+    if (black_name != '') {
+      board_string += '先手：' + black_name + '\n';
+    }
+
+
+    $('#board_text').val(board_string);
+  };
+  setBoardString(shogi_board);
 
   $('#board').mousemove(function (evt) {
     return board_canvas.onMouseMove(evt, board_canvas);
@@ -131,10 +185,11 @@ $(document).ready(function(){
     $('#twiimg_url').html(twiimg_url);
     $('#sfen').val(sfen);
 
+    changeTweetUrl();
     img_url = '<' + img_url + '>';
     $('#blog_code').val(img_url);
 
-    SetBoardString(shogi_board);
+    setBoardString(shogi_board);
   };
 
   var rot_canvas = $('#rot_canvas')[0];
@@ -150,13 +205,13 @@ $(document).ready(function(){
   $('#sente_name').change(function(evt) {
     board_canvas.drawBlackName($('#sente_name').val());
     board_canvas.drawAll();
-    SetBoardString(shogi_board);
+    setBoardString(shogi_board);
   });
 
   $('#gote_name').change(function(evt) {
     board_canvas.drawWhiteName($('#gote_name').val());
     board_canvas.drawAll();
-    SetBoardString(shogi_board);
+    setBoardString(shogi_board);
   });
 
   $('#shogi_title').change(function(evt) {
@@ -195,30 +250,6 @@ $(document).ready(function(){
   //     text += encodeURIComponent($('#sfen').val());
   //     window.open('https://twitter.com/share?url=&text=' + text, '_blank', 'width=700,height=300');
   // });
-
-  $('#tweet').click(function(evt) {
-    // var url = $('#long_url').val();
-    var url = $('#twiimg_url').html();
-    var sente_name = $('#sente_name').val();
-    var gote_name = $('#gote_name').val();
-    var shogi_title = $('#shogi_title').val();
-    var text = '';
-    var hashtags = 'CShogiG';
-    var via = 'sfenreader_gae';
-    if (sente_name != '' && gote_name != '') {
-        text += sente_name + ' ' +  $('#versus_string').text() + ' ' + gote_name + ':';
-    }
-    text += shogi_title;
-
-    if (sente_name == '' && gote_name == '' && shogi_title == '') {
-        text = $('#board_default_name').text();
-    }
-    
-    url = encodeURIComponent(url);
-    text = encodeURIComponent(text);
-    window.open('https://twitter.com/intent/tweet?url=' + url + '&text=' + text + 
-        '&hashtags=' + hashtags + '&via=' + via, '_blank', 'width=700,height=300');
-  });
   
   $('#init_board').click(function(evt) {
     shogi_board.setBoardStatusBySfen('lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1');
@@ -343,22 +374,3 @@ $(document).ready(function(){
     $('#indicator').css('display', 'none');
   });
 });
-
-function SetBoardString(shogi_board) {
-  var black_name = $('#sente_name').val();
-  var white_name = $('#gote_name').val();
-  var board_string = '';
-
-  if (white_name != '') {
-    board_string += '後手：' + white_name + '\n';
-  }
-
-  board_string += shogi_board.getBoardString();
-
-  if (black_name != '') {
-    board_string += '先手：' + black_name + '\n';
-  }
-
-
-  $('#board_text').val(board_string);
-}
