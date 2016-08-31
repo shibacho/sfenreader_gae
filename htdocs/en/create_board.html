@@ -15,7 +15,24 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script type="text/javascript" src="../jshogi_board.js?2015071201"></script>
-<script type="text/javascript" src="../create_board.js?2011082602"></script>
+<script type="text/javascript" src="../create_board.js?2016090202"></script>
+<!--Twitter Widget Setup -->
+<script>window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+ 
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+ 
+  return t;
+}(document, "script", "twitter-wjs"));</script>
 <script type="text/javascript" src="../google_analytics.js" async></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -58,7 +75,7 @@ Initialize to handicapped games (or mate problem):
 </table>
 <br>
 URL :<input type="text" id="long_url" style="width:320px;" onclick="this.focus(); this.select();"/> <span id="twiimg_url" class="none"></span>
-<button id="tweet">Tweet</button> <span id="versus_string" class="none">vs</span> <span id="board_default_name" class="none">Diagram</span><br>
+<a id="tweet" class="twitter-share-button" href="https://twitter.com/intent/tweet">Tweet</a><br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
 Shorten URL:<input type="text" id="short_url" /><br>
 -->
