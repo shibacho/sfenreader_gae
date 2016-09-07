@@ -14,9 +14,6 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
 -->
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script type="text/javascript" src="../jshogi_board.js?2015080201"></script>
-<script type="text/javascript" src="../create_board.js?2016090101"></script>
-<script type="text/javascript" src="../google_analytics.js" async></script>
 <!--Twitter Widget Setup -->
 <script>window.twttr = (function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0],
@@ -34,6 +31,10 @@ if (user_agent.indexOf('iphone') > -1 || user_agent.indexOf('android') > -1) {
  
   return t;
 }(document, "script", "twitter-wjs"));</script>
+<script type="text/javascript" src="../jshogi_board.js?2015080201"></script>
+<script type="text/javascript" src="../create_board.js?2016090501"></script>
+<script type="text/javascript" src="../google_analytics.js" async></script>
+<!-- Language Select Code -->
 <script type="text/javascript">
 $(document).ready(function() {
     $('#langselect').change(function(){
@@ -74,8 +75,9 @@ Language:<select id="langselect"><option value="ja" selected>日本語</option><
 </tr>
 </table>
 <br>
-URL :<input type="text" id="long_url" style="width:320px;" onclick="this.focus(); this.select();"/> <span id="twiimg_url" class="none"></span>
-<a id="tweet" class="twitter-share-button" href="https://twitter.com/intent/tweet">Tweet</a><br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
+URL&nbsp;:<input type="text" id="long_url" style="width:320px;" onclick="this.focus(); this.select();"/> <span id="twiimg_url" class="none"></span>
+<!--<a id="tweet" href="http://twitter.com/share">ツイート</a><br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>-->
+<span id="tweet"><a class="twitter-share-button" data-count="none">Tweet</a></span><br> <span id="versus_string" class="none">対</span> <span id="board_default_name" class="none">局面図</span>
 <!--
 短縮URL:<input type="text" id="short_url" /><br>
 -->
