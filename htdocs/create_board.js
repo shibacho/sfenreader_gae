@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 $(document).ready(function(){
   var AUTHOR = 'sfenreader_gae';
   var HASHTAG = 'CShogiG';  
@@ -23,6 +24,13 @@ $(document).ready(function(){
   // var $board = $('#board');
   var board_canvas = new BoardCanvas($('#board')[0], shogi_board,
                                      piece_images, number_images);
+  var twttr_factory = undefined; // Twitter factory object
+  /// twitter ready function
+  twttr.ready(function(twttr) {
+    console.info('twitter ready has called:');
+    twttr_factory = twttr;
+  });
+
   if (!$('#board') || !$('#board')[0].getContext) {
     return;
   }
@@ -66,8 +74,8 @@ $(document).ready(function(){
 
   /// parameter: 
   /// return value:
-  ///   boolean: Success or not to change tweet url
-  var changeTweetUrl = function() {
+  ///   dictionary: Tweet infomation
+  var getTweetUrl = function() {
     var url = $('#twiimg_url').html();
     var sente_name = $('#sente_name').val();
     var gote_name = $('#gote_name').val();
@@ -75,22 +83,18 @@ $(document).ready(function(){
     var text = '';
     var hashtags = HASHTAG;
     var via = AUTHOR;
-    if (sente_name != '' && gote_name != '') {
+    if (sente_name !== '' && gote_name !== '') {
         text += sente_name + ' ' +  $('#versus_string').text() + ' ' + gote_name + ':';
     }
     text += shogi_title;
 
-    if (sente_name == '' && gote_name == '' && shogi_title == '') {
+    if (sente_name === '' && gote_name === '' && shogi_title === '') {
         text = $('#board_default_name').text();
     }
-    
-    url = encodeURIComponent(url);
-    text = encodeURIComponent(text);
-    $('#tweet').attr('href', 'https://twitter.com/intent/tweet?url=' + url + '&text=' + text + 
-        '&hashtags=' + hashtags + '&via=' + via, '_blank');
-    return true;
+    return {url: url, text: text, hash: hashtags, via: via};
   };
 
+  /// Set (or change) board string to be inputted value
   var setBoardString = function(shogi_board) {
     var black_name = $('#sente_name').val();
     var white_name = $('#gote_name').val();
@@ -106,8 +110,20 @@ $(document).ready(function(){
       board_string += '先手：' + black_name + '\n';
     }
 
-
     $('#board_text').val(board_string);
+
+    // remove and put new tweet button
+    var $tweet = $('#tweet');
+    var tweet_info = getTweetUrl();
+    console.info('tweet_info url:' + tweet_info['url'] + ' text:' + tweet_info['text'] + 
+                  ' hashtag:' + HASHTAG + ' via:' + AUTHOR);
+    $tweet.html('&nbsp;');
+    $tweet.html('<a class="twitter-share-button" href="https://twitter.com/share" data-url="' + 
+               tweet_info['url'] + '" data-text="' + tweet_info['text'] + '" data-hashtags="' + 
+              HASHTAG + '" data-via="' + AUTHOR + '" data-count="none">Tweet</a>');
+    if (twttr_factory) {
+      twttr_factory.widgets.load();
+    }
   };
   setBoardString(shogi_board);
 
@@ -186,7 +202,6 @@ $(document).ready(function(){
     $('#blog_code').val(img_url);
 
     setBoardString(shogi_board);
-    changeTweetUrl();
   };
 
   var rot_canvas = $('#rot_canvas')[0];
@@ -321,6 +336,7 @@ $(document).ready(function(){
     return flipped;
   }
   
+  /// flip button has clicked
   $('#flip').click(function(evt) {
     var sfen = $("#sfen").val();
     var sfen_array = sfen.split(' ');
