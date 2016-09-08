@@ -23,6 +23,9 @@ handlers:
 - url: /twiimg
   script: twiimg.py
 
+- url: /resize
+  script: resize.py
+
 - url: /.*
   script: not_found.py
 
