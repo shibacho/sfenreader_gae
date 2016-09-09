@@ -46,7 +46,7 @@ $(document).ready(function(){
   }
   var parameter = read_parameter();
   
-  document.oncontextmenu = function() {
+  $('#board')[0].oncontextmenu = function() {
     return false;
   }
   
@@ -195,6 +195,7 @@ $(document).ready(function(){
     var img_url = 'img src="' + url + '"';
 
     $('#long_url').val(url);
+    $('#image_link').attr('href', url);
     $('#twiimg_url').html(twiimg_url);
     $('#sfen').val(sfen);
 
