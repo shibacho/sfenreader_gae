@@ -38,6 +38,7 @@ class TwiimgHandler(webapp.RequestHandler):
         sfen_raw = self.request.get('sfen')
         sfen = urllib.unquote(sfen_raw)
         sfenurl = "{}/sfen?{}".format(path, self.request.query_string)
+        resizeurl = "{}/resize?{}".format(path, self.request.query_string)
 
         sfen = sfen.replace('\r','')
         sfen = sfen.replace('\n','')
@@ -69,10 +70,13 @@ class TwiimgHandler(webapp.RequestHandler):
         else:
             self.response.out.write('<meta name="twitter:description" content="{}" />\n'.format(title))
         
-        self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
-        self.response.out.write('<meta name="twitter:image:width" content="400" />\n')
+        # self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(sfenurl))
+        self.response.out.write('<meta name="twitter:image" content="{}" />\n'.format(resizeurl))
+        # self.response.out.write('<meta name="twitter:image:width" content="400" />\n')
+        self.response.out.write('<meta name="twitter:image:width" content="842" />\n')
         self.response.out.write('<meta name="twitter:image:height" content="421" />\n')
-        self.response.out.write('<meta name="twitter:url" content="{}" />\n'.format(sfenurl))
+        # self.response.out.write('<meta name="twitter:url" content="{}" />\n'.format(sfenurl))
+        self.response.out.write('<meta name="twitter:url" content="{}" />\n'.format(resizeurl))
         self.response.out.write('<meta charset="UTF-8" />\n')
         self.response.out.write('</head>\n<body>\n')
         self.response.out.write('<p>\n<div style="text-align:center;">{}</div><br>\n'.format(title))
