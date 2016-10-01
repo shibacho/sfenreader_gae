@@ -30,6 +30,8 @@ from sfenlib import u2utf8
 
 class TwiimgHandler(webapp.RequestHandler):
     DEFAULT_TITLE = u'局面図'
+    EDITING_STRING_EN = u'Edit another dialog from this dialog'
+    EDITING_STRING_JA = u'この局面を引き継いで別の局面を作る'
     def get(self):
         url  = self.request.url
         m = re.search('(.+)\/(.+)', url)
@@ -82,7 +84,8 @@ class TwiimgHandler(webapp.RequestHandler):
         self.response.out.write('<p>\n<div style="text-align:center;">{}</div><br>\n'.format(title))
         self.response.out.write('<img src="{}" /><br>\n'.format(sfenurl))
         query = self.create_sfen_query(sfen_raw, black_name_raw, white_name_raw, title_raw)
-        self.response.out.write(u'<span style="text-align:left;"><a href="./ja/create_board.html{}">この局面を引き継いで別の局面を作る</a></span><br>'.format(query))
+        self.response.out.write(u'<span style="text-align:left;"><a href="./ja/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_JA))
+        self.response.out.write(u'<span style="text-align:left;"><a href="./en/create_board.html{}">{}</a></span><br>'.format(query, self.EDITING_STRING_EN))
         self.response.out.write('</body>\n</html>\n')
 
     def create_sfen_query(self, sfen, black_name, white_name, title):
