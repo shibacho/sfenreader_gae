@@ -34,7 +34,7 @@ $(document).ready(function(){
   if (!$('#board') || !$('#board')[0].getContext) {
     return;
   }
-  var read_parameter = function() {
+  var readParameter = function() {
     var parameter = {};
     var query = window.location.search.substring(1);
     var params = query.split('&');
@@ -43,9 +43,71 @@ $(document).ready(function(){
       parameter[temp[0]] = decodeURIComponent(temp[1]);
     }
     return parameter;
-  }
-  var parameter = read_parameter();
+  };
+  var parameter = readParameter();
   
+  var getCurrentQuery = function() {
+    var query = {};
+    var sfen;
+    console.log('turn value:' + $('input[name=turn]:checked').val());
+    if ($('input[name=turn]:checked').val() === 'b') {
+        sfen = shogi_board.getSFENString(shogi_board.BLACK);
+    } else {
+        sfen = shogi_board.getSFENString(shogi_board.WHITE);
+    }
+
+    var black_name = board_canvas.getBlackName();
+    var white_name = board_canvas.getWhiteName();
+    var title = board_canvas.getTitle();
+
+    var move_at_val = $('#move_at').val();
+    if (move_at_val != '') {
+      console.log('move_at_val:' + move_at_val);
+      sfen = setSfenMove(sfen, move_at_val);
+    }
+
+    var sfen_encode = encodeURIComponent(sfen);
+    query['sfen'] = sfen_encode;
+
+    var lm = $('#last_move').val();
+    if (lm != '') {
+      query['lm'] = lm;
+    }
+
+    if (typeof black_name != 'undefined' && black_name != '') {
+      query['sname'] = encodeURIComponent(black_name);
+    }
+
+    if (typeof white_name != 'undefined' && white_name != '') {
+      query['gname'] = encodeURIComponent(white_name);
+    }
+
+    if (typeof title != 'undefined' && title != '') {
+      query['title'] = encodeURIComponent(title);
+    }
+
+    if ( $('#turn_check').prop('checked') == 'checked') {
+      query['turn'] = 'off';
+    }
+
+    if (move_at_val != '') {
+      query['ma'] = 'on';
+    }
+    return query;
+  }
+
+  var getCurrentQueryString = function() {
+    var query = getCurrentQuery();
+    var query_string = '';
+    for (var key in query) {
+      console.log('getCurrentQueryString():' + key + '=' + query[key]);
+      query_string += key + '=' + query[key] +'&';
+    }
+    query_string = query_string.substring(0, query_string.length - 1);
+
+    return query_string;
+  }
+
   $('#board')[0].oncontextmenu = function() {
     return false;
   }
@@ -143,51 +205,7 @@ $(document).ready(function(){
   });
 
   board_canvas.onBoardChange = function() {
-    var sfen;
-    console.log('turn value:' + $('input[name=turn]:checked').val());
-    if ($('input[name=turn]:checked').val() === 'b') {
-        sfen = shogi_board.getSFENString(shogi_board.BLACK);
-    } else {
-        sfen = shogi_board.getSFENString(shogi_board.WHITE);
-    }
-
-    var black_name = board_canvas.getBlackName();
-    var white_name = board_canvas.getWhiteName();
-    var title = board_canvas.getTitle();
-
-    var move_at_val = $('#move_at').val();
-    if (move_at_val != '') {
-      console.log('move_at_val:' + move_at_val);
-      sfen = setSfenMove(sfen, move_at_val);
-    }
-
-    var sfen_encode = encodeURIComponent(sfen);
-    var query = 'sfen=' + sfen_encode;
-
-    var lm = $('#last_move').val();
-    if (lm != '') {
-        query += '&lm=' + lm;
-    }
-
-    if (typeof black_name != 'undefined' && black_name != '') {
-        query += '&sname=' + encodeURIComponent(black_name);
-    }
-
-    if (typeof white_name != 'undefined' && white_name != '') {
-        query += '&gname=' + encodeURIComponent(white_name);
-    }
-
-    if (typeof title != 'undefined' && title != '') {
-        query += '&title=' + encodeURIComponent(title);
-    }
-
-    if ( $('#turn_check').prop('checked') == 'checked') {
-        query += '&turn=off';
-    }
-
-    if (move_at_val != '') {
-      query += '&ma=on';
-    }
+    var query = getCurrentQueryString();
 
     var url = 'http://' + location.host + '/sfen?' + query;
     var twiimg_url = 'http://' + location.host + '/twiimg?' + query;
@@ -197,7 +215,7 @@ $(document).ready(function(){
     $('#long_url').val(url);
     $('#image_link').attr('href', url);
     $('#twiimg_url').html(twiimg_url);
-    $('#sfen').val(sfen);
+    $('#sfen').val(getCurrentQuery()['sfen']);
 
     img_url = '<' + img_url + '>';
     $('#blog_code').val(img_url);
@@ -214,6 +232,12 @@ $(document).ready(function(){
 
   $('#board')[0].width = board_canvas.CANVAS_WIDTH;
   $('#board')[0].height = board_canvas.CANVAS_HEIGHT;
+
+  $('#langselect').change(function(evt) {
+    var query = getCurrentQueryString(this);
+    location.href = 'http://' + location.host + '/' + 
+        $('#langselect').val() + '/create_board.html?' + query;
+  });
 
   $('#sente_name').change(function(evt) {
     board_canvas.drawBlackName($('#sente_name').val());
@@ -382,22 +406,37 @@ $(document).ready(function(){
   number_images.initImages();
   piece_images.initImages(function () {
     if (parameter.hasOwnProperty('sfen')) {
+      console.log('initImages(): parameter has sfen:' + parameter['sfen']);
       shogi_board.setBoardStatusBySfen(parameter['sfen']);
     }
 
     if (parameter.hasOwnProperty('sname')) {
+      console.log('initImages(): parameter has sname:' + parameter['sname']);
       $('#sente_name').val(decodeURIComponent(parameter['sname']));
       board_canvas.drawBlackName($('#sente_name').val());
     }
 
     if (parameter.hasOwnProperty('gname')) {
+      console.log('initImages(): parameter has gname:' + parameter['gname']);
       $('#gote_name').val(decodeURIComponent(parameter['gname']));
       board_canvas.drawWhiteName($('#gote_name').val());
     }
 
     if (parameter.hasOwnProperty('title')) {
+      console.log('initImages(): parameter has title:' + parameter['title']);
       $('#shogi_title').val(decodeURIComponent(parameter['title']));
       board_canvas.drawTitle($('#shogi_title').val());
+    }
+
+    if (parameter.hasOwnProperty('lm')) {
+      console.log('initImages(): parameter has lm:' + parameter['lm']);
+      $('#last_move').val(decodeURIComponent(parameter['lm']));
+    }
+
+    if (parameter.hasOwnProperty('ma') && parameter['ma'] === 'on') {
+      console.log('initImages(): parameter has ma:' + parameter['ma']);
+      console.log(decodeURIComponent(parameter['sfen']).split(' ')[3]);
+      $('#move_at').val(decodeURIComponent(parameter['sfen']).split(' ')[3]);
     }
 
     setBoardString(shogi_board);
