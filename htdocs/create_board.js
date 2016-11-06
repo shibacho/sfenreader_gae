@@ -215,7 +215,7 @@ $(document).ready(function(){
     $('#long_url').val(url);
     $('#image_link').attr('href', url);
     $('#twiimg_url').html(twiimg_url);
-    $('#sfen').val(getCurrentQuery()['sfen']);
+    $('#sfen').val(decodeURIComponent(getCurrentQuery()['sfen']));
 
     img_url = '<' + img_url + '>';
     $('#blog_code').val(img_url);
@@ -407,7 +407,7 @@ $(document).ready(function(){
   piece_images.initImages(function () {
     if (parameter.hasOwnProperty('sfen')) {
       console.log('initImages(): parameter has sfen:' + parameter['sfen']);
-      shogi_board.setBoardStatusBySfen(parameter['sfen']);
+      shogi_board.setBoardStatusBySfen(decodeURIComponent(parameter['sfen']));
     }
 
     if (parameter.hasOwnProperty('sname')) {
